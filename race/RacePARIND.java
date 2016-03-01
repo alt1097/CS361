@@ -1,5 +1,6 @@
 package race;
 
+import channel.Channel;
 import main.ChronoTimer;
 
 import java.util.ArrayList;
@@ -37,10 +38,9 @@ public class RacePARIND extends Race{
 	/**
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
-	 @return If the Racer does not exist.
 	 */
-	public boolean addRacerPARIND(int number){
-		return false;  //  TODO
+	public void addRacerPARIND(int number){
+		//  TODO
 	}
 
 	/**
@@ -102,6 +102,15 @@ public class RacePARIND extends Race{
 	 */
 	public void channelVerifyPARIND(){
 		//  TODO
+	}
+
+	/**
+	 Verifies Channel's use and triggers the Channel specified for Parallel Individual Race.
+	 @param channel Channel Object.
+	 @return String of any messages.
+	 */
+	public String triggerPARIND(Channel channel){
+		return "";  //  TODO
 	}
 
 	/**

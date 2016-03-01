@@ -1,5 +1,6 @@
 package race;
 
+import channel.Channel;
 import main.ChronoTimer;
 
 import java.util.ArrayList;
@@ -37,10 +38,9 @@ public class RacePARGRP extends Race{
 	/**
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
-	 @return If the Racer does not exist.
 	 */
-	public boolean addRacerPARGRP(int number){
-		return false;  //  TODO
+	public void addRacerPARGRP(int number){
+		//  TODO
 	}
 
 	/**
@@ -104,6 +104,14 @@ public class RacePARGRP extends Race{
 		//  TODO
 	}
 
+	/**
+	 Verifies Channel's use and triggers the Channel specified for Parallel Group Race.
+	 @param channel Channel Object.
+	 @return String of any messages.
+	 */
+	public String triggerPARGRP(Channel channel){
+		return "";  //  TODO
+	}
 	/**
 	 Runs the actions to finalize a Parallel Groups Race.
 	 */

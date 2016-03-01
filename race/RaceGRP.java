@@ -1,5 +1,6 @@
 package race;
 
+import channel.Channel;
 import main.ChronoTimer;
 
 import java.util.ArrayList;
@@ -37,10 +38,9 @@ public class RaceGRP extends Race{
 	/**
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
-	 @return If the Racer does not exist.
 	 */
-	public boolean addRacerGRP(int number){
-		return getRacerGRP(number) != null && racers.add(new Racer(number));
+	public void addRacerGRP(int number){
+		racers.add(new Racer(number));
 	}
 
 	/**
@@ -119,6 +119,15 @@ public class RaceGRP extends Race{
 	 */
 	public void channelVerifyGRP(){
 		//  TODO
+	}
+
+	/**
+	 Verifies Channel's use and triggers the Channel specified for Group Race.
+	 @param channel Channel Object.
+	 @return String of any messages.
+	 */
+	public String triggerGRP(Channel channel){
+		return "";  //  TODO
 	}
 
 	/**

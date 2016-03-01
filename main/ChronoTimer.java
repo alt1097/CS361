@@ -15,14 +15,21 @@ import channel.Channel;
 public class ChronoTimer{
 	/**
 	 //  TODO:  SHOULD INTERPRETER HAVE COPY / ORIGINAL FORMAT?
-	 //  TODO:  LISTEN TO MANUAL OR TEST DATA?  Manual = 0.000s, Test Data = 0.0s
 	 Default format all times will be parsed and printed with.
 	 */
-	private SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
+	private SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.S");
 	/**
-	 Exists only if the time has been explicitly forced to a specific time, then is used as start time.
+	 Exists only if the time has been explicitly forced to a specific time, then is used as base time.
 	 */
-	private long overrideTime = 0L;
+	private Long systemStartTime;
+	/**
+	 Offset used to make time format to desired new time.
+	 */
+	private long newOffset;
+	/**
+	 Used to immediately use a specified Date instead of getting the current time's.
+	 */
+	private Date overrideDate;
 	/**
 	 Type of the race.
 	 */
@@ -64,12 +71,18 @@ public class ChronoTimer{
 	 @param time String of desired time to start at.
 	 */
 	public void time(String time){
-		String logOut = " TIME "+time;
-		try{
-			Date parsed = format.parse(time);
-			//  TODO
-		}catch(ParseException e){
-			logOut += " - TIME COULD NOT BE PARSED";
+		String logOut = " TIME " + time;
+		if(race.ongoing()){
+			logOut += " - RACE ONGOING";
+		}
+		else{
+			try{
+				long parsed = format.parse(time).getTime();
+				systemStartTime = System.currentTimeMillis();
+				newOffset = parsed;
+			}catch(ParseException e){
+				logOut += " - TIME COULD NOT BE PARSED";
+			}
 		}
 		log.add(logOut);
 	}
@@ -155,11 +168,17 @@ public class ChronoTimer{
 
 	/**
 	 If there is not a race ongoing, then create the race structure of the set event type.
+	 Note:  Only use this one to start new runs!
 	 */
 	public void newRun(){
 		newRun(false);
 	}
 
+	/**
+	 If there is not a race ongoing, then create the race structure of the set event type.
+	 Note:  Only event() will use the 'silent' variable to prevent double messages!
+	 @param silent True to stop newRun()'s messages from appearing.
+	 */
 	public void newRun(boolean silent){
 		String logOut = getTime()+" NEWRUN";
 		if(race.ongoing()){
@@ -238,10 +257,11 @@ public class ChronoTimer{
 			if(race.ongoing()){
 				//  TODO:  DO WE WANT TO BE ABLE TO ADD NEW RACERS IF RACE IS ONGOING?
 			}
+			else if(race.ended()){
+				logOut += " - RACE HAS ENDED";
+			}
 			else{
-				if(!race.addRacer(number)){
-					logOut += " - RACER ALREADY EXISTS";
-				}
+				race.addRacer(number);
 			}
 		}
 		else{
@@ -272,6 +292,9 @@ public class ChronoTimer{
 		String logOut = getTime()+" CLR "+number;
 		if(race.ongoing()){
 			logOut += " - RACE IS ONGOING";
+		}
+		else if(race.ended()){
+			logOut += " - RACE HAS ENDED";
 		}
 		else{
 			if(!race.removeRacer(number)){
@@ -318,7 +341,6 @@ public class ChronoTimer{
 			raceGRP = (RaceGRP) race;
 			pass = true;
 		}
-
 		if(pass){
 			if(race.ongoing()){
 				if(raceIND != null){
@@ -341,34 +363,24 @@ public class ChronoTimer{
 	/**
 	 If the channel exists, trigger it.
 	 @param channel Number of the channel to trigger.
+	 @param silent Used to prevent messages from printing for shortcuts.
 	 */
 	public String trig(int channel, boolean silent){
 		Channel channelObj = getChannel(channel);
 		String logOut = getTime()+" TRIG "+channel;
 		String retMess = "";
 		if(channelObj.isOn()){
-			if(!race.trigger(channelObj)){
+			if(!race.ended() || race.ongoing()){
+				retMess += race.trigger(channelObj);
+			}
+			else{
 				retMess += " - RACE IS NOT ONGOING";
 			}
 		}
 		else{
 			retMess += " - CHANNEL IS NOT ENABLED";
 		}
-
-
-
-		if(race.ongoing()){
-			if(channelObj.isOn()){
-				race.trigger(channelObj);
-			}
-			else{
-				retMess += " - CHANNEL IS NOT ENABLED";
-			}
-		}
-		else{
-			retMess += " - RACE IS NOT ONGOING";
-		}
-		if(!silent){
+ 		if(!silent){
 			log.add(logOut+retMess);
 		}
 		return retMess;
@@ -414,13 +426,31 @@ public class ChronoTimer{
 	}
 
 	/**
+	 Sets a time to override getTime().
+	 @param time The time to use.
+	 */
+	public void useTime(String time){
+		try{
+			overrideDate = format.parse(time);
+
+		}catch(ParseException e){
+			e.printStackTrace();  //  TODO
+		}
+	}
+
+	/**
 	 Gets the unit's current time.
 	 @return Current unit time as Date.
 	 */
 	public Date getTime(){
-		if(overrideTime == 0L){
+		if(overrideDate != null){
+			Date carry = overrideDate;
+			overrideDate = null;
+			return carry;
+		}
+		if(systemStartTime == null){
 			return new Date(System.currentTimeMillis());
 		}
-		return null;  //  TODO
+		return new Date(System.currentTimeMillis() - systemStartTime + newOffset);
 	}
 }

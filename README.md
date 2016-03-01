@@ -7,7 +7,6 @@ DETAILS:
 TODO:
 	Channel, Sensor, Button and Racer need to have JavaDocs as originally planned, as there is none.
 	Channel needs to comply to Racer's methods.
-	ChronoTimer still needs a usable getTime() method, 
 	Log needs to add functionality described in manual, not always print without print being invoked.
 	TOG vs TOGGLE has to be sorted out, probably same functionality.
 	Race trigger() and update() methods need to be handled.

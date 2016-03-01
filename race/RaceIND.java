@@ -1,5 +1,6 @@
 package race;
 
+import channel.Channel;
 import main.ChronoTimer;
 
 import java.util.ArrayList;
@@ -41,10 +42,9 @@ public class RaceIND extends Race{
 	/**
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
-	 @return If the Racer does not exist.
 	 */
-	public boolean addRacerIND(int number){
-		return getRacerIND(number) != null && racers.add(new Racer(number));
+	public void addRacerIND(int number){
+		racers.add(new Racer(number));
 	}
 
 	/**
@@ -132,6 +132,15 @@ public class RaceIND extends Race{
 	 */
 	public void channelVerifyIND(){
 		//  TODO
+	}
+
+	/**
+	 Verifies Channel's use and triggers the Channel specified for Individual Race.
+	 @param channel Channel Object.
+	 @return String of any messages.
+	 */
+	public String triggerIND(Channel channel){
+		return "";  //  TODO
 	}
 
 	/**

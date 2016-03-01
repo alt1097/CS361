@@ -36,20 +36,19 @@ public class Race{
 	/**
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
-	 @return If the Racer does not exist.
 	 */
-	public boolean addRacer(int number){
+	public void addRacer(int number){
 		switch(timer.getEventType()){
 			case "IND":
-				return ((RaceIND) this).addRacerIND(number);
+				((RaceIND) this).addRacerIND(number);
 			case "PARIND":
-				return ((RacePARIND) this).addRacerPARIND(number);
+				((RacePARIND) this).addRacerPARIND(number);
 			case "GRP":
-				return ((RaceGRP) this).addRacerGRP(number);
+				((RaceGRP) this).addRacerGRP(number);
 			case "PARGRP":
-				return ((RacePARGRP) this).addRacerPARGRP(number);
+				((RacePARGRP) this).addRacerPARGRP(number);
 			default:
-				return true;
+				//  TODO?
 		}
 	}
 
@@ -192,14 +191,22 @@ public class Race{
 	/**
 	 Triggers the Channel specified.
 	 @param channel Channel Object.
-	 @return True if the race is ongoing.
+	 @return String of any messages.
 	 */
-	public boolean trigger(Channel channel){
-		if(ongoing){
-			//  TODO
-			return true;
+	public String trigger(Channel channel){
+		switch(timer.getEventType()){
+			case "IND":
+				return ((RaceIND) this).triggerIND(channel);
+			case "PARIND":
+				return ((RacePARIND) this).triggerPARIND(channel);
+			case "GRP":
+				return ((RaceGRP) this).triggerGRP(channel);
+			case "PARGRP":
+				return ((RacePARGRP) this).triggerPARGRP(channel);
+			default:
+				//  TODO?
 		}
-		return false;
+		return " - EVENT TYPE NOT FOUND";
 	}
 
 	/**
@@ -213,6 +220,8 @@ public class Race{
 	 Runs the actions to finalize a Race.
 	 */
 	public void end(){
+		ongoing = false;
+		ended = true;
 		switch(timer.getEventType()){
 			case "IND":
 				((RaceIND) this).endIND();
