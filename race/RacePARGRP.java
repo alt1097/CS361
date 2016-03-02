@@ -38,8 +38,9 @@ public class RacePARGRP extends Race{
 	/**
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
+	 @param toFront True if Racer should be added to the front of lane.
 	 */
-	public void addRacerPARGRP(int number){
+	public void addRacerPARGRP(int number, boolean toFront){
 		//  TODO
 	}
 
@@ -110,8 +111,18 @@ public class RacePARGRP extends Race{
 	 @return String of any messages.
 	 */
 	public String triggerPARGRP(Channel channel){
+		//  TODO
+		update();
 		return "";  //  TODO
 	}
+
+	/**
+	 Runs various checks every time a trigger occurs.
+	 */
+	private void update(){
+		//  TODO
+	}
+
 	/**
 	 Runs the actions to finalize a Parallel Groups Race.
 	 */

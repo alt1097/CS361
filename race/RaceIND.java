@@ -42,9 +42,15 @@ public class RaceIND extends Race{
 	/**
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
+	 @param toFront True if Racer should be added to the front of lane.
 	 */
-	public void addRacerIND(int number){
-		racers.add(new Racer(number));
+	public void addRacerIND(int number, boolean toFront){
+		if(toFront){
+			racers.add(0, new Racer(number));
+		}
+		else{
+			racers.add(new Racer(number));
+		}
 	}
 
 	/**
@@ -122,6 +128,7 @@ public class RaceIND extends Race{
 	 */
 	public void dnf(){
 		firstIndex++;
+		update();
 		//  TODO
 	}
 
@@ -140,7 +147,16 @@ public class RaceIND extends Race{
 	 @return String of any messages.
 	 */
 	public String triggerIND(Channel channel){
+		//  TODO
+		update();
 		return "";  //  TODO
+	}
+
+	/**
+	 Runs various checks every time a trigger occurs.
+	 */
+	private void update(){
+		//  TODO
 	}
 
 	/**

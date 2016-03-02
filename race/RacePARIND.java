@@ -38,8 +38,9 @@ public class RacePARIND extends Race{
 	/**
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
+	 @param toFront True if Racer should be added to the front of lane.
 	 */
-	public void addRacerPARIND(int number){
+	public void addRacerPARIND(int number, boolean toFront){
 		//  TODO
 	}
 
@@ -110,7 +111,16 @@ public class RacePARIND extends Race{
 	 @return String of any messages.
 	 */
 	public String triggerPARIND(Channel channel){
+		//  TODO
+		update();
 		return "";  //  TODO
+	}
+
+	/**
+	 Runs various checks every time a trigger occurs.
+	 */
+	private void update(){
+		//  TODO
 	}
 
 	/**

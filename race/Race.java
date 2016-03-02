@@ -14,6 +14,10 @@ public class Race{
 	 */
 	private ChronoTimer timer;
 	/**
+	 Indicates if the race is able to start and allow triggers to function.
+	 */
+	private boolean canStart = false;
+	/**
 	 Indicates if the race is currently in progress.
 	 */
 	private boolean ongoing = false;
@@ -28,6 +32,7 @@ public class Race{
 	 */
 	public Race(ChronoTimer timer){
 		this.timer = timer;
+		channelVerify();
 		//  TODO
 	}
 
@@ -36,17 +41,18 @@ public class Race{
 	/**
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
+	 @param toFront True if Racer should be added to the front of lane.
 	 */
-	public void addRacer(int number){
+	public void addRacer(int number, boolean toFront){
 		switch(timer.getEventType()){
 			case "IND":
-				((RaceIND) this).addRacerIND(number);
+				((RaceIND) this).addRacerIND(number, toFront);
 			case "PARIND":
-				((RacePARIND) this).addRacerPARIND(number);
+				((RacePARIND) this).addRacerPARIND(number, toFront);
 			case "GRP":
-				((RaceGRP) this).addRacerGRP(number);
+				((RaceGRP) this).addRacerGRP(number, toFront);
 			case "PARGRP":
-				((RacePARGRP) this).addRacerPARGRP(number);
+				((RacePARGRP) this).addRacerPARGRP(number, toFront);
 			default:
 				//  TODO?
 		}
@@ -155,6 +161,14 @@ public class Race{
 	//  ----------  EVENT MANAGEMENT  ----------
 
 	/**
+	 True if the Race is able to listen to triggers.
+	 @return True if Race can start.
+	 */
+	public boolean canStart(){
+		return canStart;
+	}
+
+	/**
 	 True if the Race is currently in progress.
 	 @return True if ongoing.
 	 */
@@ -207,13 +221,6 @@ public class Race{
 				//  TODO?
 		}
 		return " - EVENT TYPE NOT FOUND";
-	}
-
-	/**
-	 Runs various checks every time a trigger occurs.
-	 */
-	private void update(){
-		//  TODO
 	}
 
 	/**

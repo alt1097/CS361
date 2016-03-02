@@ -14,10 +14,13 @@ import channel.Channel;
  */
 public class ChronoTimer{
 	/**
-	 //  TODO:  SHOULD INTERPRETER HAVE COPY / ORIGINAL FORMAT?
+	 Indicates if the ChronoTimer is currently active.
+	 */
+	private boolean powerState = false;
+	/**
 	 Default format all times will be parsed and printed with.
 	 */
-	private SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.S");
+	private static SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SS");
 	/**
 	 Exists only if the time has been explicitly forced to a specific time, then is used as base time.
 	 */
@@ -33,7 +36,7 @@ public class ChronoTimer{
 	/**
 	 Type of the race.
 	 */
-	private String eventType = "IND";
+	private String eventType;
 	/**
 	 TODO:  CURRENTLY DOES NOT USE UNIT TIME TO MARK RACER TIMES
 	 Reference to all the channels on the system.
@@ -42,16 +45,14 @@ public class ChronoTimer{
 	/**
 	 Reference to the Race.
 	 */
-	private Race race = new RaceIND(this);
+	private Race race;
 	/**
-	 TODO:  CURRENTLY DOES NOT SATISFY ANY OF THE LOG FUNCTIONALITY
-	 Reference to the Log.
+	 Reference to Log class for debugging.
 	 */
-	private Log log = new Log();
+	private static Log debugLog;
 
 	/**
-	 Creates the main ChronoTimer unit.
-	 Creates  //  TODO
+	 Initializes the ChronoTimer.
 	 */
 	public ChronoTimer(){
 		for(int i = 0; i < 8; i++){
@@ -62,9 +63,92 @@ public class ChronoTimer{
 
 	//  ----------  COMMANDS  ----------
 
-	 //  POWER  Handled by Interpreter?
-	 //  EXIT  Handled by Interpreter?
-	 //  RESET  Handled by Interpreter?
+	/**
+	 Toggles the system's power state.
+	 */
+	public void power(){
+		power(false);
+	}
+
+	/**
+	 Toggles the system's power state.
+	 @param silent True to silence power()'s messages.
+	 */
+	private void power(boolean silent){
+		if(powerState){
+			powerState = false;
+		}
+		else{
+			powerState = true;
+			reset(true);
+		}
+		if(!silent){
+			debugLog.add(getTime()+" POWER");
+		}
+	}
+
+	/**
+	 Directly turns the system's power on.
+	 */
+	public void on(){
+		String logOut = getTime()+" ON";
+		if(powerState){
+			logOut += " - SYSTEM ALREADY ON";
+		}
+		else{
+			power(true);
+		}
+		debugLog.add(logOut);
+	}
+
+	/**
+	 Directly turns the system's power off.
+	 */
+	public void off(){
+		String logOut = getTime()+" OFF";
+		if(powerState){
+			power(true);
+		}
+		else{
+			logOut += " - SYSTEM ALREADY OFF";
+		}
+		debugLog.add(logOut);
+	}
+
+	 //  EXIT  Handled by Interpreter?  //  TODO?
+
+	/**
+	 Returns the machine back to a clean state.
+	 */
+	public void reset(){
+		String logOut = getTime()+" RESET";
+		if(powerState){
+			reset(false);
+		}
+		else{
+			logOut += " - SYSTEM NOT ON";
+		}
+		debugLog.add(logOut);
+	}
+
+	/**
+	 Returns the machine back to a clean state.
+	 @param silent True to silence reset()'s messages.
+	 */
+	private void reset(boolean silent){
+		systemStartTime = null;
+		newOffset = 0L;
+		overrideDate = null;
+		eventType = "IND";
+		for(int i = 0; i < 8; i++){
+			if(channels[i].isOn()){
+				channels[i].toggle();
+			}
+		}
+		race = new RaceIND(this);
+		debugLog = new Log();
+		//  TODO
+	}
 
 	/**
 	 Sets the unit override time.
@@ -84,7 +168,7 @@ public class ChronoTimer{
 				logOut += " - TIME COULD NOT BE PARSED";
 			}
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -100,16 +184,21 @@ public class ChronoTimer{
 	 @param channel Channel number to toggle trigger ignoring.
 	 */
 	public void toggle(int channel){
-		Channel channelObj = getChannel(channel);
 		String logOut = getTime()+" TOGGLE "+channel;
-		if(channelObj == null){
-			logOut += " - CHANNEL DOES NOT EXIST";
+		if(powerState){
+			Channel channelObj = getChannel(channel);
+			if(channelObj == null){
+				logOut += " - CHANNEL DOES NOT EXIST";
+			}
+			else{
+				channelObj.toggle();
+				race.channelVerify();
+			}
 		}
 		else{
-			channelObj.toggle();
-			race.channelVerify();
+			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -118,15 +207,15 @@ public class ChronoTimer{
 	 @param num Sensor number to add.
 	 */
 	public void conn(String sensor, int num){
-		Channel channelObj = getChannel(num);
 		String logOut = getTime()+" CONN "+sensor+" "+num;
+		Channel channelObj = getChannel(num);
 		if(channelObj == null){
 			logOut += " - CHANNEL DOES NOT EXIST";
 		}
 		else{
 			channelObj.connect(sensor);
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -134,15 +223,15 @@ public class ChronoTimer{
 	 @param num Sensor number to remove.
 	 */
 	public void disc(int num){
-		Channel channelObj = getChannel(num);
 		String logOut = getTime()+" DISC "+num;
+		Channel channelObj = getChannel(num);
 		if(channelObj == null){
 			logOut += " - CHANNEL DOES NOT EXIST";
 		}
 		else{
 			channelObj.disconnect();
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -151,24 +240,28 @@ public class ChronoTimer{
 	 */
 	public void event(String type){
 		String logOut = getTime()+" EVENT "+type;
-		if(type.equals(eventType)){
-			logOut += " - EVENT TYPE SAME";
-		}
-		else{
-			if(race.ongoing()){
-				logOut += " - RACE ONGOING";
+		if(powerState){
+			if(type.equals(eventType)){
+				logOut += " - EVENT TYPE SAME";
 			}
 			else{
-				eventType = type;
-				newRun(true);
+				if(race.ongoing()){
+					logOut += " - RACE ONGOING";
+				}
+				else{
+					eventType = type;
+					newRun(true);
+				}
 			}
 		}
-		log.add(logOut);
+		else{
+			logOut += " - SYSTEM NOT ON";
+		}
+		debugLog.add(logOut);
 	}
 
 	/**
 	 If there is not a race ongoing, then create the race structure of the set event type.
-	 Note:  Only use this one to start new runs!
 	 */
 	public void newRun(){
 		newRun(false);
@@ -176,34 +269,38 @@ public class ChronoTimer{
 
 	/**
 	 If there is not a race ongoing, then create the race structure of the set event type.
-	 Note:  Only event() will use the 'silent' variable to prevent double messages!
-	 @param silent True to stop newRun()'s messages from appearing.
+	 @param silent True to silence newRun()'s messages.
 	 */
-	public void newRun(boolean silent){
+	private void newRun(boolean silent){
 		String logOut = getTime()+" NEWRUN";
-		if(race.ongoing()){
-			logOut += " - RACE ONGOING";
-		}
-		else{
-			switch(eventType){
-				case "IND":
-					race = new RaceIND(this);
-					break;
-				case "PARIND":
-					race = new RacePARIND(this);
-					break;
-				case "GRP":
-					race = new RaceGRP(this);
-					break;
-				case "PARGRP":
-					race = new RacePARGRP(this);
-					break;
-				default:
-					logOut += " - EVENT TYPE DOES NOT EXIST";
+		if(powerState){
+			if(race.ongoing()){
+				logOut += " - RACE ONGOING";
+			}
+			else{
+				switch(eventType){
+					case "IND":
+						race = new RaceIND(this);
+						break;
+					case "PARIND":
+						race = new RacePARIND(this);
+						break;
+					case "GRP":
+						race = new RaceGRP(this);
+						break;
+					case "PARGRP":
+						race = new RacePARGRP(this);
+						break;
+					default:
+						logOut += " - EVENT TYPE DOES NOT EXIST";
+				}
 			}
 		}
+		else{
+			logOut += " - SYSTEM NOT ON";
+		}
 		if(!silent){
-			log.add(logOut);
+			debugLog.add(logOut);
 		}
 	}
 
@@ -212,13 +309,18 @@ public class ChronoTimer{
 	 */
 	public void endRun(){
 		String logOut = getTime()+" ENDRUN";
-		if(race.ongoing()){
-			race.end();
+		if(powerState){
+			if(race.ongoing()){
+				race.end();
+			}
+			else{
+				logOut += " - RACE NOT ONGOING";
+			}
 		}
 		else{
-			logOut += " - RACE NOT ONGOING";
+			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -251,57 +353,68 @@ public class ChronoTimer{
 	 @param number Number of the racer to add / move.
 	 */
 	public void num(int number){
-		Racer racer = race.getRacer(number);
 		String logOut = getTime()+" NUM "+number;
-		if(racer == null){
-			if(race.ongoing()){
-				//  TODO:  DO WE WANT TO BE ABLE TO ADD NEW RACERS IF RACE IS ONGOING?
-			}
-			else if(race.ended()){
-				logOut += " - RACE HAS ENDED";
-			}
-			else{
-				race.addRacer(number);
-			}
-		}
-		else{
-			if(race.ongoing()){
-				if(race.isRacing(racer)){
-					if(!race.moveToFirst(racer)){
-						logOut += " - NOT ENOUGH RACERS TO MOVE IN RACE";
-					}
-				}else{
-					if(!race.moveToNext(racer)){
-						logOut += " - NOT ENOUGH RACERS TO MOVE IN QUEUE";
-					}
+		if(powerState){
+			Racer racer = race.getRacer(number);
+			if(racer == null){
+				if(race.ongoing()){
+					race.addRacer(number, false);
+				}
+				else if(race.ended()){
+					logOut += " - RACE HAS ENDED";
+				}
+				else{
+					race.addRacer(number, true);
 				}
 			}
 			else{
-				logOut += " - RACE IS NOT ONGOING";
+				if(race.ongoing()){
+					if(race.isRacing(racer)){
+						if(!race.moveToFirst(racer)){
+							logOut += " - NOT ENOUGH RACERS TO MOVE IN RACE";
+						}
+					}
+					else{
+						if(!race.moveToNext(racer)){
+							logOut += " - NOT ENOUGH RACERS TO MOVE IN QUEUE";
+						}
+					}
+				}
+				else{
+					logOut += " - RACE IS NOT ONGOING";
+				}
 			}
 		}
-		log.add(logOut);
+		else{
+			logOut += " - SYSTEM NOT ON";
+		}
+		debugLog.add(logOut);
 	}
 
 	/**
-	 TODO:  CHECK IF FUNCTIONALITY IS DESIRED, CURRENT ONE IN PROJECT DESCRIPTION SOUNDS STUPID
+	 TODO:  IMPLMENT FUNCTION TO REMOVE RACER IF NOT RACING AND -1 FROM LAST INDEX
 	 If a race is not ongoing, and the racer exists, remove them.
 	 @param number Number of the racer to remove.
 	 */
 	public void clr(int number){
 		String logOut = getTime()+" CLR "+number;
-		if(race.ongoing()){
-			logOut += " - RACE IS ONGOING";
-		}
-		else if(race.ended()){
-			logOut += " - RACE HAS ENDED";
-		}
-		else{
-			if(!race.removeRacer(number)){
-				logOut += " - RACER DOES NOT EXIST";
+		if(powerState){
+			if(race.ongoing()){
+				logOut += " - RACE IS ONGOING";
+			}
+			else if(race.ended()){
+				logOut += " - RACE HAS ENDED";
+			}
+			else{
+				if(!race.removeRacer(number)){
+					logOut += " - RACER DOES NOT EXIST";
+				}
 			}
 		}
-		log.add(logOut);
+		else{
+			logOut += " - SYSTEM NOT ON";
+		}
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -309,20 +422,25 @@ public class ChronoTimer{
 	 */
 	public void swap(){
 		String logOut = getTime()+" SWAP";
-		if(eventType.equals("IND")){
-			if(race.ongoing()){
-				if(!((RaceIND) race).swap()){
-					logOut += " - NOT ENOUGH RACERS TO SWAP";
+		if(powerState){
+			if(eventType.equals("IND")){
+				if(race.ongoing()){
+					if(!((RaceIND) race).swap()){
+						logOut += " - NOT ENOUGH RACERS TO SWAP";
+					}
+				}
+				else{
+					logOut += " - RACE IS NOT ONGOING";
 				}
 			}
 			else{
-				logOut += " - RACE IS NOT ONGOING";
+				logOut += " - EVENT TYPE IS NOT IND";
 			}
 		}
 		else{
-			logOut += " - EVENT TYPE IS NOT IND";
+			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -330,58 +448,81 @@ public class ChronoTimer{
 	 */
 	public void dnf(){
 		String logOut = getTime()+" DNF";
-		boolean pass = false;
-		RaceIND raceIND = null;
-		RaceGRP raceGRP = null;
-		if(eventType.equals("IND")){
-			raceIND = (RaceIND) race;
-			pass = true;
-		}
-		else if(eventType.equals("GRP")){
-			raceGRP = (RaceGRP) race;
-			pass = true;
-		}
-		if(pass){
-			if(race.ongoing()){
-				if(raceIND != null){
-					raceIND.dnf();
+		if(powerState){
+			boolean pass = false;
+			RaceIND raceIND = null;
+			RaceGRP raceGRP = null;
+			if(eventType.equals("IND")){
+				raceIND = (RaceIND) race;
+				pass = true;
+			}
+			else if(eventType.equals("GRP")){
+				raceGRP = (RaceGRP) race;
+				pass = true;
+			}
+			if(pass){
+				if(race.ongoing()){
+					if(raceIND != null){
+						raceIND.dnf();
+					}
+					else{
+						raceGRP.dnf();
+					}
 				}
 				else{
-					raceGRP.dnf();
+					logOut += " - RACE IS NOT ONGOING";
 				}
 			}
 			else{
-				logOut += " - RACE IS NOT ONGOING";
+				logOut += " - EVENT TYPE IS NOT IND OR GRP";
 			}
 		}
 		else{
-			logOut += " - EVENT TYPE IS NOT IND OR GRP";
+			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
 	 If the channel exists, trigger it.
 	 @param channel Number of the channel to trigger.
-	 @param silent Used to prevent messages from printing for shortcuts.
 	 */
-	public String trig(int channel, boolean silent){
-		Channel channelObj = getChannel(channel);
+	public void trig(int channel){
+		trig(channel, false);
+	}
+
+	/**
+	 If the channel exists, trigger it.
+	 @param channel Number of the channel to trigger.
+	 @param silent True to silence trig()'s messages.
+	 */
+	private String trig(int channel, boolean silent){
 		String logOut = getTime()+" TRIG "+channel;
 		String retMess = "";
-		if(channelObj.isOn()){
-			if(!race.ended() || race.ongoing()){
-				retMess += race.trigger(channelObj);
+		if(powerState){
+			Channel channelObj = getChannel(channel);
+			if(channelObj.isOn()){
+				if(race.canStart()){
+					if(!race.ended() || race.ongoing()){
+						retMess += race.trigger(channelObj);
+					}
+					else{
+						retMess += " - RACE IS NOT ONGOING";
+					}
+				}
+				else{
+					retMess += " - RACE IS NOT SET UP";
+				}
 			}
 			else{
-				retMess += " - RACE IS NOT ONGOING";
+				retMess += " - CHANNEL IS NOT ENABLED";
 			}
 		}
 		else{
-			retMess += " - CHANNEL IS NOT ENABLED";
+			retMess += " - SYSTEM NOT ON";
 		}
  		if(!silent){
-			log.add(logOut+retMess);
+			debugLog.add(logOut+retMess);
 		}
 		return retMess;
 	}
@@ -393,7 +534,7 @@ public class ChronoTimer{
 	public void start(){
 		String logOut = getTime()+" START";
 		logOut += trig(1, true);
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -403,10 +544,18 @@ public class ChronoTimer{
 	public void finish(){
 		String logOut = getTime()+" FINISH";
 		logOut += trig(2, true);
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	//  ----------  FUNCTIONALITY METHODS  ----------
+
+	/**
+	 True if the system is currently powered on.
+	 @return True if unit is on.
+	 */
+	public boolean isOn(){
+		return powerState;
+	}
 
 	/**
 	 Gets the type of the race.
@@ -422,7 +571,10 @@ public class ChronoTimer{
 	 @return The Channel object.
 	 */
 	public Channel getChannel(int number){
-		return channels[number];
+		if(number > -1 && number < 8){
+			return channels[number];
+		}
+		return null;
 	}
 
 	/**

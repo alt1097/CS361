@@ -38,9 +38,15 @@ public class RaceGRP extends Race{
 	/**
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
+	 @param toFront True if Racer should be added to the front of lane.
 	 */
-	public void addRacerGRP(int number){
-		racers.add(new Racer(number));
+	public void addRacerGRP(int number, boolean toFront){
+		if(toFront){
+			racers.add(0, new Racer(number));
+		}
+		else{
+			racers.add(new Racer(number));
+		}
 	}
 
 	/**
@@ -127,7 +133,16 @@ public class RaceGRP extends Race{
 	 @return String of any messages.
 	 */
 	public String triggerGRP(Channel channel){
+		//  TODO
+		update();
 		return "";  //  TODO
+	}
+
+	/**
+	 Runs various checks every time a trigger occurs.
+	 */
+	private void update(){
+		//  TODO
 	}
 
 	/**
