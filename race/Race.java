@@ -12,11 +12,11 @@ public class Race{
 	/**
 	 Reference to the ChonoTimer.
 	 */
-	private ChronoTimer timer;
+	protected ChronoTimer timer;
 	/**
-	 Indicates if the race is able to start and allow triggers to function.
+	 Quick override to bypass start check once Race has started.
 	 */
-	private boolean canStart = false;
+	protected boolean canStart = false;
 	/**
 	 Indicates if the race is currently in progress.
 	 */
@@ -119,6 +119,26 @@ public class Race{
 	}
 
 	/**
+	 True if the Racer is able to be moved in the Race.
+	 @param racer The Racer to check.
+	 @return True if Racer can be moved.
+	 */
+	public boolean canBeMoved(Racer racer){
+		switch(timer.getEventType()){
+			case "IND":
+				return ((RaceIND) this).canBeMovedIND(racer);
+			case "PARIND":
+				return ((RacePARIND) this).canBeMovedPARIND(racer);
+			case "GRP":
+				return ((RaceGRP) this).canBeMovedGRP(racer);
+			case "PARGRP":
+				return ((RacePARGRP) this).canBeMovedPARGRP(racer);
+			default:
+				return false;
+		}
+	}
+
+	/**
 	 Moves the Racer to the first position in their lane.
 	 @param racer Racer to move.
 	 @return True if Racer could be moved.
@@ -165,7 +185,21 @@ public class Race{
 	 @return True if Race can start.
 	 */
 	public boolean canStart(){
-		return canStart;
+		if(canStart){
+			return true;
+		}
+		switch(timer.getEventType()){
+			case "IND":
+				return ((RaceIND) this).canStartIND();
+			case "PARIND":
+				return ((RacePARIND) this).canStartPARIND();
+			case "GRP":
+				return ((RaceGRP) this).canStartGRP();
+			case "PARGRP":
+				return ((RacePARGRP) this).canStartPARGRP();
+			default:
+				return false;
+		}
 	}
 
 	/**
@@ -218,9 +252,8 @@ public class Race{
 			case "PARGRP":
 				return ((RacePARGRP) this).triggerPARGRP(channel);
 			default:
-				//  TODO?
+				return " - EVENT TYPE NOT FOUND";
 		}
-		return " - EVENT TYPE NOT FOUND";
 	}
 
 	/**

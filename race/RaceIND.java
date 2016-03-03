@@ -2,6 +2,7 @@ package race;
 
 import channel.Channel;
 import main.ChronoTimer;
+import main.Log;
 
 import java.util.ArrayList;
 
@@ -12,10 +13,6 @@ import java.util.ArrayList;
  */
 public class RaceIND extends Race{
 	/**
-	 Reference to the ChonoTimer.
-	 */
-	private ChronoTimer timer;
-	/**
 	 Contains the Racer in the race.
 	 */
 	private ArrayList<Racer> racers = new ArrayList<>();
@@ -24,9 +21,17 @@ public class RaceIND extends Race{
 	 */
 	private int firstIndex = 0;
 	/**
-	 Index of the last Racer.
+	 Index of the first not racing.
 	 */
-	private int lastIndex = 0;
+	private int queueIndex = 0;
+	/**
+	 Reference to the assigned start Channel.
+	 */
+	private Channel startChannel;
+	/**
+	 Reference to the assigned finish Channel.
+	 */
+	private Channel finishChannel;
 
 	/**
 	 Initializes the Individual components of Race.
@@ -83,7 +88,16 @@ public class RaceIND extends Race{
 	 */
 	public boolean isRacingIND(Racer racer){
 		int index = racers.indexOf(racer);
-		return !(index > lastIndex || index < firstIndex);
+		return !(index >= queueIndex || index < firstIndex);
+	}
+
+	/**
+	 True if the Racer is able to be moved in the Individual Race.
+	 @param racer The Racer to check.
+	 @return True if Racer can be moved.
+	 */
+	public boolean canBeMovedIND(Racer racer){
+		return racers.indexOf(racer) <= firstIndex;
 	}
 
 	/**
@@ -92,9 +106,9 @@ public class RaceIND extends Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean moveToFirstIND(Racer racer){
-		if(lastIndex - firstIndex > 0){
+		if(queueIndex - firstIndex > 1){
 			racers.remove(racer);
-			racers.add(0, racer);
+			racers.add(firstIndex, racer);
 			return true;
 		}
 		return false;
@@ -106,9 +120,9 @@ public class RaceIND extends Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean moveToNextIND(Racer racer){
-		if(lastIndex < racers.size() - 2){
+		if(queueIndex < racers.size() - 1){
 			racers.remove(racer);
-			racers.add(lastIndex + 1, racer);
+			racers.add(queueIndex, racer);
 			return true;
 		}
 		return false;
@@ -129,16 +143,48 @@ public class RaceIND extends Race{
 	public void dnf(){
 		firstIndex++;
 		update();
-		//  TODO
 	}
 
 	//  ----------  EVENT MANAGEMENT  ----------
 
 	/**
+	 True if the Race is able to listen to triggers for Individual Race.
+	 @return True if Race can start.
+	 */
+	public boolean canStartIND(){
+		boolean pass = true;
+		if(racers.size() == 0){
+			pass = false;
+		}
+		if(startChannel == null || finishChannel == null){
+			pass = false;
+		}
+		canStart = pass;
+		return pass;
+	}
+
+	/**
 	 Verifies that Channels are set up so that an Individual Race can proceed.
 	 */
 	public void channelVerifyIND(){
-		//  TODO
+		boolean fail = true;
+		for(int i = 0; i < 8; i += 2){
+			Channel tempStart = timer.getChannel(i);
+			if(tempStart.isOn()){
+				Channel tempFinish = timer.getChannel(i + 1);
+				if(tempFinish.isOn()){
+					tempStart.setChanType("START");
+					startChannel = tempStart;
+					tempFinish.setChanType("FINISH");
+					finishChannel = tempFinish;
+					fail = false;
+				}
+			}
+		}
+		if(fail){
+			startChannel = null;
+			finishChannel = null;
+		}
 	}
 
 	/**
@@ -147,22 +193,41 @@ public class RaceIND extends Race{
 	 @return String of any messages.
 	 */
 	public String triggerIND(Channel channel){
-		//  TODO
+		String retMes = "";
+		if(channel == startChannel){
+			startChannel.fireChannel(getRacerIND(queueIndex));
+			queueIndex++;
+		}
+		else if(channel == finishChannel){
+			finishChannel.fireChannel(getRacerIND(firstIndex));
+			firstIndex++;
+		}
+		else{
+			retMes += " - CHANNEL IS NOT USED";
+		}
 		update();
-		return "";  //  TODO
+		return retMes;
 	}
 
 	/**
 	 Runs various checks every time a trigger occurs.
 	 */
 	private void update(){
-		//  TODO
+		if(firstIndex == racers.size()){
+			end();
+		}
 	}
 
 	/**
 	 Runs the actions to finalize an Individual Race.
 	 */
 	public void endIND(){
-		//  TODO
+		Log debugLog = ChronoTimer.debugLog;
+		String sep = "--------------------";
+		debugLog.add(sep);
+		for(Racer racer : racers){
+			debugLog.add("#"+racer.getNumber()+"  Start: "+racer.getStartTime()+"  Finish: "+racer.getEndTime()+"  -  "+ChronoTimer.format.format(racer.getFinalTime()));
+		}
+		debugLog.add(sep);
 	}
 }

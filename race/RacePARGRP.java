@@ -20,9 +20,17 @@ public class RacePARGRP extends Race{
 	 */
 	private ArrayList<Integer> firstIndexes = new ArrayList<>();
 	/**
-	 Indexes of the last Racers by lane.
+	 Indexes of the first not racing by lane.
 	 */
-	private ArrayList<Integer> lastIndexes = new ArrayList<>();
+	private ArrayList<Integer> queueIndexes = new ArrayList<>();
+	/**
+	 References to the assigned start Channels by lane.
+	 */
+	private ArrayList<Channel> startChannels = new ArrayList<>();
+	/**
+	 Reference to the assigned finish Channels by lane.
+	 */
+	private ArrayList<Channel> finishChannels = new ArrayList<>();
 
 	/**
 	 Initializes the Parallel Groups components of Race.
@@ -79,6 +87,15 @@ public class RacePARGRP extends Race{
 	}
 
 	/**
+	 True if the Racer is able to be moved in the Parallel Group Race.
+	 @param racer The Racer to check.
+	 @return True if Racer can be moved.
+	 */
+	public boolean canBeMovedPARGRP(Racer racer){
+		return false;  //  TODO
+	}
+
+	/**
 	 Moves the Racer to the first position in their lane.
 	 @param racer Racer to move.
 	 @return True if Racer could be moved.
@@ -97,6 +114,14 @@ public class RacePARGRP extends Race{
 	}
 
 	//  ----------  EVENT MANAGEMENT  ----------
+
+	/**
+	 True if the Race is able to listen to triggers for Parallel Group Race.
+	 @return True if Race can start.
+	 */
+	public boolean canStartPARGRP(){
+		return false;  //  TODO
+	}
 
 	/**
 	 Verifies that Channels are set up so that a Parallel Group Race can proceed.

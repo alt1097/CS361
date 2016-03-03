@@ -20,7 +20,7 @@ public class ChronoTimer{
 	/**
 	 Default format all times will be parsed and printed with.
 	 */
-	private static SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SS");
+	public static SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.S");
 	/**
 	 Exists only if the time has been explicitly forced to a specific time, then is used as base time.
 	 */
@@ -49,7 +49,7 @@ public class ChronoTimer{
 	/**
 	 Reference to Log class for debugging.
 	 */
-	private static Log debugLog;
+	public static Log debugLog;
 
 	/**
 	 Initializes the ChronoTimer.
@@ -369,15 +369,19 @@ public class ChronoTimer{
 			}
 			else{
 				if(race.ongoing()){
-					if(race.isRacing(racer)){
-						if(!race.moveToFirst(racer)){
-							logOut += " - NOT ENOUGH RACERS TO MOVE IN RACE";
+					if(race.canBeMoved(racer)){
+						if(race.isRacing(racer)){
+							if(!race.moveToFirst(racer)){
+								logOut += " - NOT ENOUGH RACERS TO MOVE IN RACE";
+							}
+						}else{
+							if(!race.moveToNext(racer)){
+								logOut += " - NOT ENOUGH RACERS TO MOVE IN QUEUE";
+							}
 						}
 					}
 					else{
-						if(!race.moveToNext(racer)){
-							logOut += " - NOT ENOUGH RACERS TO MOVE IN QUEUE";
-						}
+						logOut += " - THE RACER CANNOT BE MOVED";
 					}
 				}
 				else{

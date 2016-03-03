@@ -20,9 +20,17 @@ public class RaceGRP extends Race{
 	 */
 	private int firstIndex = 0;
 	/**
-	 Index of the last Racer.
+	 Index of the first not racing.
 	 */
-	private int lastIndex = 0;
+	private int queueIndex = 0;
+	/**
+	 Reference to the assigned start Channel.
+	 */
+	private Channel startChannel;
+	/**
+	 Reference to the assigned finish Channel.
+	 */
+	private Channel finishChannel;
 
 	/**
 	 Initializes the Group components of Race.
@@ -79,7 +87,16 @@ public class RaceGRP extends Race{
 	 */
 	public boolean isRacingGRP(Racer racer){
 		int index = racers.indexOf(racer);
-		return !(index > lastIndex || index < firstIndex);
+		return !(index >= queueIndex || index < firstIndex);
+	}
+
+	/**
+	 True if the Racer is able to be moved in the Group Race.
+	 @param racer The Racer to check.
+	 @return True if Racer can be moved.
+	 */
+	public boolean canBeMovedGRP(Racer racer){
+		return racers.indexOf(racer) <= firstIndex;
 	}
 
 	/**
@@ -88,9 +105,9 @@ public class RaceGRP extends Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean moveToFirstGRP(Racer racer){
-		if(lastIndex - firstIndex > 0){
+		if(queueIndex - firstIndex > 1){
 			racers.remove(racer);
-			racers.add(0, racer);
+			racers.add(firstIndex, racer);
 			return true;
 		}
 		return false;
@@ -102,9 +119,9 @@ public class RaceGRP extends Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean moveToNextGRP(Racer racer){
-		if(lastIndex < racers.size() - 2){
+		if(queueIndex < racers.size() - 1){
 			racers.remove(racer);
-			racers.add(lastIndex + 1, racer);
+			racers.add(lastIndex, racer);
 			return true;
 		}
 		return false;
@@ -115,10 +132,18 @@ public class RaceGRP extends Race{
 	 */
 	public void dnf(){
 		firstIndex++;
-		//  TODO
+		update();
 	}
 
 	//  ----------  EVENT MANAGEMENT  ----------
+
+	/**
+	 True if the Race is able to listen to triggers for Group Race.
+	 @return True if Race can start.
+	 */
+	public boolean canStartGRP(){
+		return false;  //  TODO
+	}
 
 	/**
 	 Verifies that Channels are set up so that a Group Race can proceed.
