@@ -21,10 +21,16 @@ public class ComHandler {
 			System.out.println("Bad command");
 			return;
 		}
-		
-		if (cmdArgs[nextCmd].equalsIgnoreCase("conn"))
+
+		if (cmdArgs[nextCmd].equalsIgnoreCase("exit"))
+		{
+			System.out.println("The simulator will now exit");
+			System.exit(0);
+		}
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("conn"))
 		{
 			if (cmdArgs.length == (nextCmd + 3)) {
+				++nextCmd;
 				String sensor = cmdArgs[nextCmd];
 				nextCmd++;
 				try {
@@ -58,6 +64,26 @@ public class ComHandler {
 		else if (cmdArgs[nextCmd].equalsIgnoreCase("newrun"))
 		{
 			chrono.newRun();
+		}
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("start"))
+		{
+			chrono.start();
+		}
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("finish"))
+		{
+			chrono.finish();
+		}
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("dnf"))
+		{
+			chrono.dnf();
+		}
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("power"))
+		{
+			chrono.power();
+		}
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("reset"))
+		{
+			chrono.reset();
 		}
 		else if (cmdArgs[nextCmd].equalsIgnoreCase("event"))
 		{
@@ -96,7 +122,7 @@ public class ComHandler {
 					chrono.num(Integer.parseInt(cmdArgs[nextCmd]));
 				}
 				catch (NumberFormatException e) {
-					System.out.println("Error parsing PRINT");
+					System.out.println("Error parsing NUM");
 				}
 			}
 		}
@@ -108,11 +134,11 @@ public class ComHandler {
 					chrono.toggle(Integer.parseInt(cmdArgs[nextCmd]));
 				}
 				catch (NumberFormatException e) {
-					System.out.println("Error parsing PRINT");
+					System.out.println("Error parsing TOGGLE");
 				}
 			}
 		}
-		else if (cmdArgs[nextCmd].equalsIgnoreCase("trig"))
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("trig") || cmdArgs[nextCmd].equalsIgnoreCase("trigger"))
 		{
 			++nextCmd;
 			if (cmdArgs.length == (nextCmd+1)) {
@@ -120,21 +146,34 @@ public class ComHandler {
 					chrono.trig(Integer.parseInt(cmdArgs[nextCmd]));
 				}
 				catch (NumberFormatException e) {
-					System.out.println("Error parsing PRINT");
+					System.out.println("Error parsing TRIG");
 				}
 			}
 		}
-		else if (cmdArgs[nextCmd].equalsIgnoreCase("trig"))
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("disc"))
 		{
 			++nextCmd;
 			if (cmdArgs.length == (nextCmd+1)) {
 				try {
-					chrono.trig(Integer.parseInt(cmdArgs[nextCmd]));
+					chrono.disc(Integer.parseInt(cmdArgs[nextCmd]));
 				}
 				catch (NumberFormatException e) {
-					System.out.println("Error parsing PRINT");
+					System.out.println("Error parsing DISC");
 				}
 			}
 		}
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("export"))
+		{
+			++nextCmd;
+			if (cmdArgs.length == (nextCmd+1)) {
+				try {
+					chrono.export(Integer.parseInt(cmdArgs[nextCmd]));
+				}
+				catch (NumberFormatException e) {
+					System.out.println("Error parsing EXPORT");
+				}
+			}
+		}
+
 	}
 }
