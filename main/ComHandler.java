@@ -130,7 +130,7 @@ public class ComHandler {
 				}
 			}
 		}
-		else if (cmdArgs[nextCmd].equalsIgnoreCase("toggle"))
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("toggle") || cmdArgs[nextCmd].equalsIgnoreCase("tog"))
 		{
 			++nextCmd;
 			if (cmdArgs.length == (nextCmd+1)) {

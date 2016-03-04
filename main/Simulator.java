@@ -1,9 +1,9 @@
 package main;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Simulator {
 	ChronoTimer chrono = new ChronoTimer();
@@ -24,5 +24,14 @@ public class Simulator {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Starts reading commands from the console
+	 */
+	public void consoleReader() {
+		Scanner scanner = new Scanner(System.in);
+		while(true) {
+			handler.handleCommand(scanner.nextLine());
+		}
+	}
 }

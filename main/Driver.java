@@ -5,9 +5,19 @@ import java.util.Scanner;
 public class Driver {
 	public static void main(String[] args)	{
 		Scanner scanner = new Scanner(System.in);
-		System.out.println("please enter the filename of the test data:");
 		Simulator simulator = new Simulator();
-		simulator.fileReader(scanner.next());
+		System.out.println("Choose file (f) or console (c) input:");
+		String inputType = scanner.next();
+		if (inputType.startsWith("f"))
+		{
+			System.out.println("Please enter the filename of the test data:");
+			simulator.fileReader(scanner.next());
+		}
+		else if (inputType.startsWith("c"))
+		{
+			System.out.println("Enter commands into the console:");
+			simulator.consoleReader();
+		}
 		scanner.close();
 	}
 }
