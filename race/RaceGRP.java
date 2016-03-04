@@ -60,12 +60,18 @@ public class RaceGRP extends Race{
 	/**
 	 Gets a Racer in a Group Race.
 	 @param number Number of the desired Racer.
+	 @param byPlace True to get a Racer based on position in Group Race.
 	 @return The Racer object.
 	 */
-	public Racer getRacerGRP(int number){
-		for(Racer racer : racers){
-			if(racer.getNumber() == number){
-				return racer;
+	public Racer getRacerGRP(int number, boolean byPlace){
+		if(byPlace){
+			return racers.get(number);
+		}
+		else{
+			for(Racer racer : racers){
+				if(racer.getNumber() == number){
+					return racer;
+				}
 			}
 		}
 		return null;
@@ -77,7 +83,7 @@ public class RaceGRP extends Race{
 	 @return If the Racer exists.
 	 */
 	public boolean removeRacerGRP(int number){
-		return racers.remove(getRacerGRP(number));
+		return racers.remove(getRacerGRP(number, false));
 	}
 
 	/**
@@ -121,7 +127,7 @@ public class RaceGRP extends Race{
 	public boolean moveToNextGRP(Racer racer){
 		if(queueIndex < racers.size() - 1){
 			racers.remove(racer);
-			racers.add(lastIndex, racer);
+			racers.add(queueIndex, racer);
 			return true;
 		}
 		return false;

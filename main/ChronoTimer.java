@@ -28,7 +28,7 @@ public class ChronoTimer{
 	/**
 	 Offset used to make time format to desired new time.
 	 */
-	private long newOffset;
+	private long newOffset = 0L;
 	/**
 	 Used to immediately use a specified Date instead of getting the current time's.
 	 */
@@ -36,7 +36,7 @@ public class ChronoTimer{
 	/**
 	 Type of the race.
 	 */
-	private String eventType;
+	private String eventType = "IND";
 	/**
 	 TODO:  CURRENTLY DOES NOT USE UNIT TIME TO MARK RACER TIMES
 	 Reference to all the channels on the system.
@@ -45,18 +45,18 @@ public class ChronoTimer{
 	/**
 	 Reference to the Race.
 	 */
-	private Race race;
+	private Race race = new RaceIND(this);;
 	/**
 	 Reference to Log class for debugging.
 	 */
-	public static Log debugLog;
+	public static Log log = new Log();;
 
 	/**
 	 Initializes the ChronoTimer.
 	 */
 	public ChronoTimer(){
 		for(int i = 0; i < 8; i++){
-			channels[i] = new Channel(i);
+			channels[i] = new Channel(i, this);
 		}
 		//  TODO
 	}
@@ -83,7 +83,7 @@ public class ChronoTimer{
 			reset(true);
 		}
 		if(!silent){
-			debugLog.add(getTime()+" POWER");
+			log.add(format.format(getTime())+" POWER");
 		}
 	}
 
@@ -91,28 +91,28 @@ public class ChronoTimer{
 	 Directly turns the system's power on.
 	 */
 	public void on(){
-		String logOut = getTime()+" ON";
+		String logOut = format.format(getTime())+" ON";
 		if(powerState){
 			logOut += " - SYSTEM ALREADY ON";
 		}
 		else{
 			power(true);
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
 	 Directly turns the system's power off.
 	 */
 	public void off(){
-		String logOut = getTime()+" OFF";
+		String logOut = format.format(getTime())+" OFF";
 		if(powerState){
 			power(true);
 		}
 		else{
 			logOut += " - SYSTEM ALREADY OFF";
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	 //  EXIT  Handled by Interpreter?  //  TODO?
@@ -121,14 +121,14 @@ public class ChronoTimer{
 	 Returns the machine back to a clean state.
 	 */
 	public void reset(){
-		String logOut = getTime()+" RESET";
+		String logOut = format.format(getTime())+" RESET";
 		if(powerState){
 			reset(false);
 		}
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
@@ -136,9 +136,6 @@ public class ChronoTimer{
 	 @param silent True to silence reset()'s messages.
 	 */
 	private void reset(boolean silent){
-		systemStartTime = null;
-		newOffset = 0L;
-		overrideDate = null;
 		eventType = "IND";
 		for(int i = 0; i < 8; i++){
 			if(channels[i].isOn()){
@@ -146,7 +143,6 @@ public class ChronoTimer{
 			}
 		}
 		race = new RaceIND(this);
-		debugLog = new Log();
 		//  TODO
 	}
 
@@ -155,7 +151,7 @@ public class ChronoTimer{
 	 @param time String of desired time to start at.
 	 */
 	public void time(String time){
-		String logOut = " TIME " + time;
+		String logOut = format.format(getTime())+" TIME "+time;
 		if(race.ongoing()){
 			logOut += " - RACE ONGOING";
 		}
@@ -168,15 +164,15 @@ public class ChronoTimer{
 				logOut += " - TIME COULD NOT BE PARSED";
 			}
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
-	 ??????????????????????????????????????????????????
-	 @param channel ???????????????????????????????????
+	 If channel exists, toggle the blocking of input.
+	 @param channel Channel number to toggle trigger ignoring.
 	 */
 	public void tog(int channel){
-		//  TODO
+		toggle(channel);
 	}
 
 	/**
@@ -184,8 +180,9 @@ public class ChronoTimer{
 	 @param channel Channel number to toggle trigger ignoring.
 	 */
 	public void toggle(int channel){
-		String logOut = getTime()+" TOGGLE "+channel;
+		String logOut = format.format(getTime())+" TOGGLE "+channel;
 		if(powerState){
+			channel = channel - 1;
 			Channel channelObj = getChannel(channel);
 			if(channelObj == null){
 				logOut += " - CHANNEL DOES NOT EXIST";
@@ -198,7 +195,7 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
@@ -207,7 +204,8 @@ public class ChronoTimer{
 	 @param num Sensor number to add.
 	 */
 	public void conn(String sensor, int num){
-		String logOut = getTime()+" CONN "+sensor+" "+num;
+		String logOut = format.format(getTime())+" CONN "+sensor+" "+num;
+		num = num - 1;
 		Channel channelObj = getChannel(num);
 		if(channelObj == null){
 			logOut += " - CHANNEL DOES NOT EXIST";
@@ -215,7 +213,7 @@ public class ChronoTimer{
 		else{
 			channelObj.connect(sensor);
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
@@ -223,7 +221,8 @@ public class ChronoTimer{
 	 @param num Sensor number to remove.
 	 */
 	public void disc(int num){
-		String logOut = getTime()+" DISC "+num;
+		String logOut = format.format(getTime())+" DISC "+num;
+		num = num - 1;
 		Channel channelObj = getChannel(num);
 		if(channelObj == null){
 			logOut += " - CHANNEL DOES NOT EXIST";
@@ -231,7 +230,7 @@ public class ChronoTimer{
 		else{
 			channelObj.disconnect();
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
@@ -239,7 +238,7 @@ public class ChronoTimer{
 	 @param type New type of race.
 	 */
 	public void event(String type){
-		String logOut = getTime()+" EVENT "+type;
+		String logOut = format.format(getTime())+" EVENT "+type;
 		if(powerState){
 			if(type.equals(eventType)){
 				logOut += " - EVENT TYPE SAME";
@@ -257,7 +256,7 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
@@ -272,12 +271,13 @@ public class ChronoTimer{
 	 @param silent True to silence newRun()'s messages.
 	 */
 	private void newRun(boolean silent){
-		String logOut = getTime()+" NEWRUN";
+		String logOut = format.format(getTime())+" NEWRUN";
 		if(powerState){
 			if(race.ongoing()){
 				logOut += " - RACE ONGOING";
 			}
 			else{
+				log.incrementLogNumber();
 				switch(eventType){
 					case "IND":
 						race = new RaceIND(this);
@@ -300,7 +300,7 @@ public class ChronoTimer{
 			logOut += " - SYSTEM NOT ON";
 		}
 		if(!silent){
-			debugLog.add(logOut);
+			log.add(logOut);
 		}
 	}
 
@@ -308,7 +308,7 @@ public class ChronoTimer{
 	 If there is a race ongoing, then trigger the end of the race.
 	 */
 	public void endRun(){
-		String logOut = getTime()+" ENDRUN";
+		String logOut = format.format(getTime())+" ENDRUN";
 		if(powerState){
 			if(race.ongoing()){
 				race.end();
@@ -320,14 +320,14 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
 	 Triggers printing the contents of the whole log passed the last time the command was issued.
 	 */
 	public void print(){
-		//  TODO
+		log.printLatestLog();
 	}
 
 	/**
@@ -353,9 +353,9 @@ public class ChronoTimer{
 	 @param number Number of the racer to add / move.
 	 */
 	public void num(int number){
-		String logOut = getTime()+" NUM "+number;
+		String logOut = format.format(getTime())+" NUM "+number;
 		if(powerState){
-			Racer racer = race.getRacer(number);
+			Racer racer = race.getRacer(number, false);
 			if(racer == null){
 				if(race.ongoing()){
 					race.addRacer(number, false);
@@ -392,7 +392,7 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
@@ -401,7 +401,7 @@ public class ChronoTimer{
 	 @param number Number of the racer to remove.
 	 */
 	public void clr(int number){
-		String logOut = getTime()+" CLR "+number;
+		String logOut = format.format(getTime())+" CLR "+number;
 		if(powerState){
 			if(race.ongoing()){
 				logOut += " - RACE IS ONGOING";
@@ -418,14 +418,14 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
 	 If the event type is IND, a race is ongoing, and there are at least two racers still racing, then swap first and second.
 	 */
 	public void swap(){
-		String logOut = getTime()+" SWAP";
+		String logOut = format.format(getTime())+" SWAP";
 		if(powerState){
 			if(eventType.equals("IND")){
 				if(race.ongoing()){
@@ -444,14 +444,14 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
 	 If the event type is IND or GRP, and a race has begun, the racer in first will be marked to not finish.
 	 */
 	public void dnf(){
-		String logOut = getTime()+" DNF";
+		String logOut = format.format(getTime())+" DNF";
 		if(powerState){
 			boolean pass = false;
 			RaceIND raceIND = null;
@@ -484,7 +484,7 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
@@ -501,9 +501,10 @@ public class ChronoTimer{
 	 @param silent True to silence trig()'s messages.
 	 */
 	private String trig(int channel, boolean silent){
-		String logOut = getTime()+" TRIG "+channel;
+		String logOut = format.format(getTime())+" TRIG "+channel;
 		String retMess = "";
 		if(powerState){
+			channel = channel - 1;
 			Channel channelObj = getChannel(channel);
 			if(channelObj.isOn()){
 				if(race.canStart()){
@@ -526,7 +527,7 @@ public class ChronoTimer{
 			retMess += " - SYSTEM NOT ON";
 		}
  		if(!silent){
-			debugLog.add(logOut+retMess);
+			log.add(logOut+retMess);
 		}
 		return retMess;
 	}
@@ -536,9 +537,9 @@ public class ChronoTimer{
 	 Shortcut of trig(1)
 	 */
 	public void start(){
-		String logOut = getTime()+" START";
+		String logOut = format.format(getTime())+" START";
 		logOut += trig(1, true);
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	/**
@@ -546,9 +547,9 @@ public class ChronoTimer{
 	 Shortcut of trig(2)
 	 */
 	public void finish(){
-		String logOut = getTime()+" FINISH";
+		String logOut = format.format(getTime())+" FINISH";
 		logOut += trig(2, true);
-		debugLog.add(logOut);
+		log.add(logOut);
 	}
 
 	//  ----------  FUNCTIONALITY METHODS  ----------
@@ -595,14 +596,20 @@ public class ChronoTimer{
 	}
 
 	/**
+	 Gets the time offset when an override time is active.
+	 @return The time offset.
+	 */
+	public long getNewOffset(){
+		return newOffset;
+	}
+
+	/**
 	 Gets the unit's current time.
 	 @return Current unit time as Date.
 	 */
 	public Date getTime(){
 		if(overrideDate != null){
-			Date carry = overrideDate;
-			overrideDate = null;
-			return carry;
+			return overrideDate;
 		}
 		if(systemStartTime == null){
 			return new Date(System.currentTimeMillis());

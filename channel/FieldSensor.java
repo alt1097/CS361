@@ -1,5 +1,6 @@
 package channel;
 
+import main.ChronoTimer;
 import race.Racer;
 
 /**
@@ -8,19 +9,20 @@ import race.Racer;
  Date:  2/28/2016 - 1:24 AM
  */
 public class FieldSensor extends Sensor{
-
+	private ChronoTimer timer;
 	private int name;
 	double elapsedTime;
 
 	// for tests only
-	public FieldSensor(Channel channel, String type, boolean state, int name) {
-		super(channel, type, state);
+	public FieldSensor(Channel channel, String type, boolean state, int name, ChronoTimer timer) {
+		super(channel, type, state, timer);
+		this.timer = timer;
 		this.name = name;
 	}
 
 	// use this for regular activities
-	public FieldSensor(Channel channel, String type) {
-		super(channel, type, false);
+	public FieldSensor(Channel channel, String type, ChronoTimer timer) {
+		super(channel, type, false, timer);
 		this.name = channel.getName();
 	}
 
@@ -66,8 +68,8 @@ public class FieldSensor extends Sensor{
 		}else{
 //			racer.addHistory(ChronoTimer.currentEventType + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " +ChronoTimer.format.format(ChronoTimer.pcTime) + "\n");
 //			super.trigger(super.getType() + " by racer #" + racer.getNumber() + " at " + ChronoTimer.format.format(ChronoTimer.pcTime));
-			racer.addHistory(ChronoTimer.currentEventType + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " + ChronoTimer.simulatorTime + "\n");
-			super.trigger(super.getType() + " by racer #" + racer.getNumber() + " at " + ChronoTimer.simulatorTime);
+	//		racer.addHistory(timer.getTime() + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " + ChronoTimer.simulatorTime + "\n");
+		//	super.trigger(super.getType() + " by racer #" + racer.getNumber() + " at " + timer.getTime());
 
 			// attempt to use current time. Problem: System.currentTimeMillis() returns same time every call
 //			if(racer.getStart() == null && racer.getEnd() == null){

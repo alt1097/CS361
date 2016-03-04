@@ -53,15 +53,26 @@ public class RacePARGRP extends Race{
 	}
 
 	/**
-	 Gets a Racer in a Parallel Groups Race.
+	 Gets a Racer in a Parallel Group Race.
 	 @param number Number of the desired Racer.
+	 @param byPlace True to get a Racer based on position in Parallel Group Race.
 	 @return The Racer object.
 	 */
-	public Racer getRacerPARGRP(int number){
-		for(ArrayList<Racer> lane : lanes){
-			for(Racer racer : lane){
-				if(racer.getNumber() == number){
-					return racer;
+	public Racer getRacerPARGRP(int number, boolean byPlace){
+		if(byPlace){
+			for(ArrayList<Racer> lane : lanes){
+				Racer tempRacer = lane.get(number);
+				if(tempRacer != null){
+					return tempRacer;
+				}
+			}
+		}
+		else{
+			for(ArrayList<Racer> lane : lanes){
+				for(Racer racer : lane){
+					if(racer.getNumber() == number){
+						return racer;
+					}
 				}
 			}
 		}

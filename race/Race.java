@@ -20,7 +20,7 @@ public class Race{
 	/**
 	 Indicates if the race is currently in progress.
 	 */
-	private boolean ongoing = false;
+	protected boolean ongoing = false;
 	/**
 	 Indicates if the race is currently over.
 	 */
@@ -47,12 +47,16 @@ public class Race{
 		switch(timer.getEventType()){
 			case "IND":
 				((RaceIND) this).addRacerIND(number, toFront);
+				break;
 			case "PARIND":
 				((RacePARIND) this).addRacerPARIND(number, toFront);
+				break;
 			case "GRP":
 				((RaceGRP) this).addRacerGRP(number, toFront);
+				break;
 			case "PARGRP":
 				((RacePARGRP) this).addRacerPARGRP(number, toFront);
+				break;
 			default:
 				//  TODO?
 		}
@@ -61,18 +65,19 @@ public class Race{
 	/**
 	 Gets the desired Racer from number.
 	 @param number Number of the Racer.
+	 @param byPlace True to get a Racer based on position in Race.
 	 @return The Racer object.
 	 */
-	public Racer getRacer(int number){
+	public Racer getRacer(int number, boolean byPlace){
 		switch(timer.getEventType()){
 			case "IND":
-				return ((RaceIND) this).getRacerIND(number);
+				return ((RaceIND) this).getRacerIND(number, byPlace);
 			case "PARIND":
-				return ((RacePARIND) this).getRacerPARIND(number);
+				return ((RacePARIND) this).getRacerPARIND(number, byPlace);
 			case "GRP":
-				return ((RaceGRP) this).getRacerGRP(number);
+				return ((RaceGRP) this).getRacerGRP(number, byPlace);
 			case "PARGRP":
-				return ((RacePARGRP) this).getRacerPARGRP(number);
+				return ((RacePARGRP) this).getRacerPARGRP(number, byPlace);
 			default:
 				return null;
 		}
@@ -225,12 +230,16 @@ public class Race{
 		switch(timer.getEventType()){
 			case "IND":
 				((RaceIND) this).channelVerifyIND();
+				break;
 			case "PARIND":
 				((RacePARIND) this).channelVerifyPARIND();
+				break;
 			case "GRP":
 				((RaceGRP) this).channelVerifyGRP();
+				break;
 			case "PARGRP":
 				((RacePARGRP) this).channelVerifyPARGRP();
+				break;
 			default:
 				//  TODO?
 		}
@@ -265,12 +274,16 @@ public class Race{
 		switch(timer.getEventType()){
 			case "IND":
 				((RaceIND) this).endIND();
+				break;
 			case "PARIND":
 				((RacePARIND) this).endPARIND();
+				break;
 			case "GRP":
 				((RaceGRP) this).endGRP();
+				break;
 			case "PARGRP":
 				((RacePARGRP) this).endPARGRP();
+				break;
 			default:
 				//  TODO?
 		}

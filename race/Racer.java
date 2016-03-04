@@ -94,11 +94,16 @@ public class Racer
 	 * time from their end time.
 	 * @return finalTime
 	 */
-	public Date getFinalTime()
+	public Date getFinalTime(ChronoTimer ct)
 	{
-		Date finalTime = new Date();
-		finalTime.setTime(endTime.getTime() - startTime.getTime());
-		return finalTime;
+		if(endTime == null){
+			return null;
+		}
+		else{
+			Date finalTime = new Date();
+			finalTime.setTime(endTime.getTime() - startTime.getTime() - ct.getNewOffset());
+			return finalTime;
+		}
 	}
 
 	/**

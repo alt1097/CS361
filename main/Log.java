@@ -77,6 +77,7 @@ public class Log
 	public Log()
 	{
 		this.logNumber = 1;
+		runs[logNumber] = "";
 	}
 	
 	/**
@@ -121,6 +122,7 @@ public class Log
 	public void incrementLogNumber()
 	{
 		logNumber++;
+		runs[logNumber] = "";
 	}
 	
 	/**
@@ -128,6 +130,6 @@ public class Log
 	 */
 	public void printLatestLog()
 	{
-		System.out.println(runs[runs.length-1]);
+		System.out.println(runs[logNumber]);
 	}
 }

@@ -1,5 +1,6 @@
 package channel;
 
+import main.ChronoTimer;
 import race.Racer;
 
 /**
@@ -8,7 +9,7 @@ import race.Racer;
  Date:  2/28/2016
  */
 public class Channel implements SensorListener{
-
+	private static ChronoTimer timer;
 	private boolean channelWasFired;
 	private int number;
 	private String type;
@@ -35,28 +36,29 @@ public class Channel implements SensorListener{
 //		fieldSensor = new FieldSensor(this, fieldSsensorType);
 //	}
 
-	public Channel(String channelType, int number, String fieldSsensorType){
+	public Channel(String channelType, int number, String fieldSsensorType, ChronoTimer timer){
+		this.timer = timer;
 		type = channelType;
 		this.number = number;
-		fireButton = new ChannelFireButton(this);
+		fireButton = new ChannelFireButton(this, timer);
 		if(fieldSsensorType == null){
 			fieldSsensorType = null;
 		}else{
-			fieldSensor = new FieldSensor(this, fieldSsensorType);
+			fieldSensor = new FieldSensor(this, fieldSsensorType, timer);
 		}
 
 	}
 
-	public Channel(String channelType){
-		this(channelType, 1, null);
+	public Channel(String channelType, ChronoTimer timer){
+		this(channelType, 1, null, timer);
 	}
 
 	public Channel(){
-		this("ANON", 1, null);
+		this("ANON", 1, null, timer);
 	}
 
-	public Channel(int channelNumber){
-		this("ANON", channelNumber, null);
+	public Channel(int channelNumber, ChronoTimer timer){
+		this("ANON", channelNumber, null, timer);
 	}
 
 	public void setChanType(String channelType){
@@ -123,7 +125,7 @@ public class Channel implements SensorListener{
 			return;
 		}
 		if (fieldSensor == null) {
-			fieldSensor = new FieldSensor(this, fieldSensorType);
+			fieldSensor = new FieldSensor(this, fieldSensorType, timer);
 			System.out.println("Channel # " + number+ " " + type + " was successfully connected to " + fieldSensor.getType() + " sensor.");
 		} else {
 			System.out.println("Error: channel # " + number + " connected to " + fieldSensor.getType() + " sensor. Disconnect old one manually");
@@ -186,14 +188,14 @@ public class Channel implements SensorListener{
 		}
 
 		if(getChannelType().equals("START")){
-			if(racer.getStart() == null){
-				racer.setStart(ChronoTimer.simulatorTime);
+			if(racer.getStartTime() == null){
+				racer.setStartTime(timer.getTime());
 			}else{
 				System.out.println("Error: This racer already have START time");
 			}
 		}else if(getChannelType().equals("FINISH")){
-			if(racer.getEnd() == null){
-				racer.setEnd(ChronoTimer.simulatorTime);
+			if(racer.getEndTime() == null){
+				racer.setEndTime(timer.getTime());
 			}else{
 				System.out.println("Error: This racer already have FINISH time");
 			}

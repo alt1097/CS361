@@ -5,6 +5,7 @@ import main.ChronoTimer;
 import main.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  -- ChronoTimer 1009 --
@@ -61,12 +62,18 @@ public class RaceIND extends Race{
 	/**
 	 Gets a Racer in an Individual Race.
 	 @param number Number of the desired Racer.
+	 @param byPlace True to get a Racer based on position in Individual Race.
 	 @return The Racer object.
 	 */
-	public Racer getRacerIND(int number){
-		for(Racer racer : racers){
-			if(racer.getNumber() == number){
-				return racer;
+	public Racer getRacerIND(int number, boolean byPlace){
+		if(byPlace){
+			return racers.get(number);
+		}
+		else{
+			for(Racer racer : racers){
+				if(racer.getNumber() == number){
+					return racer;
+				}
 			}
 		}
 		return null;
@@ -78,7 +85,7 @@ public class RaceIND extends Race{
 	 @return If the Racer exists.
 	 */
 	public boolean removeRacerIND(int number){
-		return racers.remove(getRacerIND(number));
+		return racers.remove(getRacerIND(number, false));
 	}
 
 	/**
@@ -170,14 +177,15 @@ public class RaceIND extends Race{
 		boolean fail = true;
 		for(int i = 0; i < 8; i += 2){
 			Channel tempStart = timer.getChannel(i);
-			if(tempStart.isOn()){
+			if(tempStart != null && tempStart.isOn()){
 				Channel tempFinish = timer.getChannel(i + 1);
-				if(tempFinish.isOn()){
+				if(tempFinish != null && tempFinish.isOn()){
 					tempStart.setChanType("START");
 					startChannel = tempStart;
 					tempFinish.setChanType("FINISH");
 					finishChannel = tempFinish;
 					fail = false;
+					break;
 				}
 			}
 		}
@@ -195,11 +203,15 @@ public class RaceIND extends Race{
 	public String triggerIND(Channel channel){
 		String retMes = "";
 		if(channel == startChannel){
-			startChannel.fireChannel(getRacerIND(queueIndex));
+			ongoing = true;
+			startChannel.fireChannel(getRacerIND(queueIndex, true));
+			startChannel.reset();
 			queueIndex++;
 		}
 		else if(channel == finishChannel){
-			finishChannel.fireChannel(getRacerIND(firstIndex));
+			ongoing = true;
+			finishChannel.fireChannel(getRacerIND(firstIndex, true));
+			finishChannel.reset();
 			firstIndex++;
 		}
 		else{
@@ -222,12 +234,38 @@ public class RaceIND extends Race{
 	 Runs the actions to finalize an Individual Race.
 	 */
 	public void endIND(){
-		Log debugLog = ChronoTimer.debugLog;
+		Log log = ChronoTimer.log;
 		String sep = "--------------------";
-		debugLog.add(sep);
+		log.add(sep);
 		for(Racer racer : racers){
-			debugLog.add("#"+racer.getNumber()+"  Start: "+racer.getStartTime()+"  Finish: "+racer.getEndTime()+"  -  "+ChronoTimer.format.format(racer.getFinalTime()));
+			String record = "#"+racer.getNumber()+"  Start: ";
+			boolean printDif = true;
+			Date tempStartTime = racer.getStartTime();
+			if(tempStartTime == null){
+				record += "DID NOT START";
+				printDif = false;
+			}
+			else{
+				record += ChronoTimer.format.format(tempStartTime);
+			}
+			record += "  Finish: ";
+			Date tempEndTime = racer.getEndTime();
+			if(tempEndTime == null){
+				record += "DID NOT FINISH";
+				printDif = false;
+			}
+			else{
+				record += ChronoTimer.format.format(tempEndTime);
+			}
+			record += "  -  ";
+			if(printDif){
+				record += ChronoTimer.format.format(racer.getFinalTime(timer));
+			}
+			else{
+				record += "DNF";
+			}
+			log.add(record);
 		}
-		debugLog.add(sep);
+		log.add(sep);
 	}
 }

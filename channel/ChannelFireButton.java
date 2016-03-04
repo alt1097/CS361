@@ -1,5 +1,6 @@
 package channel;
 
+import main.ChronoTimer;
 import race.Racer;
 
 /**
@@ -8,21 +9,22 @@ import race.Racer;
  Date:  2/28/2016 - 1:22 AM
  */
 public class ChannelFireButton extends Sensor{
-
+	private ChronoTimer timer;
 	private int name;
 	double elapsedTime;
 
 	// need this for test
-	public ChannelFireButton(Channel channel, String type, boolean state, int name) {
-		super(channel, type, state);
+	public ChannelFireButton(Channel channel, String type, boolean state, int name, ChronoTimer timer) {
+		super(channel, type, state, timer);
+		this.timer = timer;
 		this.name = name;
 	}
 
 	// THIS BUTTON STATE SHOULD ALWAYS BE TRUE!!!
 
 	// use this for regular activities
-	public ChannelFireButton(Channel channel) {
-		super(channel, "FIRE_BUTTON", true);
+	public ChannelFireButton(Channel channel, ChronoTimer timer) {
+		super(channel, "FIRE_BUTTON", true, timer);
 		this.name = channel.getName();
 	}
 
@@ -42,7 +44,7 @@ public class ChannelFireButton extends Sensor{
 
 	public void trigger(Racer racer) {
 
-		elapsedTime =  (double) (System.nanoTime() - ChronoTimer.pcTime)/ 1000000000.0;
+		elapsedTime =  (double) (System.nanoTime() - timer.getTime().getTime())/ 1000000000.0;
 
 		if(whichChannelShouldReceiveEvent.wasFired()){
 			System.out.println("Sort of error: channel # " + whichChannelShouldReceiveEvent.getName() + " was fired from somewhere else");
@@ -50,7 +52,7 @@ public class ChannelFireButton extends Sensor{
 		}else{
 //			racer.addHistory(ChronoTimer.currentEventType + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " +ChronoTimer.format.format(ChronoTimer.pcTime));
 //			super.trigger(super.getType() + " " + name + " at " + ChronoTimer.format.format(ChronoTimer.pcTime));
-			racer.addHistory(ChronoTimer.currentEventType + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " + elapsedTime + "\n");
+		//	racer.addHistory(timer.getTime() + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " + elapsedTime + "\n");
 			super.trigger(super.getType() + " " + name + " at " + elapsedTime);
 
 		}
