@@ -7,6 +7,10 @@ public class ComHandler {
 		this.chrono = chrono;
 	}
 
+	/**
+	 * Parses the command line into ChronoTimer method calls
+	 * @param line Line of test file.
+	 */
 	public void handleCommand(String line) {
 		boolean isValid = false;
 		String[] cmdArgs = line.split("\\s");
@@ -99,21 +103,21 @@ public class ComHandler {
 				chrono.time(cmdArgs[nextCmd]);
 			}
 		}
-		else if (cmdArgs[nextCmd].equalsIgnoreCase("print"))
-		{
-			++nextCmd;
-			if (cmdArgs.length == (nextCmd+1)) {
-				try {
-					chrono.print(Integer.parseInt(cmdArgs[nextCmd]));
-					isValid = true;
-				}
-				catch (NumberFormatException e) {
-					System.out.println("Error parsing PRINT");
-				}
-			}
-			else
-				chrono.print();
-		}
+//		else if (cmdArgs[nextCmd].equalsIgnoreCase("print"))
+//		{
+//			++nextCmd;
+//			if (cmdArgs.length == (nextCmd+1)) {
+//				try {
+//					chrono.print(Integer.parseInt(cmdArgs[nextCmd]));
+//					isValid = true;
+//				}
+//				catch (NumberFormatException e) {
+//					System.out.println("Error parsing PRINT");
+//				}
+//			}
+//			else
+//				chrono.print();
+//		}
 		else if (cmdArgs[nextCmd].equalsIgnoreCase("num"))
 		{
 			++nextCmd;

@@ -8,6 +8,11 @@ import java.io.IOException;
 public class Simulator {
 	ChronoTimer chrono = new ChronoTimer();
 	ComHandler handler = new ComHandler(chrono);
+
+	/**
+	 * Simulates the running of the chrono timer with a test file
+	 * @param fileName Name of file you'd like to test
+	 */
 	public void fileReader(String fileName) {
 		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 		    String line;
