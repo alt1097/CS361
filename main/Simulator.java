@@ -12,7 +12,7 @@ public class Simulator {
 		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 		    String line;
 		    while ((line = br.readLine()) != null) {
-		       handler.handleCommand(new Com(line));
+		       handler.handleCommand(line);
 		    }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
