@@ -5,6 +5,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ -- ChronoTimer 1009 --
+ Author:  The Unnameables
+ */
+
 public class Simulator {
 	ChronoTimer chrono = new ChronoTimer();
 	ComHandler handler = new ComHandler(chrono);
@@ -24,7 +29,7 @@ public class Simulator {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Starts reading commands from the console
 	 */

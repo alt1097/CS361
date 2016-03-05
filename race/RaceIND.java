@@ -10,7 +10,6 @@ import java.util.Date;
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
- Date:  2/28/2016
  */
 public class RaceIND extends Race{
 	/**
@@ -104,7 +103,7 @@ public class RaceIND extends Race{
 	 @return True if Racer can be moved.
 	 */
 	public boolean canBeMovedIND(Racer racer){
-		return racers.indexOf(racer) <= firstIndex;
+		return racers.indexOf(racer) > firstIndex;
 	}
 
 	/**
@@ -203,16 +202,26 @@ public class RaceIND extends Race{
 	public String triggerIND(Channel channel){
 		String retMes = "";
 		if(channel == startChannel){
-			ongoing = true;
-			startChannel.fireChannel(getRacerIND(queueIndex, true));
-			startChannel.reset();
-			queueIndex++;
+			if(queueIndex == racers.size()){
+				retMes += " - NO RACER LEFT IN QUEUE";
+			}
+			else{
+				ongoing = true;
+				startChannel.fireChannel(getRacerIND(queueIndex, true));
+				startChannel.reset();
+				queueIndex++;
+			}
 		}
 		else if(channel == finishChannel){
-			ongoing = true;
-			finishChannel.fireChannel(getRacerIND(firstIndex, true));
-			finishChannel.reset();
-			firstIndex++;
+			if(firstIndex == queueIndex){
+				retMes += " - NO RACER CURRENTLY RACING";
+			}
+			else{
+				ongoing = true;
+				finishChannel.fireChannel(getRacerIND(firstIndex, true));
+				finishChannel.reset();
+				firstIndex++;
+			}
 		}
 		else{
 			retMes += " - CHANNEL IS NOT USED";
@@ -234,11 +243,30 @@ public class RaceIND extends Race{
 	 Runs the actions to finalize an Individual Race.
 	 */
 	public void endIND(){
-		Log log = ChronoTimer.log;
+		ChronoTimer.log.add(print());
+	}
+
+	/**
+	 Prints the current status of all Racers in Individual Race.
+	 @return The Racer status printout.
+	 */
+	public String printIND(){
 		String sep = "--------------------";
-		log.add(sep);
+		String record = "";
+		record += sep+"\n";
+		record += ": : Run #"+ChronoTimer.log.getLogNumber()+" : : ";
+		if(ended()){
+			record += "Ended";
+		}
+		else if(ongoing()){
+			record += "Ongoing";
+		}
+		else{
+			record += "Not Started";
+		}
+		record += " : :\n";
 		for(Racer racer : racers){
-			String record = "#"+racer.getNumber()+"  Start: ";
+			record += "#"+racer.getNumber()+"\tStart: ";
 			boolean printDif = true;
 			Date tempStartTime = racer.getStartTime();
 			if(tempStartTime == null){
@@ -248,7 +276,7 @@ public class RaceIND extends Race{
 			else{
 				record += ChronoTimer.format.format(tempStartTime);
 			}
-			record += "  Finish: ";
+			record += "\t\tFinish: ";
 			Date tempEndTime = racer.getEndTime();
 			if(tempEndTime == null){
 				record += "DID NOT FINISH";
@@ -257,15 +285,16 @@ public class RaceIND extends Race{
 			else{
 				record += ChronoTimer.format.format(tempEndTime);
 			}
-			record += "  -  ";
+			record += "\t\tFinal: ";
 			if(printDif){
-				record += ChronoTimer.format.format(racer.getFinalTime(timer));
+				record += diffFormat.format(racer.getFinalTime(timer));
 			}
 			else{
 				record += "DNF";
 			}
-			log.add(record);
+			record += "\n";
 		}
-		log.add(sep);
+		record += sep;
+		return record;
 	}
 }

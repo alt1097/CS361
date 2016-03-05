@@ -5,7 +5,6 @@ import main.ChronoTimer;
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
- Date:  2/28/2016
  */
 public abstract class Sensor{
 	private ChronoTimer timer;

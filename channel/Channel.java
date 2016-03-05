@@ -6,7 +6,6 @@ import race.Racer;
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
- Date:  2/28/2016
  */
 public class Channel implements SensorListener{
 	private static ChronoTimer timer;
@@ -70,7 +69,7 @@ public class Channel implements SensorListener{
 		if(fireButton != null){
 			return fireButton.getState();
 		}else{
-			System.out.println("Channel # " + number + " fire button is NULL");
+			ChronoTimer.debugLog.add("Channel # " + number + " fire button is NULL");
 			return false;
 		}
 	}
@@ -79,7 +78,7 @@ public class Channel implements SensorListener{
 		if(fieldSensor != null){
 			return fieldSensor.getState();
 		}else{
-			System.out.println("Channel # " + number + " field sensor is NULL");
+			ChronoTimer.debugLog.add("Channel # " + number + " field sensor is NULL");
 			return false;
 		}
 	}
@@ -88,7 +87,7 @@ public class Channel implements SensorListener{
 		if(fieldSensor != null){
 			fieldSensor.toggle();
 		}else{
-			System.out.println("Channel # " + number + " field sensor is NULL");
+			ChronoTimer.debugLog.add("Channel # " + number + " field sensor is NULL");
 		}
 	}
 
@@ -115,20 +114,20 @@ public class Channel implements SensorListener{
 		}else{
 			state = true;
 		}
-		System.out.println("Channel " + type + " was toggled, it is " +state + " now");
+		ChronoTimer.debugLog.add("Channel " + type + " was toggled, it is " +state + " now");
 	}
 
 	public void connect(String fieldSensorType) {
 
 		if(fieldSensorType.equals("FIRE_BUTTON")){
-			System.out.println("Error: This method to connect field sensors only, not a buttons");
+			ChronoTimer.debugLog.add("Error: This method to connect field sensors only, not a buttons");
 			return;
 		}
 		if (fieldSensor == null) {
 			fieldSensor = new FieldSensor(this, fieldSensorType, timer);
-			System.out.println("Channel # " + number+ " " + type + " was successfully connected to " + fieldSensor.getType() + " sensor.");
+			ChronoTimer.debugLog.add("Channel # " + number+ " " + type + " was successfully connected to " + fieldSensor.getType() + " sensor.");
 		} else {
-			System.out.println("Error: channel # " + number + " connected to " + fieldSensor.getType() + " sensor. Disconnect old one manually");
+			ChronoTimer.debugLog.add("Error: channel # " + number + " connected to " + fieldSensor.getType() + " sensor. Disconnect old one manually");
 		}
 	}
 
@@ -136,10 +135,10 @@ public class Channel implements SensorListener{
 
 	public void disconnect(){
 		if(fieldSensor == null){
-			System.out.println("Error: channel # " + number + " have no field sensor attached. There is nothing to disconnect");
+			ChronoTimer.debugLog.add("Error: channel # " + number + " have no field sensor attached. There is nothing to disconnect");
 		}else{
+			ChronoTimer.debugLog.add("Channel # " + number + " was disconnected from " + fieldSensor.getType() + " sensor.");
 			fieldSensor = null;
-			System.out.println("Channel # " + number + " was disconnected from " + fieldSensor.getType() + " sensor.");
 		}
 	}
 
@@ -155,9 +154,9 @@ public class Channel implements SensorListener{
 			fireButton.trigger(racer);
 			channelWasFired = true; // comment this out if tired to reset
 		}else if(state && channelWasFired){
-			System.out.println("Error: channel# " + number + "fired some event before");
+			ChronoTimer.debugLog.add("Error: channel# " + number + "fired some event before");
 		}else if(!state){
-			System.out.println("Error: channel# " + number + "is disabled, fire button is useless");
+			ChronoTimer.debugLog.add("Error: channel# " + number + "is disabled, fire button is useless");
 		}
 
 	}
@@ -168,15 +167,15 @@ public class Channel implements SensorListener{
 	public void fireFieldSensorEvent(Racer racer){
 		if(state && !channelWasFired){
 			if(fieldSensor == null){
-				System.out.println("Error: seems like channel " + number +" have no field sensor attached to it");
+				ChronoTimer.debugLog.add("Error: seems like channel " + number +" have no field sensor attached to it");
 			}else{
 				fieldSensor.trigger(racer);
 				channelWasFired = true; // comment this out if tired to reset
 			}
 		}else if(state && channelWasFired){
-			System.out.println("Error: channel# " + number + " fired some event before, can not fire another event without resetting");
+			ChronoTimer.debugLog.add("Error: channel# " + number + " fired some event before, can not fire another event without resetting");
 		}else if(!state){
-			System.out.println("Error: channel# " + number + " is disabled, field sensor can not be fired from this method");
+			ChronoTimer.debugLog.add("Error: channel# " + number + " is disabled, field sensor can not be fired from this method");
 		}
 	}
 
@@ -191,13 +190,13 @@ public class Channel implements SensorListener{
 			if(racer.getStartTime() == null){
 				racer.setStartTime(timer.getTime());
 			}else{
-				System.out.println("Error: This racer already have START time");
+				ChronoTimer.debugLog.add("Error: This racer already have START time");
 			}
 		}else if(getChannelType().equals("FINISH")){
 			if(racer.getEndTime() == null){
 				racer.setEndTime(timer.getTime());
 			}else{
-				System.out.println("Error: This racer already have FINISH time");
+				ChronoTimer.debugLog.add("Error: This racer already have FINISH time");
 			}
 		}
 	}
@@ -205,7 +204,7 @@ public class Channel implements SensorListener{
 	@Override
 	public void fire(String messageFromEventInitiator) {
 		// TODO Auto-generated method stub
-		System.out.println("Channel# " + number +" was triggered at: " + messageFromEventInitiator);
+		ChronoTimer.debugLog.add("Channel# " + number +" was triggered at: " + messageFromEventInitiator);
 
 	}
 

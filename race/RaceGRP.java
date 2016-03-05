@@ -4,11 +4,11 @@ import channel.Channel;
 import main.ChronoTimer;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
- Date:  2/28/2016
  */
 public class RaceGRP extends Race{
 	/**
@@ -181,5 +181,57 @@ public class RaceGRP extends Race{
 	 */
 	public void endGRP(){
 		//  TODO
+	}
+	
+	/**
+	 Prints the current status of all Racers in Group Race.
+	 @return The Racer status printout.
+	 */
+	public String printGRP(){
+		String sep = "--------------------";
+		String record = "";
+		record += sep+"\n";
+		record += ": : Run #"+ChronoTimer.log.getLogNumber()+" : : ";
+		if(ended()){
+			record += "Ended";
+		}
+		else if(ongoing()){
+			record += "Ongoing";
+		}
+		else{
+			record += "Not Started";
+		}
+		record += " : :\n";
+		for(Racer racer : racers){
+			record += "#"+racer.getNumber()+"\tStart: ";
+			boolean printDif = true;
+			Date tempStartTime = racer.getStartTime();
+			if(tempStartTime == null){
+				record += "DID NOT START";
+				printDif = false;
+			}
+			else{
+				record += ChronoTimer.format.format(tempStartTime);
+			}
+			record += "\t\tFinish: ";
+			Date tempEndTime = racer.getEndTime();
+			if(tempEndTime == null){
+				record += "DID NOT FINISH";
+				printDif = false;
+			}
+			else{
+				record += ChronoTimer.format.format(tempEndTime);
+			}
+			record += "\t\tFinal: ";
+			if(printDif){
+				record += diffFormat.format(racer.getFinalTime(timer));
+			}
+			else{
+				record += "DNF";
+			}
+			record += "\n";
+		}
+		record += sep;
+		return record;
 	}
 }

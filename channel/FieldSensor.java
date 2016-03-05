@@ -5,8 +5,7 @@ import race.Racer;
 
 /**
  -- ChronoTimer 1009 --
- Author:  The Joker
- Date:  2/28/2016 - 1:24 AM
+ Author:  The Unnameables
  */
 public class FieldSensor extends Sensor{
 	private ChronoTimer timer;
@@ -29,7 +28,7 @@ public class FieldSensor extends Sensor{
 	@Override
 	public void enable() {
 		if(super.getState()){
-			System.out.println("Error: trying to enable a field sensor that is active already");
+			ChronoTimer.debugLog.add("Error: trying to enable a field sensor that is active already");
 		}else{
 			super.setState(true);
 		}
@@ -40,7 +39,7 @@ public class FieldSensor extends Sensor{
 		if(super.getState()){
 			super.setState(false);
 		}else{
-			System.out.println("Error: trying to disable a field sensor that is disabled already");
+			ChronoTimer.debugLog.add("Error: trying to disable a field sensor that is disabled already");
 		}
 	}
 
@@ -63,8 +62,8 @@ public class FieldSensor extends Sensor{
 //		elapsedTime = Math.floor(elapsedTime * 1000000) / 1000000;
 
 		if(whichChannelShouldReceiveEvent.wasFired()){
-			System.out.println("Sort of error: channel # " + whichChannelShouldReceiveEvent.getName() + " was fired from somewhere else");
-			System.out.println("Reset channel and then use this sensor");
+			ChronoTimer.debugLog.add("Sort of error: channel # " + whichChannelShouldReceiveEvent.getName() + " was fired from somewhere else");
+			ChronoTimer.debugLog.add("Reset channel and then use this sensor");
 		}else{
 //			racer.addHistory(ChronoTimer.currentEventType + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " +ChronoTimer.format.format(ChronoTimer.pcTime) + "\n");
 //			super.trigger(super.getType() + " by racer #" + racer.getNumber() + " at " + ChronoTimer.format.format(ChronoTimer.pcTime));
@@ -73,18 +72,18 @@ public class FieldSensor extends Sensor{
 
 			// attempt to use current time. Problem: System.currentTimeMillis() returns same time every call
 //			if(racer.getStart() == null && racer.getEnd() == null){
-//				System.out.println("START TIME SENT " + System.currentTimeMillis());
+//				ChronoTimer.debugLog.add("START TIME SENT " + System.currentTimeMillis());
 //				racer.setStart(new Date(System.currentTimeMillis()));
 //			}else{
-//				System.out.println("Error: This racer already have START time");
+//				ChronoTimer.debugLog.add("Error: This racer already have START time");
 //			}
 //
 //			if(racer.getStart() != null && racer.getEnd() == null){
 //
-//				System.out.println("END TIME SENT " + System.currentTimeMillis());
+//				ChronoTimer.debugLog.add("END TIME SENT " + System.currentTimeMillis());
 //				racer.setEnd(new Date(System.currentTimeMillis()));
 //			}else{
-//				System.out.println("Error: This racer already have END time");
+//				ChronoTimer.debugLog.add("Error: This racer already have END time");
 //			}
 
 

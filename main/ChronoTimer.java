@@ -10,7 +10,6 @@ import channel.Channel;
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
- Date:  2/26/2016
  */
 public class ChronoTimer{
 	/**
@@ -47,9 +46,14 @@ public class ChronoTimer{
 	 */
 	private Race race = new RaceIND(this);;
 	/**
-	 Reference to Log class for debugging.
+	 Reference to DebugLog class for debugging.
 	 */
-	public static Log log = new Log();;
+	public static DebugLog debugLog = new DebugLog("ChronoTimer Debug.txt");
+	/**
+	 Reference to Log class for printing.
+	 */
+	public static Log log = new Log();
+	
 
 	/**
 	 Initializes the ChronoTimer.
@@ -58,6 +62,7 @@ public class ChronoTimer{
 		for(int i = 0; i < 8; i++){
 			channels[i] = new Channel(i, this);
 		}
+		debugLog.add("\t\t"+new Date(System.currentTimeMillis()).toString());
 		//  TODO
 	}
 
@@ -83,7 +88,7 @@ public class ChronoTimer{
 			reset(true);
 		}
 		if(!silent){
-			log.add(format.format(getTime())+" POWER");
+			debugLog.add(format.format(getTime())+" POWER");
 		}
 	}
 
@@ -98,7 +103,7 @@ public class ChronoTimer{
 		else{
 			power(true);
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -112,10 +117,15 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM ALREADY OFF";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
-	 //  EXIT  Handled by Interpreter?  //  TODO?
+	/**
+	 Used before system terminates.  //  TODO:  ONLY FOR LOG PURPOSE
+	 */
+	public void exit(){
+		debugLog.add(format.format(getTime())+" EXIT");
+	}
 
 	/**
 	 Returns the machine back to a clean state.
@@ -128,7 +138,7 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -143,6 +153,7 @@ public class ChronoTimer{
 			}
 		}
 		race = new RaceIND(this);
+		log = new Log();
 		//  TODO
 	}
 
@@ -164,7 +175,7 @@ public class ChronoTimer{
 				logOut += " - TIME COULD NOT BE PARSED";
 			}
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -195,7 +206,7 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -213,7 +224,7 @@ public class ChronoTimer{
 		else{
 			channelObj.connect(sensor);
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -230,7 +241,7 @@ public class ChronoTimer{
 		else{
 			channelObj.disconnect();
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -256,7 +267,7 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -300,7 +311,7 @@ public class ChronoTimer{
 			logOut += " - SYSTEM NOT ON";
 		}
 		if(!silent){
-			log.add(logOut);
+			debugLog.add(logOut);
 		}
 	}
 
@@ -320,14 +331,15 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
 	 Triggers printing the contents of the whole log passed the last time the command was issued.
 	 */
 	public void print(){
-		log.printLatestLog();
+		System.out.println(race.print());
+		debugLog.add(format.format(getTime())+" PRINT");
 	}
 
 	/**
@@ -368,31 +380,27 @@ public class ChronoTimer{
 				}
 			}
 			else{
-				if(race.ongoing()){
-					if(race.canBeMoved(racer)){
-						if(race.isRacing(racer)){
-							if(!race.moveToFirst(racer)){
-								logOut += " - NOT ENOUGH RACERS TO MOVE IN RACE";
-							}
-						}else{
-							if(!race.moveToNext(racer)){
-								logOut += " - NOT ENOUGH RACERS TO MOVE IN QUEUE";
-							}
+				if(race.canBeMoved(racer)){
+					if(race.isRacing(racer)){
+						if(!race.moveToFirst(racer)){
+							logOut += " - NOT ENOUGH RACERS TO MOVE IN RACE";
 						}
 					}
 					else{
-						logOut += " - THE RACER CANNOT BE MOVED";
+						if(!race.moveToNext(racer)){
+							logOut += " - NOT ENOUGH RACERS TO MOVE IN QUEUE";
+						}
 					}
 				}
 				else{
-					logOut += " - RACE IS NOT ONGOING";
+					logOut += " - THE RACER CANNOT BE MOVED";
 				}
 			}
 		}
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -418,7 +426,7 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -444,7 +452,7 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -484,7 +492,7 @@ public class ChronoTimer{
 		else{
 			logOut += " - SYSTEM NOT ON";
 		}
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -527,7 +535,7 @@ public class ChronoTimer{
 			retMess += " - SYSTEM NOT ON";
 		}
  		if(!silent){
-			log.add(logOut+retMess);
+			debugLog.add(logOut+retMess);
 		}
 		return retMess;
 	}
@@ -539,7 +547,7 @@ public class ChronoTimer{
 	public void start(){
 		String logOut = format.format(getTime())+" START";
 		logOut += trig(1, true);
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -549,7 +557,7 @@ public class ChronoTimer{
 	public void finish(){
 		String logOut = format.format(getTime())+" FINISH";
 		logOut += trig(2, true);
-		log.add(logOut);
+		debugLog.add(logOut);
 	}
 
 	//  ----------  FUNCTIONALITY METHODS  ----------
@@ -591,7 +599,7 @@ public class ChronoTimer{
 			overrideDate = format.parse(time);
 
 		}catch(ParseException e){
-			e.printStackTrace();  //  TODO
+			debugLog.add("---- "+format.format(getTime())+" DATE ENTERED WAS IMPROPERLY FORMATTED");
 		}
 	}
 

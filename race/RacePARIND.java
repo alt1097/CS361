@@ -4,11 +4,11 @@ import channel.Channel;
 import main.ChronoTimer;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
- Date:  2/28/2016
  */
 public class RacePARIND extends Race{
 	/**
@@ -164,5 +164,13 @@ public class RacePARIND extends Race{
 	 */
 	public void endPARIND(){
 		//  TODO
+	}
+	
+	/**
+	 Prints the current status of all Racers in Parallel Individual Race.
+	 @return The Racer status printout.
+	 */
+	public String printPARIND(){
+		return "";//  TODO
 	}
 }

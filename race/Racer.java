@@ -3,7 +3,6 @@ package race;
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
- Date:  2/26/2016
  */
 import java.util.Date;
 
@@ -101,7 +100,7 @@ public class Racer
 		}
 		else{
 			Date finalTime = new Date();
-			finalTime.setTime(endTime.getTime() - startTime.getTime() - ct.getNewOffset());
+			finalTime.setTime(endTime.getTime() - startTime.getTime());
 			return finalTime;
 		}
 	}

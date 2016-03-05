@@ -1,5 +1,10 @@
 package main;
 
+/**
+ -- ChronoTimer 1009 --
+ Author:  The Unnameables
+ */
+
 public class ComHandler {
 	ChronoTimer chrono;
 	
@@ -28,6 +33,7 @@ public class ComHandler {
 
 		if (cmdArgs[nextCmd].equalsIgnoreCase("exit"))
 		{
+			chrono.exit();
 			System.out.println("The simulator will now exit");
 			System.exit(0);
 		}
@@ -85,6 +91,10 @@ public class ComHandler {
 		{
 			chrono.power();
 		}
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("swap"))
+		{
+			chrono.swap();
+		}
 		else if (cmdArgs[nextCmd].equalsIgnoreCase("reset"))
 		{
 			chrono.reset();
@@ -103,21 +113,21 @@ public class ComHandler {
 				chrono.time(cmdArgs[nextCmd]);
 			}
 		}
-//		else if (cmdArgs[nextCmd].equalsIgnoreCase("print"))
-//		{
-//			++nextCmd;
-//			if (cmdArgs.length == (nextCmd+1)) {
-//				try {
-//					chrono.print(Integer.parseInt(cmdArgs[nextCmd]));
-//					isValid = true;
-//				}
-//				catch (NumberFormatException e) {
-//					System.out.println("Error parsing PRINT");
-//				}
-//			}
-//			else
-//				chrono.print();
-//		}
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("print"))
+		{
+			++nextCmd;
+			if (cmdArgs.length == (nextCmd+1)) {
+				try {
+					chrono.print(Integer.parseInt(cmdArgs[nextCmd]));
+					isValid = true;
+				}
+				catch (NumberFormatException e) {
+					System.out.println("Error parsing PRINT");
+				}
+			}
+			else
+				chrono.print();
+		}
 		else if (cmdArgs[nextCmd].equalsIgnoreCase("num"))
 		{
 			++nextCmd;
@@ -127,6 +137,18 @@ public class ComHandler {
 				}
 				catch (NumberFormatException e) {
 					System.out.println("Error parsing NUM");
+				}
+			}
+		}
+		else if (cmdArgs[nextCmd].equalsIgnoreCase("clr"))
+		{
+			++nextCmd;
+			if (cmdArgs.length == (nextCmd+1)) {
+				try {
+					chrono.clr(Integer.parseInt(cmdArgs[nextCmd]));
+				}
+				catch (NumberFormatException e) {
+					System.out.println("Error parsing CLR");
 				}
 			}
 		}

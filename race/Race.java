@@ -1,18 +1,21 @@
 package race;
 
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
 import channel.Channel;
 import main.ChronoTimer;
 
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
- Date:  2/28/2016
  */
 public class Race{
 	/**
 	 Reference to the ChonoTimer.
 	 */
 	protected ChronoTimer timer;
+	protected SimpleDateFormat diffFormat = new SimpleDateFormat("HH:mm:ss.S");
 	/**
 	 Quick override to bypass start check once Race has started.
 	 */
@@ -31,6 +34,7 @@ public class Race{
 	 @param timer Reference to the ChronoTimer.
 	 */
 	public Race(ChronoTimer timer){
+		diffFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		this.timer = timer;
 		channelVerify();
 		//  TODO
@@ -286,6 +290,26 @@ public class Race{
 				break;
 			default:
 				//  TODO?
+		}
+	}
+	
+	/**
+	 Prints the current status of all Racers.
+	 @return The Racer status printout.
+	 TODO:  IMPLEMENT IN LOG?
+	 */
+	public String print(){
+		switch(timer.getEventType()){
+			case "IND":
+				return ((RaceIND) this).printIND();
+			case "PARIND":
+				return ((RacePARIND) this).printPARIND();
+			case "GRP":
+				return ((RaceGRP) this).printGRP();
+			case "PARGRP":
+				return ((RacePARGRP) this).printPARGRP();
+			default:
+				return "";  //  TODO?
 		}
 	}
 }

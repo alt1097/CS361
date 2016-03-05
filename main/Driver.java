@@ -2,16 +2,21 @@ package main;
 
 import java.util.Scanner;
 
+/**
+ -- ChronoTimer 1009 --
+ Author:  The Unnameables
+ */
+
 public class Driver {
 	public static void main(String[] args)	{
 		Scanner scanner = new Scanner(System.in);
 		Simulator simulator = new Simulator();
-		System.out.println("Choose file (f) or console (c) input:");
-		String inputType = scanner.next();
+		System.out.print("Choose file (f) or console (c) input:  ");
+		String inputType = scanner.nextLine();
 		if (inputType.startsWith("f"))
 		{
 			System.out.println("Please enter the filename of the test data:");
-			simulator.fileReader(scanner.next());
+			simulator.fileReader(scanner.nextLine());
 		}
 		else if (inputType.startsWith("c"))
 		{

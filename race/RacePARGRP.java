@@ -4,11 +4,11 @@ import channel.Channel;
 import main.ChronoTimer;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  -- ChronoTimer 1009 --
- Author:  The Joker
- Date:  2/28/2016 - 3:49 PM
+ Author:  The Unnameables
  */
 public class RacePARGRP extends Race{
 	/**
@@ -164,5 +164,13 @@ public class RacePARGRP extends Race{
 	 */
 	public void endPARGRP(){
 		//  TODO
+	}
+	
+	/**
+	 Prints the current status of all Racers in Parallel Group Race.
+	 @return The Racer status printout.
+	 */
+	public String printPARGRP(){
+		return "";  //  TODO
 	}
 }
