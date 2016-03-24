@@ -369,14 +369,11 @@ public class ChronoTimer{
 		if(powerState){
 			Racer racer = race.getRacer(number, false);
 			if(racer == null){
-				if(race.ongoing()){
-					race.addRacer(number, false);
-				}
-				else if(race.ended()){
+				if(race.ended()){
 					logOut += " - RACE HAS ENDED";
 				}
 				else{
-					race.addRacer(number, true);
+					race.addRacer(number, false);
 				}
 			}
 			else{

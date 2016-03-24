@@ -22,6 +22,7 @@ public class FieldSensor extends Sensor{
 	// use this for regular activities
 	public FieldSensor(Channel channel, String type, ChronoTimer timer) {
 		super(channel, type, false, timer);
+		this.timer = timer;
 		this.name = channel.getName();
 	}
 

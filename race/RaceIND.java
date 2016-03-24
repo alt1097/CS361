@@ -139,8 +139,11 @@ public class RaceIND extends Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean swap(){
-		Racer racer = racers.get(1);
-		return racer != null && moveToFirstIND(racer);
+		if(firstIndex + 1 < racers.size()){
+			Racer racer = racers.get(firstIndex + 1);
+			return racer != null && moveToFirstIND(racer);
+		}
+		return false;
 	}
 
 	/**

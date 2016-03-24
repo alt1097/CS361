@@ -24,6 +24,7 @@ public class ChannelFireButton extends Sensor{
 	// use this for regular activities
 	public ChannelFireButton(Channel channel, ChronoTimer timer) {
 		super(channel, "FIRE_BUTTON", true, timer);
+		this.timer = timer;
 		this.name = channel.getName();
 	}
 
