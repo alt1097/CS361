@@ -50,6 +50,8 @@ public class RacePARIND extends Race{
 	 */
 	public void addRacerPARIND(int number, boolean toFront){
 		//  TODO
+		int numLanes = lanes.size();
+
 	}
 
 	/**
@@ -148,8 +150,42 @@ public class RacePARIND extends Race{
 	 */
 	public String triggerPARIND(Channel channel){
 		//  TODO
+		String retMes = "";
+		if (startChannels.contains(channel)) {
+			int laneNum = 0;
+			for (int i=0; i <= startChannels.size(); i++) {
+				if (channel == startChannels.get(i))
+					laneNum = i;
+			}
+			if (queueIndexes.get(laneNum) == lanes.get(laneNum).size())
+				retMes += " - NO RACER LEFT IN QUEUE";
+			else {
+				ongoing = true;
+				startChannels.get(laneNum).fireChannel(getRacerPARIND(queueIndexes.get(laneNum),true));
+				startChannels.get(laneNum).reset();
+				queueIndexes.set(laneNum, queueIndexes.get(laneNum) + 1);
+			}
+		}
+		else if (finishChannels.contains(channel)) {
+			int laneNum = 0;
+			for (int i=0; i <= finishChannels.size(); i++) {
+				if (channel == finishChannels.get(i))
+					laneNum = i;
+			}
+			if (queueIndexes.get(laneNum) == lanes.get(laneNum).size())
+				retMes += " - NO RACER LEFT IN QUEUE";
+			else {
+				ongoing = true;
+				finishChannels.get(laneNum).fireChannel(getRacerPARIND(queueIndexes.get(laneNum),true));
+				finishChannels.get(laneNum).reset();
+				queueIndexes.set(laneNum, queueIndexes.get(laneNum) + 1);
+			}
+		}
+		else {
+			retMes += " - CHANNEL IS NOT USED";
+		}
 		update();
-		return "";  //  TODO
+		return retMes;
 	}
 
 	/**
