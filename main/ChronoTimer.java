@@ -6,6 +6,7 @@ import java.util.Date;
 
 import race.*;
 import channel.Channel;
+import export.Export;
 
 /**
  -- ChronoTimer 1009 --
@@ -44,7 +45,7 @@ public class ChronoTimer{
 	/**
 	 Reference to the Race.
 	 */
-	private Race race = new RaceIND(this);;
+	private Race race = new RaceIND(this);
 	/**
 	 Reference to DebugLog class for debugging.
 	 */
@@ -338,6 +339,9 @@ public class ChronoTimer{
 	 Triggers printing the contents of the whole log passed the last time the command was issued.
 	 */
 	public void print(){
+		// this is example of how to save instance of RaceIND into json
+//		((RaceIND) race).exportMe();
+
 		System.out.println(race.print());
 		debugLog.add(format.format(getTime())+" PRINT");
 	}

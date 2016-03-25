@@ -8,7 +8,7 @@ import java.util.Scanner;
  */
 
 public class Driver {
-	public static void main(String[] args)	{
+	public static void main(String[] args)	{		
 		Scanner scanner = new Scanner(System.in);
 		Simulator simulator = new Simulator();
 		System.out.print("Choose file (f) or console (c) input:  ");
@@ -17,6 +17,7 @@ public class Driver {
 		{
 			System.out.println("Please enter the filename of the test data:");
 			simulator.fileReader(scanner.nextLine());
+			
 		}
 		else if (inputType.startsWith("c"))
 		{
@@ -25,4 +26,4 @@ public class Driver {
 		}
 		scanner.close();
 	}
-}// test
+}

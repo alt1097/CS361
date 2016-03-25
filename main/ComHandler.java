@@ -35,7 +35,7 @@ public class ComHandler {
 		{
 			chrono.exit();
 			System.out.println("The simulator will now exit");
-			System.exit(0);
+//			System.exit(0);
 		}
 		else if (cmdArgs[nextCmd].equalsIgnoreCase("conn"))
 		{

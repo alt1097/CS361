@@ -7,6 +7,10 @@ import main.Log;
 import java.util.ArrayList;
 import java.util.Date;
 
+import export.Export;
+import java.util.Hashtable;
+import java.io.Serializable;
+
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
@@ -41,6 +45,24 @@ public class RaceIND extends Race{
 		super(timer);
 		//  TODO
 	}
+	
+	// this is example of how to use export to save object variables as JSON
+//	Export export = new Export();
+//	
+//	public void exportMe() {
+//		// use this format to put desired items in table:
+//		// "variable name":variable itself
+//		// keep in mind: "variable":variable not a same as "variable":"variable"
+//	    // table.put("key", value);
+//	    Hashtable<String, Serializable> table = new Hashtable<String, Serializable>();
+//	    table.put("racers", racers);
+//	    table.put("firstIndex", firstIndex);
+//	    table.put("queueIndex", queueIndex);
+//	    table.put("startChannel", startChannel.getName());
+//	    table.put("finishChannel", finishChannel.getName());	    
+//		//export.objectToJsonFile(table); // this is for export in file
+//	    //return export.objectToJsonString(table); // this is for export in string
+//	}
 
 	//  ----------  RACER MANAGEMENT  ----------
 
