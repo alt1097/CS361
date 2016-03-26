@@ -1,6 +1,8 @@
 package race;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.Hashtable;
 import java.util.TimeZone;
 
 import channel.Channel;
@@ -30,12 +32,10 @@ public class Race{
 
 	/**
 	 Initializes the default Race requirements.
+	 @param type Type the Race should be.
 	 */
-	public Race(){
-		if(eventType == null){
-			eventType = "IND";
-		}
-		channelVerify();
+	public Race(String type){
+		eventType = type;
 		//  TODO
 	}
 
@@ -298,6 +298,7 @@ public class Race{
 			default:
 				//  TODO?
 		}
+		ChronoTimer.log.addToExport(exportMe());
 	}
 	
 	/**
@@ -318,5 +319,34 @@ public class Race{
 			default:
 				return "";  //  TODO?
 		}
+	}
+
+	/**
+	 Exports Race data into JSON format String.
+	 @return The JSON data.
+	 */
+	public String exportMe(){
+		Hashtable<String, Serializable> data = new Hashtable<>();
+		data.put("eventType", eventType);
+		data.put("canStart", canStart);
+		data.put("ongoing", ongoing);
+		data.put("ended", ended);
+		switch(getEventType()){
+			case "IND":
+				((RaceIND) this).exportMeIND(data);
+				break;
+			case "PARIND":
+				((RacePARIND) this).exportMePARIND(data);
+				break;
+			case "GRP":
+				((RaceGRP) this).exportMeGRP(data);
+				break;
+			case "PARGRP":
+				((RacePARGRP) this).exportMePARGRP(data);
+				break;
+			default:
+				break;  //  TODO?
+		}
+		return ChronoTimer.export.objectToJsonString(data);
 	}
 }

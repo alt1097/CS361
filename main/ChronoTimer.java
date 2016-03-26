@@ -29,7 +29,6 @@ public class ChronoTimer{
 	/**
 	 Exists only if the time has been explicitly forced to a specific time, then is used as base time.
 	 */
-
 	private static Long systemStartTime;
 	/**
 	 Offset used to make time format to desired new time.
@@ -104,6 +103,14 @@ public class ChronoTimer{
 		if(!silent){
 			debugLog.add(format.format(getTime())+" POWER");
 		}
+		String output = "SYSTEM POWERED ";
+		if(powerState){
+			output += "ON";
+		}
+		else{
+			output += "OFF";
+		}
+		output(output);
 	}
 
 	/**
@@ -139,6 +146,7 @@ public class ChronoTimer{
 	 */
 	public void exit(){
 		debugLog.add(format.format(getTime())+" EXIT");
+		output("SYSTEM TERMINATED");
 	}
 
 	/**
@@ -167,7 +175,9 @@ public class ChronoTimer{
 		}
 		race = new RaceIND();
 		log = new Log();
-		//  TODO
+		if(!silent){
+			output("SYSTEM RESET");
+		}
 	}
 
 	/**
@@ -184,6 +194,7 @@ public class ChronoTimer{
 				long parsed = format.parse(time).getTime();
 				systemStartTime = System.currentTimeMillis();
 				newOffset = parsed;
+				output("SYSTEM TIME SET TO "+format.format(new Date(parsed)));
 			}catch(ParseException e){
 				logOut += " - TIME COULD NOT BE PARSED";
 			}
@@ -206,14 +217,21 @@ public class ChronoTimer{
 	public void toggle(int channel){
 		String logOut = format.format(getTime())+" TOGGLE "+channel;
 		if(powerState){
-			channel = channel - 1;
-			Channel channelObj = getChannel(channel);
+			Channel channelObj = getChannel(channel - 1);
 			if(channelObj == null){
 				logOut += " - CHANNEL DOES NOT EXIST";
 			}
 			else{
 				channelObj.toggle();
 				race.channelVerify();
+				String output = "CHANNEL "+channel+" TOGGLED ";
+				if(channelObj.isOn()){
+					output += "ON";
+				}
+				else{
+					output += "OFF";
+				}
+				output(output);
 			}
 		}
 		else{
@@ -236,6 +254,7 @@ public class ChronoTimer{
 		}
 		else{
 			channelObj.connect(sensor);
+			output("SENSOR TYPE ("+sensor+") CONNECTED TO CHANNEL "+num);
 		}
 		debugLog.add(logOut);
 	}
@@ -253,6 +272,7 @@ public class ChronoTimer{
 		}
 		else{
 			channelObj.disconnect();
+			output("SENSOR DISCONNECTED FROM CHANNEL "+num);
 		}
 		debugLog.add(logOut);
 	}
@@ -272,6 +292,7 @@ public class ChronoTimer{
 					logOut += " - RACE ONGOING";
 				}
 				else{
+					output("EVENT TYPE CHANGED TO "+type);
 					newRun(type, true);
 				}
 			}
@@ -301,6 +322,9 @@ public class ChronoTimer{
 				logOut += " - RACE ONGOING";
 			}
 			else{
+				if(log.getExportData(log.getLogNumber()).length() == 0){
+					log.addToExport(race.exportMe());
+				}
 				log.incrementLogNumber();
 				switch(type){
 					case "IND":
@@ -318,6 +342,7 @@ public class ChronoTimer{
 					default:
 						logOut += " - EVENT TYPE DOES NOT EXIST";
 				}
+				output("NEW RUN TYPE ("+type+") STARTED");
 			}
 		}
 		else{
@@ -336,6 +361,7 @@ public class ChronoTimer{
 		if(powerState){
 			if(race.ongoing()){
 				race.end();
+				output("RUN ENDED");
 			}
 			else{
 				logOut += " - RACE NOT ONGOING";
@@ -351,8 +377,15 @@ public class ChronoTimer{
 	 Triggers printing the contents of the whole log passed the last time the command was issued.
 	 */
 	public void print(){
-		System.out.println(race.print());
-		debugLog.add(format.format(getTime())+" PRINT");
+		String logOut = format.format(getTime())+" PRINT";
+		if(powerState){
+			output("PRINTING RACE STATUS...");
+			System.out.println(race.print());
+		}
+		else{
+			logOut += " - SYSTEM NOT ON";
+		}
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -361,12 +394,10 @@ public class ChronoTimer{
 	 */
 	public void print(int run){
 		String logOut = format.format(getTime())+" PRINT "+run;
-		int logNum = log.getLogNumber();
-		if(run == logNum){
-			System.out.println(race.print());
-		}
-		else if(run < logNum){
-		//	System.out.println(log.print(run));
+		String runLog = log.getRuns(run);
+		if(runLog != null){
+			output("PRINTING LOG FOR RUN "+run+"...");
+			System.out.println(runLog);
 		}
 		else{
 			logOut += " - RUN DOES NOT EXIST";
@@ -380,21 +411,26 @@ public class ChronoTimer{
 	 */
 	public void export(int run){
 		String logOut = format.format(getTime())+" EXPORT "+run;
-		int logNum = log.getLogNumber();
-		if(run == logNum){
-		export.objectToJsonFile(race);
-		//	race.export();
-		}
-		else if(run < logNum){
-		//	log.export(run);
+		String saveData = null;
+		if(log.getLogNumber() == run && !race.ended()){
+			output("EXPORTING CURRENT RUN ("+run+") DATA...");
+			saveData = race.exportMe();
 		}
 		else{
-			logOut += " - RUN DOES NOT EXIST";
+			String runExport = log.getExportData(run);
+			if(runExport != null){
+				output("EXPORTING RUN "+run+" DATA...");
+				saveData = runExport;
+			}
+			else{
+				logOut += " - RUN DOES NOT EXIST";
+			}
 		}
 		debugLog.add(logOut);
-		//  ((RaceIND) race).exportMe();
-
-		//  TODO
+		if(saveData != null){
+			System.out.println(saveData);
+			//  TODO
+		}
 	}
 
 	/**
@@ -413,17 +449,24 @@ public class ChronoTimer{
 				}
 				else{
 					race.addRacer(number, false);
+					output("RACER "+number+" ADDED");
 				}
 			}
 			else{
 				if(race.canBeMoved(racer)){
 					if(race.isRacing(racer)){
-						if(!race.moveToFirst(racer)){
+						if(race.moveToFirst(racer)){
+							output("RACER "+number+" MOVED TO FIRST");
+						}
+						else{
 							logOut += " - NOT ENOUGH RACERS TO MOVE IN RACE";
 						}
 					}
 					else{
-						if(!race.moveToNext(racer)){
+						if(race.moveToNext(racer)){
+							output("RACER "+number+" NEXT TO START");
+						}
+						else{
 							logOut += " - NOT ENOUGH RACERS TO MOVE IN QUEUE";
 						}
 					}
@@ -454,7 +497,10 @@ public class ChronoTimer{
 				logOut += " - RACE HAS ENDED";
 			}
 			else{
-				if(!race.removeRacer(number)){
+				if(race.removeRacer(number)){
+					output("RACER "+number+" REMOVED");
+				}
+				else{
 					logOut += " - RACER DOES NOT EXIST";
 				}
 			}
@@ -473,7 +519,10 @@ public class ChronoTimer{
 		if(powerState){
 			if(race.getEventType().equals("IND")){
 				if(race.ongoing()){
-					if(!((RaceIND) race).swap()){
+					if(((RaceIND) race).swap()){
+						output("TWO LEAD POSITIONS SWAPPED");
+					}
+					else{
 						logOut += " - NOT ENOUGH RACERS TO SWAP";
 					}
 				}
@@ -655,7 +704,7 @@ public class ChronoTimer{
 
 	/**
 	 Prints input to the screen and records it to Log.
-	 @param out
+	 @param out Text to print and save.
 	 */
 	public static void output(String out){
 		System.out.println(out);

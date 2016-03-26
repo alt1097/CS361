@@ -3,8 +3,10 @@ package race;
 import channel.Channel;
 import main.ChronoTimer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 
 /**
  -- ChronoTimer 1009 --
@@ -40,9 +42,14 @@ public class RacePARIND extends Race{
 	 Initializes the Parallel Individual components of Race.
 	 */
 	public RacePARIND(){
-		super();
-		eventType = "PARIND";
-		//  TODO
+		super("PARIND");
+		for(int i = 0; i < 4; i++){
+			lanes.add(new ArrayList<>());
+			firstIndexes.add(0);
+			startChannels.add(null);
+			finishChannels.add(null);
+		}
+		channelVerifyPARIND();
 	}
 
 	//  ----------  RACER MANAGEMENT  ----------
@@ -279,7 +286,7 @@ public class RacePARIND extends Race{
 	 Runs the actions to finalize a Parallel Individual Race.
 	 */
 	public void endPARIND(){
-		ChronoTimer.log.add(print());
+		ChronoTimer.log.add(printPARIND());
 	}
 	
 	/**
@@ -288,5 +295,23 @@ public class RacePARIND extends Race{
 	 */
 	public String printPARIND(){
 		return "";//  TODO
+	}
+
+	/**
+	 Exports Parallel Individual Race data into JSON format String.
+	 @param data Hash table to add to.
+	 */
+	public void exportMePARIND(Hashtable<String, Serializable> data){
+		data.put("racers", racers);
+		data.put("lanes", lanes);
+		data.put("firstIndexes", firstIndexes);
+		for(int i = 0; i < 4; i++){
+			if(startChannels.get(i) != null){
+				data.put("startChannel_"+i, startChannels.get(i).getName());
+			}
+			if(finishChannels.get(i) != null){
+				data.put("finishChannel_"+i, finishChannels.get(i).getName());
+			}
+		}
 	}
 }

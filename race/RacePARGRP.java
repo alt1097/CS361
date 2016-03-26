@@ -3,8 +3,10 @@ package race;
 import channel.Channel;
 import main.ChronoTimer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 
 /**
  -- ChronoTimer 1009 --
@@ -36,8 +38,8 @@ public class RacePARGRP extends Race{
 	 Initializes the Parallel Groups components of Race.
 	 */
 	public RacePARGRP(){
-		super();
-		eventType = "PARGRP";
+		super("PARGRP");
+		channelVerifyPARGRP();
 		//  TODO
 	}
 
@@ -172,5 +174,13 @@ public class RacePARGRP extends Race{
 	 */
 	public String printPARGRP(){
 		return "";  //  TODO
+	}
+
+	/**
+	 Exports Parallel Group Race data into JSON format String.
+	 @param data Hash table to add to.
+	 */
+	public void exportMePARGRP(Hashtable<String, Serializable> data){
+		//  TODO
 	}
 }

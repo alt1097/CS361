@@ -2,14 +2,11 @@ package race;
 
 import channel.Channel;
 import main.ChronoTimer;
-import main.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-
-import export.Export;
 import java.util.Hashtable;
-import java.io.Serializable;
 
 /**
  -- ChronoTimer 1009 --
@@ -41,8 +38,8 @@ public class RaceIND extends Race{
 	 Initializes the Individual components of Race.
 	 */
 	public RaceIND(){
-		super();
-		eventType = "IND";
+		super("IND");
+		channelVerifyIND();
 	}
 
 	// this is example of how to use export to save object variables as JSON
@@ -244,7 +241,6 @@ public class RaceIND extends Race{
 				retMes += " - NO RACER CURRENTLY RACING";
 			}
 			else{
-				ongoing = true;
 				Racer racer = getRacerIND(firstIndex, true);
 				finishChannel.fireChannel(racer);
 				finishChannel.reset();
@@ -298,22 +294,22 @@ public class RaceIND extends Race{
 		for(Racer racer : racers){
 			record += "#"+racer.getNumber()+"\tStart: ";
 			boolean printDif = true;
-			Date tempStartTime = racer.getStartTime();
-			if(tempStartTime == null){
+			Date tempTime = racer.getStartTime();
+			if(tempTime == null){
 				record += "DID NOT START";
 				printDif = false;
 			}
 			else{
-				record += ChronoTimer.format.format(tempStartTime);
+				record += ChronoTimer.format.format(tempTime);
 			}
 			record += "\t\tFinish: ";
-			Date tempEndTime = racer.getEndTime();
-			if(tempEndTime == null){
+			tempTime = racer.getEndTime();
+			if(tempTime == null){
 				record += "DID NOT FINISH";
 				printDif = false;
 			}
 			else{
-				record += ChronoTimer.format.format(tempEndTime);
+				record += ChronoTimer.format.format(tempTime);
 			}
 			record += "\t\tFinal: ";
 			if(printDif){
@@ -326,5 +322,21 @@ public class RaceIND extends Race{
 		}
 		record += sep;
 		return record;
+	}
+
+	/**
+	 Exports Individual Race data into JSON format String.
+	 @param data Hash table to add to.
+	 */
+	public void exportMeIND(Hashtable<String, Serializable> data){
+		data.put("racers", racers);
+		data.put("firstIndex", firstIndex);
+		data.put("queueIndex", queueIndex);
+		if(startChannel != null){
+			data.put("startChannel", startChannel.getName());
+		}
+		if(finishChannel != null){
+			data.put("finishChannel", finishChannel.getName());
+		}
 	}
 }

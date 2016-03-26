@@ -3,8 +3,10 @@ package race;
 import channel.Channel;
 import main.ChronoTimer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 
 /**
  -- ChronoTimer 1009 --
@@ -36,8 +38,8 @@ public class RaceGRP extends Race{
 	 Initializes the Group components of Race.
 	 */
 	public RaceGRP(){
-		super();
-		eventType = "GRP";
+		super("GRP");
+		channelVerifyGRP();
 		//  TODO
 	}
 
@@ -233,5 +235,13 @@ public class RaceGRP extends Race{
 		}
 		record += sep;
 		return record;
+	}
+
+	/**
+	 Exports Group Race data into JSON format String.
+	 @param data Hash table to add to.
+	 */
+	public void exportMeGRP(Hashtable<String, Serializable> data){
+		//  TODO
 	}
 }

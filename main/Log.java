@@ -30,6 +30,7 @@ public class Log
 	{
 		this.logNumber = 1;
 		runs[logNumber] = "";
+		exportData[logNumber] = "";
 	}
 	
 	/**
