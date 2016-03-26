@@ -38,10 +38,10 @@ public class RacePARIND extends Race{
 
 	/**
 	 Initializes the Parallel Individual components of Race.
-	 @param timer Reference to the ChronoTimer.
 	 */
-	public RacePARIND(ChronoTimer timer){
-		super(timer);
+	public RacePARIND(){
+		super();
+		eventType = "PARIND";
 		//  TODO
 	}
 
@@ -164,9 +164,9 @@ public class RacePARIND extends Race{
 		boolean pass = false;
 		int numLanes = 0;
 		for (int i = 0; i < 8; i += 2) {
-			Channel tempStart = timer.getChannel(i);
+			Channel tempStart = ChronoTimer.getChannel(i);
 			if (tempStart.isOn()) {
-				Channel tempFinish = timer.getChannel(i + 1);
+				Channel tempFinish = ChronoTimer.getChannel(i + 1);
 				if (tempFinish.isOn()) {
 					// Adds the lane at start channel number divided by two.
 					lanes.add((i/2), new ArrayList<Racer>());

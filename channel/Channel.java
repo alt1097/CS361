@@ -8,7 +8,6 @@ import race.Racer;
  Author:  The Unnameables
  */
 public class Channel implements SensorListener{
-	private static ChronoTimer timer;
 	private boolean channelWasFired;
 	private int number;
 	private String type;
@@ -35,29 +34,28 @@ public class Channel implements SensorListener{
 //		fieldSensor = new FieldSensor(this, fieldSsensorType);
 //	}
 
-	public Channel(String channelType, int number, String fieldSsensorType, ChronoTimer timer){
-		this.timer = timer;
+	public Channel(String channelType, int number, String fieldSsensorType){
 		type = channelType;
 		this.number = number;
-		fireButton = new ChannelFireButton(this, timer);
+		fireButton = new ChannelFireButton(this);
 		if(fieldSsensorType == null){
 			fieldSsensorType = null;
 		}else{
-			fieldSensor = new FieldSensor(this, fieldSsensorType, timer);
+			fieldSensor = new FieldSensor(this, fieldSsensorType);
 		}
 
 	}
 
-	public Channel(String channelType, ChronoTimer timer){
-		this(channelType, 1, null, timer);
+	public Channel(String channelType){
+		this(channelType, 1, null);
 	}
 
 	public Channel(){
-		this("ANON", 1, null, timer);
+		this("ANON", 1, null);
 	}
 
-	public Channel(int channelNumber, ChronoTimer timer){
-		this("ANON", channelNumber, null, timer);
+	public Channel(int channelNumber){
+		this("ANON", channelNumber, null);
 	}
 
 	public void setChanType(String channelType){
@@ -124,7 +122,7 @@ public class Channel implements SensorListener{
 			return;
 		}
 		if (fieldSensor == null) {
-			fieldSensor = new FieldSensor(this, fieldSensorType, timer);
+			fieldSensor = new FieldSensor(this, fieldSensorType);
 			ChronoTimer.debugLog.add("Channel # " + number+ " " + type + " was successfully connected to " + fieldSensor.getType() + " sensor.");
 		} else {
 			ChronoTimer.debugLog.add("Error: channel # " + number + " connected to " + fieldSensor.getType() + " sensor. Disconnect old one manually");
@@ -188,13 +186,13 @@ public class Channel implements SensorListener{
 
 		if(getChannelType().equals("START")){
 			if(racer.getStartTime() == null){
-				racer.setStartTime(timer.getTime());
+				racer.setStartTime(ChronoTimer.getTime());
 			}else{
 				ChronoTimer.debugLog.add("Error: This racer already have START time");
 			}
 		}else if(getChannelType().equals("FINISH")){
 			if(racer.getEndTime() == null){
-				racer.setEndTime(timer.getTime());
+				racer.setEndTime(ChronoTimer.getTime());
 			}else{
 				ChronoTimer.debugLog.add("Error: This racer already have FINISH time");
 			}

@@ -93,7 +93,7 @@ public class Racer
 	 * time from their end time.
 	 * @return finalTime
 	 */
-	public Date getFinalTime(ChronoTimer ct)
+	public Date getFinalTime()
 	{
 		if(endTime == null){
 			return null;
@@ -108,13 +108,12 @@ public class Racer
 	/**
 	 * Returns the elapsed time of a racer at any given point during a race
 	 * by subtracting their start time from the current system time.
-	 * @param ct Reference to the ChronoTimer
 	 * @return elapsedTime How long a racer has been running for at any given time during a race
 	 */
-	public Date getElapsedTime(ChronoTimer ct)
+	public Date getElapsedTime()
 	{
 		Date elapsedTime = new Date();
-		elapsedTime.setTime(ct.getTime().getTime() - startTime.getTime());
+		elapsedTime.setTime(ChronoTimer.getTime().getTime() - startTime.getTime());
 		return elapsedTime;
 	}
 }

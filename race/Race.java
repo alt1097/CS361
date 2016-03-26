@@ -12,10 +12,9 @@ import main.ChronoTimer;
  */
 public class Race{
 	/**
-	 Reference to the ChonoTimer.
+	 Type of the race.
 	 */
-	protected ChronoTimer timer;
-	protected SimpleDateFormat diffFormat = new SimpleDateFormat("HH:mm:ss.S");
+	protected String eventType;
 	/**
 	 Quick override to bypass start check once Race has started.
 	 */
@@ -31,11 +30,11 @@ public class Race{
 
 	/**
 	 Initializes the default Race requirements.
-	 @param timer Reference to the ChronoTimer.
 	 */
-	public Race(ChronoTimer timer){
-		diffFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-		this.timer = timer;
+	public Race(){
+		if(eventType == null){
+			eventType = "IND";
+		}
 		channelVerify();
 		//  TODO
 	}
@@ -48,7 +47,7 @@ public class Race{
 	 @param toFront True if Racer should be added to the front of lane.
 	 */
 	public void addRacer(int number, boolean toFront){
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				((RaceIND) this).addRacerIND(number, toFront);
 				break;
@@ -73,7 +72,7 @@ public class Race{
 	 @return The Racer object.
 	 */
 	public Racer getRacer(int number, boolean byPlace){
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				return ((RaceIND) this).getRacerIND(number, byPlace);
 			case "PARIND":
@@ -93,7 +92,7 @@ public class Race{
 	 @return If the Racer exists.
 	 */
 	public boolean removeRacer(int number){
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				return ((RaceIND) this).removeRacerIND(number);
 			case "PARIND":
@@ -113,7 +112,7 @@ public class Race{
 	 @return True if the Racer is racing.
 	 */
 	public boolean isRacing(Racer racer){
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				return ((RaceIND) this).isRacingIND(racer);
 			case "PARIND":
@@ -133,7 +132,7 @@ public class Race{
 	 @return True if Racer can be moved.
 	 */
 	public boolean canBeMoved(Racer racer){
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				return ((RaceIND) this).canBeMovedIND(racer);
 			case "PARIND":
@@ -153,7 +152,7 @@ public class Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean moveToFirst(Racer racer){
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				return ((RaceIND) this).moveToFirstIND(racer);
 			case "PARIND":
@@ -173,7 +172,7 @@ public class Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean moveToNext(Racer racer){
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				return ((RaceIND) this).moveToNextIND(racer);
 			case "PARIND":
@@ -197,7 +196,7 @@ public class Race{
 		if(canStart){
 			return true;
 		}
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				return ((RaceIND) this).canStartIND();
 			case "PARIND":
@@ -228,10 +227,18 @@ public class Race{
 	}
 
 	/**
+	 Gets the type of the race.
+	 @return Type of the race.
+	 */
+	public String getEventType(){
+		return eventType;
+	}
+
+	/**
 	 Verifies that Channels are set up so that a Race can proceed.
 	 */
 	public void channelVerify(){
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				((RaceIND) this).channelVerifyIND();
 				break;
@@ -255,7 +262,7 @@ public class Race{
 	 @return String of any messages.
 	 */
 	public String trigger(Channel channel){
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				return ((RaceIND) this).triggerIND(channel);
 			case "PARIND":
@@ -275,7 +282,7 @@ public class Race{
 	public void end(){
 		ongoing = false;
 		ended = true;
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				((RaceIND) this).endIND();
 				break;
@@ -299,7 +306,7 @@ public class Race{
 	 TODO:  IMPLEMENT IN LOG?
 	 */
 	public String print(){
-		switch(timer.getEventType()){
+		switch(getEventType()){
 			case "IND":
 				return ((RaceIND) this).printIND();
 			case "PARIND":

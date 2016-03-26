@@ -34,10 +34,10 @@ public class RaceGRP extends Race{
 
 	/**
 	 Initializes the Group components of Race.
-	 @param timer Reference to the ChronoTimer.
 	 */
-	public RaceGRP(ChronoTimer timer){
-		super(timer);
+	public RaceGRP(){
+		super();
+		eventType = "GRP";
 		//  TODO
 	}
 
@@ -224,7 +224,7 @@ public class RaceGRP extends Race{
 			}
 			record += "\t\tFinal: ";
 			if(printDif){
-				record += diffFormat.format(racer.getFinalTime(timer));
+				record += ChronoTimer.diffFormat.format(racer.getFinalTime());
 			}
 			else{
 				record += "DNF";

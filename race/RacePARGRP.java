@@ -34,10 +34,10 @@ public class RacePARGRP extends Race{
 
 	/**
 	 Initializes the Parallel Groups components of Race.
-	 @param timer Reference to the ChronoTimer.
 	 */
-	public RacePARGRP(ChronoTimer timer){
-		super(timer);
+	public RacePARGRP(){
+		super();
+		eventType = "PARGRP";
 		//  TODO
 	}
 

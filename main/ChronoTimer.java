@@ -3,6 +3,7 @@ package main;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import race.*;
 import channel.Channel;
@@ -16,55 +17,67 @@ public class ChronoTimer{
 	/**
 	 Indicates if the ChronoTimer is currently active.
 	 */
-	private boolean powerState = false;
+	private static boolean powerState;
 	/**
 	 Default format all times will be parsed and printed with.
 	 */
-	public static SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.S");
+	public static final SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.S");
+	/**
+	 Format used specifically for printing race times.
+	 */
+	public static final SimpleDateFormat diffFormat = new SimpleDateFormat("HH:mm:ss.S");
 	/**
 	 Exists only if the time has been explicitly forced to a specific time, then is used as base time.
 	 */
-	private Long systemStartTime;
+
+	private static Long systemStartTime;
 	/**
 	 Offset used to make time format to desired new time.
 	 */
-	private long newOffset = 0L;
+	private static long newOffset;
 	/**
 	 Used to immediately use a specified Date instead of getting the current time's.
 	 */
-	private Date overrideDate;
+	private static Date overrideDate;
 	/**
-	 Type of the race.
-	 */
-	private String eventType = "IND";
-	/**
-	 TODO:  CURRENTLY DOES NOT USE UNIT TIME TO MARK RACER TIMES
 	 Reference to all the channels on the system.
 	 */
-	private Channel[] channels = new Channel[8];
+	private static Channel[] channels;
 	/**
 	 Reference to the Race.
 	 */
-	private Race race = new RaceIND(this);
+	private static Race race;
 	/**
 	 Reference to DebugLog class for debugging.
 	 */
-	public static DebugLog debugLog = new DebugLog("ChronoTimer Debug.txt");
+	public static DebugLog debugLog;
 	/**
 	 Reference to Log class for printing.
 	 */
-	public static Log log = new Log();
-	
+	public static Log log;
+	/**
+	 Reference to Export to export data file.
+	 */
+	public static Export export;
 
 	/**
 	 Initializes the ChronoTimer.
 	 */
 	public ChronoTimer(){
+		powerState = false;
+		diffFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		systemStartTime = null;
+		newOffset = 0L;
+		overrideDate = null;
+		channels = new Channel[8];
 		for(int i = 0; i < 8; i++){
-			channels[i] = new Channel(i, this);
+			channels[i] = new Channel(i);
 		}
+		race = new RaceIND();
+		debugLog = new DebugLog("ChronoTimer Debug.txt");
 		debugLog.add("\t\t"+new Date(System.currentTimeMillis()).toString());
-		//  TODO
+		log = new Log();
+		export = new Export();
 	}
 
 	//  ----------  COMMANDS  ----------
@@ -147,13 +160,12 @@ public class ChronoTimer{
 	 @param silent True to silence reset()'s messages.
 	 */
 	private void reset(boolean silent){
-		eventType = "IND";
 		for(int i = 0; i < 8; i++){
 			if(channels[i].isOn()){
 				channels[i].toggle();
 			}
 		}
-		race = new RaceIND(this);
+		race = new RaceIND();
 		log = new Log();
 		//  TODO
 	}
@@ -252,7 +264,7 @@ public class ChronoTimer{
 	public void event(String type){
 		String logOut = format.format(getTime())+" EVENT "+type;
 		if(powerState){
-			if(type.equals(eventType)){
+			if(type.equals(race.getEventType())){
 				logOut += " - EVENT TYPE SAME";
 			}
 			else{
@@ -260,8 +272,7 @@ public class ChronoTimer{
 					logOut += " - RACE ONGOING";
 				}
 				else{
-					eventType = type;
-					newRun(true);
+					newRun(type, true);
 				}
 			}
 		}
@@ -275,14 +286,15 @@ public class ChronoTimer{
 	 If there is not a race ongoing, then create the race structure of the set event type.
 	 */
 	public void newRun(){
-		newRun(false);
+		newRun(race.getEventType(), false);
 	}
 
 	/**
 	 If there is not a race ongoing, then create the race structure of the set event type.
+	 @param type Type that the Race should be.
 	 @param silent True to silence newRun()'s messages.
 	 */
-	private void newRun(boolean silent){
+	private void newRun(String type, boolean silent){
 		String logOut = format.format(getTime())+" NEWRUN";
 		if(powerState){
 			if(race.ongoing()){
@@ -290,18 +302,18 @@ public class ChronoTimer{
 			}
 			else{
 				log.incrementLogNumber();
-				switch(eventType){
+				switch(type){
 					case "IND":
-						race = new RaceIND(this);
+						race = new RaceIND();
 						break;
 					case "PARIND":
-						race = new RacePARIND(this);
+						race = new RacePARIND();
 						break;
 					case "GRP":
-						race = new RaceGRP(this);
+						race = new RaceGRP();
 						break;
 					case "PARGRP":
-						race = new RacePARGRP(this);
+						race = new RacePARGRP();
 						break;
 					default:
 						logOut += " - EVENT TYPE DOES NOT EXIST";
@@ -339,9 +351,6 @@ public class ChronoTimer{
 	 Triggers printing the contents of the whole log passed the last time the command was issued.
 	 */
 	public void print(){
-		// this is example of how to save instance of RaceIND into json
-//		((RaceIND) race).exportMe();
-
 		System.out.println(race.print());
 		debugLog.add(format.format(getTime())+" PRINT");
 	}
@@ -351,7 +360,18 @@ public class ChronoTimer{
 	 @param run Number of the run to print.
 	 */
 	public void print(int run){
-		//  TODO
+		String logOut = format.format(getTime())+" PRINT "+run;
+		int logNum = log.getLogNumber();
+		if(run == logNum){
+			System.out.println(race.print());
+		}
+		else if(run < logNum){
+		//	System.out.println(log.print(run));
+		}
+		else{
+			logOut += " - RUN DOES NOT EXIST";
+		}
+		debugLog.add(logOut);
 	}
 
 	/**
@@ -359,6 +379,21 @@ public class ChronoTimer{
  	 @param run Run number to export.
 	 */
 	public void export(int run){
+		String logOut = format.format(getTime())+" EXPORT "+run;
+		int logNum = log.getLogNumber();
+		if(run == logNum){
+		export.objectToJsonFile(race);
+		//	race.export();
+		}
+		else if(run < logNum){
+		//	log.export(run);
+		}
+		else{
+			logOut += " - RUN DOES NOT EXIST";
+		}
+		debugLog.add(logOut);
+		//  ((RaceIND) race).exportMe();
+
 		//  TODO
 	}
 
@@ -436,7 +471,7 @@ public class ChronoTimer{
 	public void swap(){
 		String logOut = format.format(getTime())+" SWAP";
 		if(powerState){
-			if(eventType.equals("IND")){
+			if(race.getEventType().equals("IND")){
 				if(race.ongoing()){
 					if(!((RaceIND) race).swap()){
 						logOut += " - NOT ENOUGH RACERS TO SWAP";
@@ -465,11 +500,11 @@ public class ChronoTimer{
 			boolean pass = false;
 			RaceIND raceIND = null;
 			RaceGRP raceGRP = null;
-			if(eventType.equals("IND")){
+			if(race.getEventType().equals("IND")){
 				raceIND = (RaceIND) race;
 				pass = true;
 			}
-			else if(eventType.equals("GRP")){
+			else if(race.getEventType().equals("GRP")){
 				raceGRP = (RaceGRP) race;
 				pass = true;
 			}
@@ -515,7 +550,7 @@ public class ChronoTimer{
 		if(powerState){
 			channel = channel - 1;
 			Channel channelObj = getChannel(channel);
-			if(channelObj.isOn()){
+			if(channelObj != null && channelObj.isOn()){
 				if(race.canStart()){
 					if(!race.ended() || race.ongoing()){
 						retMess += race.trigger(channelObj);
@@ -572,19 +607,11 @@ public class ChronoTimer{
 	}
 
 	/**
-	 Gets the type of the race.
-	 @return Type of the race.
-	 */
-	public String getEventType(){
-		return eventType;
-	}
-
-	/**
 	 Gets the desired channel from number.
 	 @param number Number of channel to get.
 	 @return The Channel object.
 	 */
-	public Channel getChannel(int number){
+	public static Channel getChannel(int number){
 		if(number > -1 && number < 8){
 			return channels[number];
 		}
@@ -616,7 +643,7 @@ public class ChronoTimer{
 	 Gets the unit's current time.
 	 @return Current unit time as Date.
 	 */
-	public Date getTime(){
+	public static Date getTime(){
 		if(overrideDate != null){
 			return overrideDate;
 		}
@@ -624,5 +651,14 @@ public class ChronoTimer{
 			return new Date(System.currentTimeMillis());
 		}
 		return new Date(System.currentTimeMillis() - systemStartTime + newOffset);
+	}
+
+	/**
+	 Prints input to the screen and records it to Log.
+	 @param out
+	 */
+	public static void output(String out){
+		System.out.println(out);
+		log.add(out);
 	}
 }

@@ -39,16 +39,15 @@ public class RaceIND extends Race{
 
 	/**
 	 Initializes the Individual components of Race.
-	 @param timer Reference to the ChronoTimer.
 	 */
-	public RaceIND(ChronoTimer timer){
-		super(timer);
-		//  TODO
+	public RaceIND(){
+		super();
+		eventType = "IND";
 	}
-	
+
 	// this is example of how to use export to save object variables as JSON
 //	Export export = new Export();
-//	
+//
 //	public void exportMe() {
 //		// use this format to put desired items in table:
 //		// "variable name":variable itself
@@ -59,7 +58,7 @@ public class RaceIND extends Race{
 //	    table.put("firstIndex", firstIndex);
 //	    table.put("queueIndex", queueIndex);
 //	    table.put("startChannel", startChannel.getName());
-//	    table.put("finishChannel", finishChannel.getName());	    
+//	    table.put("finishChannel", finishChannel.getName());
 //		//export.objectToJsonFile(table); // this is for export in file
 //	    //return export.objectToJsonString(table); // this is for export in string
 //	}
@@ -172,6 +171,7 @@ public class RaceIND extends Race{
 	 The Racer in first will be marked to not finish.
 	 */
 	public void dnf(){
+		ChronoTimer.output(getRacerIND(firstIndex, true).getNumber()+" DNF");
 		firstIndex++;
 		update();
 	}
@@ -200,9 +200,9 @@ public class RaceIND extends Race{
 	public void channelVerifyIND(){
 		boolean fail = true;
 		for(int i = 0; i < 8; i += 2){
-			Channel tempStart = timer.getChannel(i);
+			Channel tempStart = ChronoTimer.getChannel(i);
 			if(tempStart != null && tempStart.isOn()){
-				Channel tempFinish = timer.getChannel(i + 1);
+				Channel tempFinish = ChronoTimer.getChannel(i + 1);
 				if(tempFinish != null && tempFinish.isOn()){
 					tempStart.setChanType("START");
 					startChannel = tempStart;
@@ -232,9 +232,11 @@ public class RaceIND extends Race{
 			}
 			else{
 				ongoing = true;
-				startChannel.fireChannel(getRacerIND(queueIndex, true));
+				Racer racer = getRacerIND(queueIndex, true);
+				startChannel.fireChannel(racer);
 				startChannel.reset();
 				queueIndex++;
+				ChronoTimer.output(racer.getNumber()+" TRIG "+(startChannel.getName() + 1));
 			}
 		}
 		else if(channel == finishChannel){
@@ -243,9 +245,12 @@ public class RaceIND extends Race{
 			}
 			else{
 				ongoing = true;
-				finishChannel.fireChannel(getRacerIND(firstIndex, true));
+				Racer racer = getRacerIND(firstIndex, true);
+				finishChannel.fireChannel(racer);
 				finishChannel.reset();
 				firstIndex++;
+				ChronoTimer.output(racer.getNumber() + " TRIG " + (finishChannel.getName() + 1));
+				ChronoTimer.output(racer.getNumber()+" ELAPSED " + ChronoTimer.diffFormat.format(racer.getFinalTime()));
 			}
 		}
 		else{
@@ -268,7 +273,7 @@ public class RaceIND extends Race{
 	 Runs the actions to finalize an Individual Race.
 	 */
 	public void endIND(){
-		ChronoTimer.log.add(print());
+		ChronoTimer.log.add(printIND());
 	}
 
 	/**
@@ -312,7 +317,7 @@ public class RaceIND extends Race{
 			}
 			record += "\t\tFinal: ";
 			if(printDif){
-				record += diffFormat.format(racer.getFinalTime(timer));
+				record += ChronoTimer.diffFormat.format(racer.getFinalTime());
 			}
 			else{
 				record += "DNF";

@@ -7,13 +7,11 @@ import main.ChronoTimer;
  Author:  The Unnameables
  */
 public abstract class Sensor{
-//	private ChronoTimer timer;
 	private boolean state;
 	private String type;
 	protected Channel whichChannelShouldReceiveEvent;
 
-	public Sensor(Channel channel, String type, boolean state, ChronoTimer timer){
-//		this.timer = timer;
+	public Sensor(Channel channel, String type, boolean state){
 		if(type.equalsIgnoreCase("EYE") || type.equalsIgnoreCase("GATE") || type.equalsIgnoreCase("PAD") || type.equalsIgnoreCase("FIRE_BUTTON")){
 			this.type = type;
 		}else{
@@ -26,8 +24,8 @@ public abstract class Sensor{
 		this.whichChannelShouldReceiveEvent = channel;
 	}
 
-	public Sensor(Channel channel, String type, ChronoTimer timer){
-		this(channel, type, false, timer);
+	public Sensor(Channel channel, String type){
+		this(channel, type, false);
 	}
 
 	public void setState(boolean state){

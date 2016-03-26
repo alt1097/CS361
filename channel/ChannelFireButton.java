@@ -8,23 +8,20 @@ import race.Racer;
  Author:  The Unnameables
  */
 public class ChannelFireButton extends Sensor{
-	private ChronoTimer timer;
 	private int name;
 	double elapsedTime;
 
 	// need this for test
-	public ChannelFireButton(Channel channel, String type, boolean state, int name, ChronoTimer timer) {
-		super(channel, type, state, timer);
-		this.timer = timer;
+	public ChannelFireButton(Channel channel, String type, boolean state, int name) {
+		super(channel, type, state);
 		this.name = name;
 	}
 
 	// THIS BUTTON STATE SHOULD ALWAYS BE TRUE!!!
 
 	// use this for regular activities
-	public ChannelFireButton(Channel channel, ChronoTimer timer) {
-		super(channel, "FIRE_BUTTON", true, timer);
-		this.timer = timer;
+	public ChannelFireButton(Channel channel) {
+		super(channel, "FIRE_BUTTON", true);
 		this.name = channel.getName();
 	}
 
@@ -44,7 +41,7 @@ public class ChannelFireButton extends Sensor{
 
 	public void trigger(Racer racer) {
 
-		elapsedTime =  (double) (System.nanoTime() - timer.getTime().getTime())/ 1000000000.0;
+		elapsedTime =  (double) (System.nanoTime() - ChronoTimer.getTime().getTime())/ 1000000000.0;
 
 		if(whichChannelShouldReceiveEvent.wasFired()){
 			ChronoTimer.debugLog.add("Sort of error: channel # " + whichChannelShouldReceiveEvent.getName() + " was fired from somewhere else");

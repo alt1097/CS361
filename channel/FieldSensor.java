@@ -8,21 +8,18 @@ import race.Racer;
  Author:  The Unnameables
  */
 public class FieldSensor extends Sensor{
-	private ChronoTimer timer;
 	private int name;
 	double elapsedTime;
 
 	// for tests only
-	public FieldSensor(Channel channel, String type, boolean state, int name, ChronoTimer timer) {
-		super(channel, type, state, timer);
-		this.timer = timer;
+	public FieldSensor(Channel channel, String type, boolean state, int name) {
+		super(channel, type, state);
 		this.name = name;
 	}
 
 	// use this for regular activities
-	public FieldSensor(Channel channel, String type, ChronoTimer timer) {
-		super(channel, type, false, timer);
-		this.timer = timer;
+	public FieldSensor(Channel channel, String type) {
+		super(channel, type, false);
 		this.name = channel.getName();
 	}
 
