@@ -1,5 +1,6 @@
 package main;
 
+
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
@@ -8,9 +9,14 @@ package main;
 public class Log
 {
 	/**
-	 * A log that stores the contents of each run
+	 * Stores the logged contents of each run
 	 */
-	private String[] runs = new String[100];
+	private String[] runs = new String[500];
+	
+	/**
+	 * Stores the logged contents of each run and stores data to be exported to file/USB
+	 */
+	private String[] exportData = new String[500];
 	
 	/**
 	 * A number specifying the desired log for a specific run
@@ -18,7 +24,7 @@ public class Log
 	private int logNumber;
 	
 	/**
-	 * Creates a new log which will start logging for run #1
+	 * Creates a new log which will start logging at run #1
 	 */
 	public Log()
 	{
@@ -34,7 +40,53 @@ public class Log
 	{
 		return runs;
 	}
+	
+	/**
+	 * Gets any run by using an input number entered by the user, as long as it exists
+	 * @param input User-entered number that corresponds to the desired run
+	 * @return exportData[input] Export string for a log
+	 */
+	public String getRuns(int input)
+	{
+		if(input <= logNumber)
+		{
+			return runs[input];
+		}
+		else
+		{
+			System.out.println("Run does not exist for this number");
+			return null;
+		}
+	}
+	
+	/**
+	 * Gets all logged info for all runs in the format to be exported to USB/file
+	 * @return
+	 */
+	public String[] getExportData()
+	{
+		return exportData;
+	}
 
+	/**
+	 * Gets any export string by using an input number entered by the user,
+	 * as long as it exists
+	 * @param input User-entered number that corresponds to the desired export string
+	 * @return exportData[input] Export string for a log
+	 */
+	public String getExportData(int input)
+	{
+		if(input <= logNumber)
+		{
+			return exportData[input];
+		}
+		else
+		{
+			System.out.println("Export data does not exist for this number");
+			return null;
+		}
+	}
+	
 	/**
 	 * Gets the log number corresponding to the equivalent run number
 	 * @return logNumber Location in the array corresponding to the same run number
@@ -63,12 +115,23 @@ public class Log
 	}
 	
 	/**
+	 * Adds one line to the file to be used for export
+	 * @param line Information from a run that we want to export
+	 */
+	public void addToExport(String line)
+	{
+		exportData[logNumber] += line + "\n";
+	}
+	
+	/**
 	 * Increments the log number, signifying a new log for a new run has begun
+	 * as well as an export capability for the new run
 	 */
 	public void incrementLogNumber()
 	{
 		logNumber++;
 		runs[logNumber] = "";
+		exportData[logNumber] = "";
 	}
 	
 	/**
