@@ -245,8 +245,8 @@ public class RaceIND extends Race{
 				finishChannel.fireChannel(racer);
 				finishChannel.reset();
 				firstIndex++;
-				ChronoTimer.output(racer.getNumber() + " TRIG " + (finishChannel.getName() + 1));
-				ChronoTimer.output(racer.getNumber()+" ELAPSED " + ChronoTimer.diffFormat.format(racer.getFinalTime()));
+				ChronoTimer.output(racer.getNumber()+" TRIG "+(finishChannel.getName() + 1));
+				ChronoTimer.output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
 			}
 		}
 		else{
@@ -280,7 +280,7 @@ public class RaceIND extends Race{
 		String sep = "--------------------";
 		String record = "";
 		record += sep+"\n";
-		record += ": : Run #"+ChronoTimer.log.getLogNumber()+" : : ";
+		record += ": : Run #"+ChronoTimer.log.getLogNumber()+" : : "+eventType+" : : ";
 		if(ended()){
 			record += "Ended";
 		}

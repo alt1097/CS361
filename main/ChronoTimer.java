@@ -1,5 +1,7 @@
 package main;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,6 +10,8 @@ import java.util.TimeZone;
 import race.*;
 import channel.Channel;
 import export.Export;
+
+import javax.swing.*;
 
 /**
  -- ChronoTimer 1009 --
@@ -282,6 +286,7 @@ public class ChronoTimer{
 	 @param type New type of race.
 	 */
 	public void event(String type){
+		type = type.toUpperCase();
 		String logOut = format.format(getTime())+" EVENT "+type;
 		if(powerState){
 			if(type.equals(race.getEventType())){
@@ -292,7 +297,7 @@ public class ChronoTimer{
 					logOut += " - RACE ONGOING";
 				}
 				else{
-					output("EVENT TYPE CHANGED TO "+type);
+					output("EVENT TYPE CHANGING TO "+type);
 					newRun(type, true);
 				}
 			}
@@ -316,12 +321,13 @@ public class ChronoTimer{
 	 @param silent True to silence newRun()'s messages.
 	 */
 	private void newRun(String type, boolean silent){
+		type = type.toUpperCase();
 		String logOut = format.format(getTime())+" NEWRUN";
 		if(powerState){
 			if(race.ongoing()){
 				logOut += " - RACE ONGOING";
 			}
-			else{
+			else if(type.equals("IND") || type.equals("PARIND") || type.equals("GRP") || type.equals("PARGRP")){
 				if(log.getExportData(log.getLogNumber()).length() == 0){
 					log.addToExport(race.exportMe());
 				}
@@ -340,9 +346,12 @@ public class ChronoTimer{
 						race = new RacePARGRP();
 						break;
 					default:
-						logOut += " - EVENT TYPE DOES NOT EXIST";
+						//  TODO
 				}
 				output("NEW RUN TYPE ("+type+") STARTED");
+			}
+			else{
+				logOut += " - EVENT TYPE DOES NOT EXIST";
 			}
 		}
 		else{
@@ -394,13 +403,17 @@ public class ChronoTimer{
 	 */
 	public void print(int run){
 		String logOut = format.format(getTime())+" PRINT "+run;
-		String runLog = log.getRuns(run);
-		if(runLog != null){
-			output("PRINTING LOG FOR RUN "+run+"...");
-			System.out.println(runLog);
+		if(powerState){
+			String runLog = log.getRuns(run);
+			if(runLog != null){
+				output("PRINTING LOG FOR RUN "+run+"...");
+				System.out.println(runLog);
+			}else{
+				logOut += " - RUN DOES NOT EXIST";
+			}
 		}
 		else{
-			logOut += " - RUN DOES NOT EXIST";
+			logOut += " - SYSTEM NOT ON";
 		}
 		debugLog.add(logOut);
 	}
@@ -411,26 +424,41 @@ public class ChronoTimer{
 	 */
 	public void export(int run){
 		String logOut = format.format(getTime())+" EXPORT "+run;
-		String saveData = null;
-		if(log.getLogNumber() == run && !race.ended()){
-			output("EXPORTING CURRENT RUN ("+run+") DATA...");
-			saveData = race.exportMe();
+		if(powerState){
+			String saveData = null;
+			if(log.getLogNumber() == run && !race.ended()){
+				output("EXPORTING CURRENT RUN ("+run+") DATA...");
+				saveData = race.exportMe();
+			}else{
+				String runExport = log.getExportData(run);
+				if(runExport != null){
+					output("EXPORTING RUN "+run+" DATA...");
+					saveData = runExport;
+				}else{
+					logOut += " - RUN DOES NOT EXIST";
+				}
+			}
+			if(saveData != null){
+				System.out.println("! ! File chooser is open, look behind window ! !");
+				JFileChooser fc = new JFileChooser();
+				int check = fc.showSaveDialog(null);
+				if(check == JFileChooser.APPROVE_OPTION){
+					try{
+						FileWriter fw = new FileWriter(fc.getSelectedFile());
+						fw.write(saveData);
+						fw.close();
+						output("EXPORT SUCCESSFUL...");
+					}catch(IOException e){
+						output("EXPORT FAILED, FILE COULD NOT BE CREATED...");
+					}
+				}
+				output("EXPORT COMPLETE");
+			}
 		}
 		else{
-			String runExport = log.getExportData(run);
-			if(runExport != null){
-				output("EXPORTING RUN "+run+" DATA...");
-				saveData = runExport;
-			}
-			else{
-				logOut += " - RUN DOES NOT EXIST";
-			}
+			logOut += " - SYSTEM NOT ON";
 		}
 		debugLog.add(logOut);
-		if(saveData != null){
-			System.out.println(saveData);
-			//  TODO
-		}
 	}
 
 	/**
@@ -597,8 +625,7 @@ public class ChronoTimer{
 		String logOut = format.format(getTime())+" TRIG "+channel;
 		String retMess = "";
 		if(powerState){
-			channel = channel - 1;
-			Channel channelObj = getChannel(channel);
+			Channel channelObj = getChannel(channel - 1);
 			if(channelObj != null && channelObj.isOn()){
 				if(race.canStart()){
 					if(!race.ended() || race.ongoing()){
