@@ -47,6 +47,11 @@ public class RacePARIND extends Race{
 			this.firstIndex = 0;
 			racers = new ArrayList<Racer>();
 		}
+		
+		public ArrayList<Racer> getRacers() {
+			return racers;
+		}
+		
 
 		public Racer getRacer(int number) {
 			for (Racer racer : racers) {
@@ -403,15 +408,19 @@ public class RacePARIND extends Race{
 		data.put("queue", queue);
 		Hashtable<String, Serializable> laneHash = new Hashtable<>();
 		for (int i = 0; i < 4; i++) {
-			Lane lane = lanes.get(i);
-			Hashtable<String, Serializable> singleLaneHash = new Hashtable<>();
-			if (lane.startChannel != null)
-				singleLaneHash.put("startChannel", lane.startChannel.getName());
-			if (lane.finishChannel != null)
-				singleLaneHash.put("finishChannel", lane.finishChannel.getName());
-			singleLaneHash.put("firstIndex", lane.firstIndex);
-			laneHash.put("lane_" + i, singleLaneHash);
+//			Lane lane = lanes.get(i);
+//			Hashtable<String, Serializable> singleLaneHash = new Hashtable<>();
+//			if (lane.startChannel != null)
+//				singleLaneHash.put("startChannel", lane.startChannel.getName());
+//			if (lane.finishChannel != null)
+//				singleLaneHash.put("finishChannel", lane.finishChannel.getName());
+//			singleLaneHash.put("firstIndex", lane.firstIndex);
+//			laneHash.put("lane_" + i, singleLaneHash);
+			data.put("lanes_"+i, lanes.get(i).getRacers());
 		}
-		data.put("lanes", laneHash);
+		
+		
+		
+//		data.put("lanes", laneHash);
 	}
 }
