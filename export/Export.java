@@ -16,7 +16,7 @@ public class Export {
 		
 	}
 	
-	/**
+	/***
 	 * Saves object to JSON file in root
 	 * @param singleObject - some object with "variable : var_value" pairs
 	 */
