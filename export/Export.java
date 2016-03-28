@@ -33,8 +33,9 @@ public class Export {
 	}
 
 	/**
-	 * Returns object as a JSON string
+	 * Returns object as a JSON string. Saves variables names and values, not a methods
 	 * @param singleObject - some object with "variable : var_value" pairs
+	 * 
 	 */
 	public String objectToJsonString(Object singleObject){
 		return gson.toJson(singleObject);
