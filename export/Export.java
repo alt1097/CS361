@@ -18,7 +18,7 @@ public class Export {
 	
 	/**
 	 * Saves object to JSON file in root
-	 * 
+	 * @param singleObject - some object with "variable : var_value" pairs
 	 */
 	public void objectToJsonFile(Object singleObject){
 		PrintWriter writer;
@@ -34,7 +34,7 @@ public class Export {
 
 	/**
 	 * Returns object as a JSON string
-	 * 
+	 * @param singleObject - some object with "variable : var_value" pairs
 	 */
 	public String objectToJsonString(Object singleObject){
 		return gson.toJson(singleObject);
