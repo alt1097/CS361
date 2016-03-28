@@ -6,6 +6,7 @@ import main.ChronoTimer;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Hashtable;
 
 /**
@@ -44,10 +45,7 @@ public class RacePARIND extends Race{
 	public RacePARIND(){
 		super("PARIND");
 		for(int i = 0; i < 4; i++){
-			lanes.add(new ArrayList<>());
-			firstIndexes.add(0);
-			startChannels.add(null);
-			finishChannels.add(null);
+			firstIndexes.add(-1);
 		}
 		channelVerifyPARIND();
 	}
@@ -85,6 +83,11 @@ public class RacePARIND extends Race{
 			}
 		}
 		else{
+			for (Racer racer : racers) {
+				if (racer != null && racer.getNumber() == number) {
+					return racer;
+				}
+			}
 			for(ArrayList<Racer> lane : lanes){
 				for(Racer racer : lane){
 					if(racer.getNumber() == number){
@@ -102,6 +105,29 @@ public class RacePARIND extends Race{
 	 @return If the Racer exists.
 	 */
 	public boolean removeRacerPARIND(int number){
+		// Check if Racer is still in queue
+		Iterator<Racer> racerIterator = racers.iterator();
+		while (racerIterator.hasNext()) {
+			Racer tmpRacer = racerIterator.next();
+			if (tmpRacer != null && tmpRacer.getNumber() == number) {
+				racers.remove(tmpRacer);
+				return true;
+			}
+		}
+		// Check if Racer has alread started race
+		for (int l=0; l <= lanes.size(); l++) {
+			ArrayList<Racer> lane = lanes.get(l);
+			for (int r=0; r < lane.size(); r++) {
+				Racer tmpRacer = lane.get(r);
+				if (tmpRacer != null && tmpRacer.getNumber() == number) {
+					lane.remove(tmpRacer);
+					// Decrement first index tor that lane assuming a check has been made
+					// to ensure the racer hasn't already finished
+					firstIndexes.set(l, firstIndexes.get(l) - 1);
+					return true;
+				}
+			}
+		}
 		return false;  //  TODO
 	}
 
@@ -111,6 +137,18 @@ public class RacePARIND extends Race{
 	 @return True if Racer can be moved.
 	 */
 	public boolean canBeMovedPARIND(Racer racer){
+		if (racers.contains(racer))
+			return true;
+		else {
+			for (int l=0; l < lanes.size(); l++) {
+				ArrayList<Racer> tmpLane = lanes.get(l);
+				if (tmpLane.contains(racer)){
+					if (tmpLane.indexOf(racer) >= firstIndexes.get(l)) {
+						return true;
+					}
+				}
+			}
+		}
 		return false;  //  TODO
 	}
 
@@ -135,7 +173,17 @@ public class RacePARIND extends Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean moveToFirstPARIND(Racer racer){
-		return false;  //  TODO
+		if (canBeMovedPARIND(racer)) {
+			for (int l=0; l < lanes.size(); l++) {
+				ArrayList<Racer> tmpLane = lanes.get(l);
+				if (tmpLane.contains(racer)){
+					// Remove from lane, and add back in at first index
+					tmpLane.add(firstIndexes.get(l),tmpLane.remove(tmpLane.indexOf(racer)));
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -144,7 +192,11 @@ public class RacePARIND extends Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean moveToNextPARIND(Racer racer){
-		return false;  //  TODO
+		if (racers.contains(racer)) {
+			racers.add(0,racers.remove(racers.indexOf(racer)));
+			return true;
+		}
+		return false;
 	}
 
 	//  ----------  EVENT MANAGEMENT  ----------
@@ -168,31 +220,32 @@ public class RacePARIND extends Race{
 	 */
 	public void channelVerifyPARIND(){
 		//  TODO
-		boolean pass = false;
-		int numLanes = 0;
-		for (int i = 0; i < 8; i += 2) {
+		for (int i=0; i < 8; i += 2) {
 			Channel tempStart = ChronoTimer.getChannel(i);
 			if (tempStart.isOn()) {
-				Channel tempFinish = ChronoTimer.getChannel(i + 1);
-				if (tempFinish.isOn()) {
-					// Adds the lane at start channel number divided by two.
-					lanes.add((i/2), new ArrayList<Racer>());
+				if (!startChannels.contains(tempStart)) {
 					tempStart.setChanType("START");
 					startChannels.add(tempStart);
-					tempFinish.setChanType("FINISH");
-					finishChannels.add(tempFinish);
-					numLanes ++;
-					break;
 				}
 			}
+			Channel tempFinish = ChronoTimer.getChannel(i + 1);
+			if (tempFinish.isOn()) {
+				if (!finishChannels.contains(tempFinish)) {
+					tempFinish.setChanType("FINISH");
+					finishChannels.add(tempFinish);
+				}
+			}
+			if (tempStart.isOn() && tempFinish.isOn()) {
+				lanes.set((i/2), new ArrayList<Racer>());
+			}
 		}
-		if (numLanes >= 2)
-			return;
-		else {
-			// If it doesn't pass as a valid PARIND race, clear start and finish channels.
-			startChannels.clear();
-			finishChannels.clear();
-		}
+	}
+
+	/**
+	 *
+	 */
+	private void syncLanes() {
+
 	}
 
 	/**
@@ -204,12 +257,13 @@ public class RacePARIND extends Race{
 		//  TODO
 		String retMes = "";
 		int laneNum = (channel.getName()+1)/2;
-		if (startChannels.contains(channel)) {	
+		if (startChannels.contains(channel)) {
 			if (racers.size() > 0) {
 				Racer racer = racers.remove(0);
 				lanes.get(laneNum).add(racer);
 				channel.fireChannel(racer);
 				channel.reset();
+				ChronoTimer.output(racer.getNumber()+" TRIG "+(channel.getName() + 1));
 			}
 		}
 		else if (finishChannels.contains(channel)) {
@@ -228,8 +282,8 @@ public class RacePARIND extends Race{
 		}
 		update();
 		return retMes;
-		
-		
+
+
 //		if (startChannels.contains(channel)) {
 //			int laneNum = 0;
 //			for (int i=0; i <= startChannels.size(); i++) {
@@ -288,13 +342,13 @@ public class RacePARIND extends Race{
 	public void endPARIND(){
 		ChronoTimer.log.add(printPARIND());
 	}
-	
+
 	/**
 	 Prints the current status of all Racers in Parallel Individual Race.
 	 @return The Racer status printout.
 	 */
 	public String printPARIND(){
-		return "";//  TODO
+		return "EVERYTHING SUCKS";//  TODO
 	}
 
 	/**
