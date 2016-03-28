@@ -328,10 +328,9 @@ public class ChronoTimer extends JFrame{
 				logOut += " - RACE ONGOING";
 			}
 			else if(type.equals("IND") || type.equals("PARIND") || type.equals("GRP") || type.equals("PARGRP")){
-				if(log.getExportData(log.getLogNumber()).length() == 0){
-					log.addToExport(race.exportMe());
+				if(log.getExportData(log.getLogNumber()).length() != 0){
+					log.incrementLogNumber();
 				}
-				log.incrementLogNumber();
 				switch(type){
 					case "IND":
 						race = new RaceIND();
