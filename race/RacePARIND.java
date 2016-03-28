@@ -392,7 +392,7 @@ public class RacePARIND extends Race{
 			record += "#"+racer.getNumber()+ "\n";
 		}
 		record += sep;
-		return record; //  TODO
+		return record;
 	}
 
 	/**
@@ -400,17 +400,18 @@ public class RacePARIND extends Race{
 	 @param data Hash table to add to.
 	 */
 	public void exportMePARIND(Hashtable<String, Serializable> data) {
-
-//		data.put("racers", racers);
-//		data.put("lanes", lanes);
-//		data.put("firstIndexes", firstIndexes);
-//		for(int i = 0; i < 4; i++){
-//			if(startChannels.get(i) != null){
-//				data.put("startChannel_"+i, startChannels.get(i).getName());
-//			}
-//			if(finishChannels.get(i) != null){
-//				data.put("finishChannel_"+i, finishChannels.get(i).getName());
-//			}
-//		}
+		data.put("queue", queue);
+		Hashtable<String, Serializable> laneHash = new Hashtable<>();
+		for (int i = 0; i < 4; i++) {
+			Lane lane = lanes.get(i);
+			Hashtable<String, Serializable> singleLaneHash = new Hashtable<>();
+			if (lane.startChannel != null)
+				singleLaneHash.put("startChannel", lane.startChannel.getName());
+			if (lane.finishChannel != null)
+				singleLaneHash.put("finishChannel", lane.finishChannel.getName());
+			singleLaneHash.put("firstIndex", lane.firstIndex);
+			laneHash.put("lane_" + i, singleLaneHash);
+		}
+		data.put("lanes", laneHash);
 	}
 }
