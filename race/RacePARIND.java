@@ -234,7 +234,7 @@ public class RacePARIND extends Race{
 			if (lane.isValid())
 				++validLanes;
 		}
-		if (validLanes > 2) {
+		if (validLanes < 2) {
 			startable = false;
 		}
 		if (startable) {
@@ -283,9 +283,11 @@ public class RacePARIND extends Race{
 	 @return String of any messages.
 	 */
 	public String triggerPARIND(Channel channel){
+		boolean usedChannel = false;
 		String retMes = "";
 		for (Lane lane : lanes) {
 			if (channel.equals(lane.startChannel)) {
+				usedChannel = true;
 				if (queue.size() <= 0) {
 					retMes += " - NO RACER LEFT IN QUEUE";
 				}
@@ -299,7 +301,7 @@ public class RacePARIND extends Race{
 				}
 			}
 			else if (channel.equals(lane.finishChannel)) {
-				// NOTE: check here
+				usedChannel = true;
 				if (lane.firstIndex >= lane.racers.size()) {
 					retMes += " - NO RACER CURRENTLY RACING";
 				}
@@ -313,7 +315,8 @@ public class RacePARIND extends Race{
 				}
 			}
 		}
-		// TODO Include "CHANNEL IS NOT USED' retMes
+		if (!usedChannel)
+			retMes += " - CHANNEL IS NOT USED";
 		update();
 		return retMes; //  TODO
 	}
@@ -408,19 +411,16 @@ public class RacePARIND extends Race{
 		data.put("queue", queue);
 		Hashtable<String, Serializable> laneHash = new Hashtable<>();
 		for (int i = 0; i < 4; i++) {
-//			Lane lane = lanes.get(i);
-//			Hashtable<String, Serializable> singleLaneHash = new Hashtable<>();
-//			if (lane.startChannel != null)
-//				singleLaneHash.put("startChannel", lane.startChannel.getName());
-//			if (lane.finishChannel != null)
-//				singleLaneHash.put("finishChannel", lane.finishChannel.getName());
-//			singleLaneHash.put("firstIndex", lane.firstIndex);
-//			laneHash.put("lane_" + i, singleLaneHash);
-			data.put("lanes_"+i, lanes.get(i).getRacers());
+			Lane lane = lanes.get(i);
+			Hashtable<String, Serializable> singleLaneHash = new Hashtable<>();
+			if (lane.startChannel != null)
+				singleLaneHash.put("startChannel", lane.startChannel.getName());
+			if (lane.finishChannel != null)
+				singleLaneHash.put("finishChannel", lane.finishChannel.getName());
+			singleLaneHash.put("firstIndex", lane.firstIndex);
+			singleLaneHash.put("racers", lane.getRacers());
+			laneHash.put("lane_" + i, singleLaneHash);
 		}
-		
-		
-		
-//		data.put("lanes", laneHash);
+		data.put("lanes", laneHash);
 	}
 }
