@@ -17,7 +17,7 @@ import javax.swing.*;
  -- ChronoTimer 1009 --
  Author:  The Unnameables
  */
-public class ChronoTimer{
+public class ChronoTimer extends JFrame{
 	/**
 	 Indicates if the ChronoTimer is currently active.
 	 */
@@ -441,10 +441,10 @@ public class ChronoTimer{
 			if(saveData != null){
 				System.out.println("! ! File chooser is open, look behind window ! !");
 				JFileChooser fc = new JFileChooser();
-				int check = fc.showSaveDialog(null);
+				int check = fc.showSaveDialog(ChronoTimer.this);
 				if(check == JFileChooser.APPROVE_OPTION){
 					try{
-						FileWriter fw = new FileWriter(fc.getSelectedFile());
+						FileWriter fw = new FileWriter(fc.getSelectedFile() + ".json");
 						fw.write(saveData);
 						fw.close();
 						output("EXPORT SUCCESSFUL...");
