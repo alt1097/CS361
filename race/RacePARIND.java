@@ -71,13 +71,11 @@ public class RacePARIND extends Race{
 	 @param toFront True if Racer should be added to the front of lane.
 	 */
 	public void addRacerPARIND(int number, boolean toFront){
-		if (getRacerPARIND(number, false) == null) {
-			if (toFront) {
-				queue.add(0, new Racer(number));
-			}
-			else {
-				queue.add(new Racer(number));
-			}
+		if (toFront) {
+			queue.add(0, new Racer(number));
+		}
+		else {
+			queue.add(new Racer(number));
 		}
 	}
 
@@ -147,6 +145,8 @@ public class RacePARIND extends Race{
 	 @return True if Racer can be moved.
 	 */
 	public boolean canBeMovedPARIND(Racer racer){
+		if (queue.contains(racer))
+			return true;
 		for (Lane lane : lanes) {
 			if (lane != null) {
 				int racerIndex = lane.racers.indexOf(racer);
@@ -170,7 +170,7 @@ public class RacePARIND extends Race{
 			return false;
 		else {
 			for (Lane lane : lanes) {
-				if (lane.racers.indexOf(racer) > lane.firstIndex) {
+				if (lane.racers.indexOf(racer) >= lane.firstIndex) {
 					return true;
 				}
 			}
@@ -206,6 +206,7 @@ public class RacePARIND extends Race{
 		if (racerIndex > 0) {
 			queue.remove(racer);
 			queue.add(0, racer);
+			return true;
 		}
 		return false;
 	}
@@ -217,19 +218,28 @@ public class RacePARIND extends Race{
 	 @return True if Race can start.
 	 */
 	public boolean canStartPARIND(){
+		boolean startable = true;
 		// Must be racers in the queue
-//		if (queue.size() == 0)
-//			return false;
-
+		if (queue.size() == 0) {
+			startable = false;
+		}
 		// Must be at least two working lanes
 		int validLanes = 0;
 		for (Lane lane : lanes) {
 			if (lane.isValid())
 				++validLanes;
 		}
-		if (validLanes >= 2)
+		if (validLanes > 2) {
+			startable = false;
+		}
+		if (startable) {
+			canStart = true;
 			return true;
-		return false;
+		}
+		else {
+			canStart = false;
+			return false;
+		}
 	}
 
 	/**
@@ -284,7 +294,8 @@ public class RacePARIND extends Race{
 				}
 			}
 			else if (channel.equals(lane.finishChannel)) {
-				if (lane.firstIndex > lane.racers.size()) {
+				// NOTE: check here
+				if (lane.firstIndex >= lane.racers.size()) {
 					retMes += " - NO RACER CURRENTLY RACING";
 				}
 				else {
@@ -307,6 +318,8 @@ public class RacePARIND extends Race{
 	 */
 	private void update(){
 		boolean end = true;
+		if (queue.size() > 0)
+			end = false;
 		for (Lane lane : lanes) {
 			if (lane.firstIndex != lane.racers.size()) {
 				end = false;
@@ -344,37 +357,41 @@ public class RacePARIND extends Race{
 		record += " : :\n";
 
 		for (Lane lane : lanes) {
-			record += "\t~~~Lane " + (lane.laneNum+1) + "~~~\n";
-			for (Racer racer : lane.racers) {
-				record += "#"+racer.getNumber()+"\tStart: ";
-				boolean printDif = true;
-				Date tempTime = racer.getStartTime();
-				if(tempTime == null){
-					record += "DID NOT START";
-					printDif = false;
+			if (lane.racers.size() >0) {
+				record += "\t~~~Lane " + (lane.laneNum + 1) + "~~~\n";
+				for (Racer racer : lane.racers) {
+					record += "#" + racer.getNumber() + "\tStart: ";
+					boolean printDif = true;
+					Date tempTime = racer.getStartTime();
+					if (tempTime == null) {
+						record += "DID NOT START";
+						printDif = false;
+					} else {
+						record += ChronoTimer.format.format(tempTime);
+					}
+					record += "\t\tFinish: ";
+					tempTime = racer.getEndTime();
+					if (tempTime == null) {
+						record += "DID NOT FINISH";
+						printDif = false;
+					} else {
+						record += ChronoTimer.format.format(tempTime);
+					}
+					record += "\t\tFinal: ";
+					if (printDif) {
+						record += ChronoTimer.diffFormat.format(racer.getFinalTime());
+					} else {
+						record += "DNF";
+					}
+					record += "\n";
 				}
-				else{
-					record += ChronoTimer.format.format(tempTime);
-				}
-				record += "\t\tFinish: ";
-				tempTime = racer.getEndTime();
-				if(tempTime == null){
-					record += "DID NOT FINISH";
-					printDif = false;
-				}
-				else{
-					record += ChronoTimer.format.format(tempTime);
-				}
-				record += "\t\tFinal: ";
-				if(printDif){
-					record += ChronoTimer.diffFormat.format(racer.getFinalTime());
-				}
-				else{
-					record += "DNF";
-				}
-				record += "\n";
 			}
 		}
+		record += "\t~~~Queued~~~\n";
+		for (Racer racer : queue) {
+			record += "#"+racer.getNumber()+ "\n";
+		}
+		record += sep;
 		return record; //  TODO
 	}
 
@@ -383,7 +400,7 @@ public class RacePARIND extends Race{
 	 @param data Hash table to add to.
 	 */
 	public void exportMePARIND(Hashtable<String, Serializable> data) {
-		
+
 //		data.put("racers", racers);
 //		data.put("lanes", lanes);
 //		data.put("firstIndexes", firstIndexes);
