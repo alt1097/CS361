@@ -132,6 +132,11 @@ public class RacePARIND extends Race{
 		return false;
 	}
 
+	/**
+	 * Returns the lane that the racer provided is in.
+	 * @param racer
+	 * @return The lane the racer is in.
+     */
 	private Lane getLane(Racer racer) {
 		for (Lane lane : lanes) {
 			if (lane != null) {
