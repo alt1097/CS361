@@ -7,9 +7,11 @@ package main;
 
 public class ComHandler {
 	ChronoTimer chrono;
+	boolean flagJUnit;
 	
 	public ComHandler(ChronoTimer chrono) {
 		this.chrono = chrono;
+		flagJUnit = false;
 	}
 
 	/**
@@ -35,7 +37,9 @@ public class ComHandler {
 		{
 			chrono.exit();
 			System.out.println("The simulator will now exit");
-			System.exit(0);
+			if(!flagJUnit){
+				System.exit(0);
+			}
 		}
 		else if (cmdArgs[nextCmd].equalsIgnoreCase("conn"))
 		{
@@ -201,5 +205,9 @@ public class ComHandler {
 			}
 		}
 
+	}
+
+	public void enableJUnit(){
+		flagJUnit = true;
 	}
 }

@@ -62,6 +62,10 @@ public class ChronoTimer extends JFrame{
 	 Reference to Export to export data file.
 	 */
 	public static Export export;
+	/**
+	 Flag used to override certain functions from being used during JUnit testing.
+	 */
+	public static boolean flagJUnit;
 
 	/**
 	 Initializes the ChronoTimer.
@@ -81,6 +85,7 @@ public class ChronoTimer extends JFrame{
 		debugLog.add("\t\t"+new Date(System.currentTimeMillis()).toString());
 		log = new Log();
 		export = new Export();
+		flagJUnit = false;
 	}
 
 	//  ----------  COMMANDS  ----------
@@ -438,20 +443,25 @@ public class ChronoTimer extends JFrame{
 				}
 			}
 			if(saveData != null){
-				System.out.println("! ! File chooser is open, look behind window ! !");
-				JFileChooser fc = new JFileChooser();
-				int check = fc.showSaveDialog(ChronoTimer.this);
-				if(check == JFileChooser.APPROVE_OPTION){
-					try{
-						FileWriter fw = new FileWriter(fc.getSelectedFile() + ".json");
-						fw.write(saveData);
-						fw.close();
-						output("EXPORT SUCCESSFUL...");
-					}catch(IOException e){
-						output("EXPORT FAILED, FILE COULD NOT BE CREATED...");
-					}
+				if(flagJUnit){
+					System.out.println("Export Data:  "+saveData);
 				}
-				output("EXPORT COMPLETE");
+				else{
+					System.out.println("! ! File chooser is open, look behind window ! !");
+					JFileChooser fc = new JFileChooser();
+					int check = fc.showSaveDialog(ChronoTimer.this);
+					if(check == JFileChooser.APPROVE_OPTION){
+						try{
+							FileWriter fw = new FileWriter(fc.getSelectedFile()+".json");
+							fw.write(saveData);
+							fw.close();
+							output("EXPORT SUCCESSFUL...");
+						}catch(IOException e){
+							output("EXPORT FAILED, FILE COULD NOT BE CREATED...");
+						}
+					}
+					output("EXPORT COMPLETE");
+				}
 			}
 		}
 		else{
@@ -735,5 +745,10 @@ public class ChronoTimer extends JFrame{
 	public static void output(String out){
 		System.out.println(out);
 		log.add(out);
+	}
+	
+	public static void enableJUnit(){
+		flagJUnit = true;
+		debugLog.enableJUnit();
 	}
 }

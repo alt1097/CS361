@@ -41,8 +41,6 @@ public class ChannelFireButton extends Sensor{
 
 	public void trigger(Racer racer) {
 
-		elapsedTime =  (double) (System.nanoTime() - ChronoTimer.getTime().getTime())/ 1000000000.0;
-
 		if(whichChannelShouldReceiveEvent.wasFired()){
 			ChronoTimer.debugLog.add("Sort of error: channel # " + whichChannelShouldReceiveEvent.getName() + " was fired from somewhere else");
 			ChronoTimer.debugLog.add("Reset channel and then use this button");
@@ -50,7 +48,7 @@ public class ChannelFireButton extends Sensor{
 //			racer.addHistory(ChronoTimer.currentEventType + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " +ChronoTimer.format.format(ChronoTimer.pcTime));
 //			super.trigger(super.getType() + " " + name + " at " + ChronoTimer.format.format(ChronoTimer.pcTime));
 		//	racer.addHistory(timer.getTime() + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " + elapsedTime + "\n");
-			super.trigger(super.getType() + " " + name + " at " + elapsedTime);
+			super.trigger(super.getType() + " " + name + " at " + ChronoTimer.getTime().getTime());
 
 		}
 

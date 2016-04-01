@@ -20,10 +20,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 public class DebugLog {
 	File file;
 	Writer output;
 	String fileName;
+	private boolean testWrite;
+	private ArrayList<String> testOut;
 
 	/**
 	 * Class constructor. Will create a file with a given file name when invoked.
@@ -32,6 +35,8 @@ public class DebugLog {
 	public DebugLog(String fileName){
 		this.fileName = fileName;
 		file = new File(fileName);
+		testWrite = false;
+		testOut = new ArrayList<String>();
 	}
 
 
@@ -41,19 +46,41 @@ public class DebugLog {
 	public DebugLog(){
 		this("log.txt");
 		fileName = "log.txt";
+		testWrite = false;
+		testOut = new ArrayList<String>();
 	}
 
+	/**
+	 * Overrides DebugLog for JUnit test output.
+	 */
+	public void enableJUnit(){
+		testWrite = true;
+	}
+
+	/**
+	 * Retrieves the overridden debug output.
+	 * @return The debug log.
+	 */
+	public ArrayList<String> outputTestString(){
+		return testOut;
+	}
+	
 	/**
 	 * Append a single line to file created with a class constructor.
 	 * @param singleLine - String-type line to append
 	 */
 	public void add(String singleLine){
-		try {
-			output = new BufferedWriter(new FileWriter(fileName, true));
-			output.append(singleLine + "\r\n");
-			output.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(testWrite){
+			testOut.add(singleLine);
+		}
+		else{
+			try {
+				output = new BufferedWriter(new FileWriter(fileName, true));
+				output.append(singleLine + "\r\n");
+				output.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
