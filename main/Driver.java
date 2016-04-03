@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import gui.Gui; //gui example. Place this import in class that will create gui window 
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,7 +22,17 @@ public class Driver {
 	static String tf = "Test Files/";
 	static String t = ".txt";
 	
+	
 	public static void main(String[] args)	{
+		
+		//gui example. Place this code in class that will create gui window 
+		try {
+			Gui window = new Gui();
+			window.getFrame().setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}// end of gui example		
+		
 		Scanner scanner = new Scanner(System.in);
 		simulator = new Simulator();
 		System.out.print("Choose file (f) or console (c) input:  ");
