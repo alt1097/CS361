@@ -327,8 +327,27 @@ public class RaceIND extends Race{
 	/**
 	 Exports Individual Race data into JSON format String.
 	 @param data Hash table to add to.
+	 * @return 
 	 */
-	public void exportMeIND(Hashtable<String, Serializable> data){
+//	public void exportMeIND(Hashtable<String, Serializable> data){
+//		data.put("racers", racers);
+//		data.put("firstIndex", firstIndex);
+//		data.put("queueIndex", queueIndex);
+//		if(startChannel != null){
+//			data.put("startChannel", startChannel.getName());
+//		}
+//		if(finishChannel != null){
+//			data.put("finishChannel", finishChannel.getName());
+//		}
+//	}
+	
+	@Override
+	public String exportMe(){
+		Hashtable<String, Serializable> data = new Hashtable<>();
+		data.put("eventType", super.eventType);
+		data.put("canStart", super.canStart);
+		data.put("ongoing", super.ongoing);
+		data.put("ended", super.ended);
 		data.put("racers", racers);
 		data.put("firstIndex", firstIndex);
 		data.put("queueIndex", queueIndex);
@@ -337,6 +356,90 @@ public class RaceIND extends Race{
 		}
 		if(finishChannel != null){
 			data.put("finishChannel", finishChannel.getName());
-		}
+		}		
+		return ChronoTimer.export.objectToJsonString(data);
 	}
+
+	@Override
+	public String print() {
+		// TODO Merge this with printIND into one method		
+		return printIND();
+	}
+
+	@Override
+	public String trigger(Channel channel) {
+		// TODO Merge this with triggerIND into one method		
+		return triggerIND(channel);
+	}
+
+	@Override
+	public void channelVerify() {
+		// TODO Auto-generated method stub
+		channelVerifyIND();
+		
+	}
+
+	@Override
+	public boolean moveToNext(Racer racer) {
+		// TODO Auto-generated method stub
+		return moveToNextIND(racer);
+	}
+
+	@Override
+	public boolean moveToFirst(Racer racer) {
+		// TODO Auto-generated method stub
+		return moveToFirstIND(racer);
+	}
+
+	@Override
+	public void addRacer(int number, boolean toFront) {
+		// TODO Auto-generated method stub
+		addRacerIND(number, toFront);
+		
+	}
+
+	@Override
+	public Racer getRacer(int number, boolean byPlace) {
+		// TODO Auto-generated method stub
+		return getRacerIND(number, byPlace);
+	}
+
+	@Override
+	public boolean removeRacer(int number) {
+		// TODO Auto-generated method stub
+		return removeRacerIND(number);
+	}
+
+	@Override
+	public boolean isRacing(Racer racer) {
+		// TODO Auto-generated method stub
+		return isRacingIND(racer);
+	}
+
+	@Override
+	public boolean canBeMoved(Racer racer) {
+		// TODO Auto-generated method stub
+		return moveToFirstIND(racer);
+	}
+
+	@Override
+	public boolean canStart() {
+		// TODO Auto-generated method stub
+		return canStart ? true : canStartIND();
+	}
+
+	@Override
+	public void end() {
+		// TODO Auto-generated method stub
+		ongoing = false;
+		ended = true;
+		endIND();
+		ChronoTimer.log.addToExport(exportMe());
+	}
+	
+	
+	
+	
+	
+	
 }

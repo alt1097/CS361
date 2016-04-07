@@ -25,13 +25,13 @@ public class Driver {
 	
 	public static void main(String[] args)	{
 		
-		//gui example. Place this code in class that will create gui window 
-		try {
-			Gui window = new Gui();
-			window.getFrame().setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}// end of gui example		
+//		//gui example. Place this code in class that will create gui window 
+//		try {
+//			Gui window = new Gui();
+//			window.getFrame().setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}// end of gui example		
 		
 		Scanner scanner = new Scanner(System.in);
 		simulator = new Simulator();

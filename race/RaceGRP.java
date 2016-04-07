@@ -244,4 +244,86 @@ public class RaceGRP extends Race{
 	public void exportMeGRP(Hashtable<String, Serializable> data){
 		//  TODO
 	}
+
+	@Override
+	public String exportMe() {
+		// TODO Implement
+		return null;
+	}
+
+	@Override
+	public String print() {
+		// TODO Merge or replace with printGRP
+		return printGRP();
+	}
+
+	@Override
+	public String trigger(Channel channel) {
+		// TODO Merge or replace with triggerGRP
+		return triggerGRP(channel);
+	}
+
+	@Override
+	public void channelVerify() {
+		// TODO Merge/replace with channelVerifyGRP
+		channelVerifyGRP();
+		
+	}
+
+	@Override
+	public boolean moveToNext(Racer racer) {
+		// TODO Auto-generated method stub
+		return moveToNextGRP(racer);
+	}
+
+	@Override
+	public boolean moveToFirst(Racer racer) {
+		// TODO Auto-generated method stub
+		return moveToFirstGRP(racer);
+	}
+
+	@Override
+	public void addRacer(int number, boolean toFront) {
+		// TODO Auto-generated method stub
+		addRacerGRP(number, toFront);
+	}
+
+	@Override
+	public Racer getRacer(int number, boolean byPlace) {
+		// TODO Auto-generated method stub
+		return getRacerGRP(number, byPlace);
+	}
+
+	@Override
+	public boolean removeRacer(int number) {
+		// TODO Auto-generated method stub
+		return removeRacerGRP(number);
+	}
+
+	@Override
+	public boolean isRacing(Racer racer) {
+		// TODO Auto-generated method stub
+		return isRacingGRP(racer);
+	}
+
+	@Override
+	public boolean canBeMoved(Racer racer) {
+		// TODO Auto-generated method stub
+		return moveToFirstGRP(racer);
+	}
+
+	@Override
+	public boolean canStart() {
+		// TODO Auto-generated method stub
+		return canStart ? true : canStartGRP();
+	}
+
+	@Override
+	public void end() {
+		// TODO Auto-generated method stub
+		ongoing = false;
+		ended = true;
+		endGRP();
+		ChronoTimer.log.addToExport(exportMe());
+	}
 }

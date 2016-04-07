@@ -183,4 +183,85 @@ public class RacePARGRP extends Race{
 	public void exportMePARGRP(Hashtable<String, Serializable> data){
 		//  TODO
 	}
+
+	@Override
+	public String exportMe() {
+		// TODO Implement
+		return null;
+	}
+
+	@Override
+	public String print() {
+		// TODO Implement and merge/replace with printPARGRP
+		return null;
+	}
+
+	@Override
+	public String trigger(Channel channel) {
+		// TODO Merge or replace with triggerPARGRP
+		return triggerPARGRP(channel);
+	}
+
+	@Override
+	public void channelVerify() {
+		// TODO Auto-generated method stub
+		channelVerifyPARGRP();
+	}
+
+	@Override
+	public boolean moveToNext(Racer racer) {
+		// TODO Auto-generated method stub
+		return moveToNextPARGRP(racer);
+	}
+
+	@Override
+	public boolean moveToFirst(Racer racer) {
+		// TODO Auto-generated method stub
+		return moveToFirstPARGRP(racer);
+	}
+
+	@Override
+	public void addRacer(int number, boolean toFront) {
+		// TODO Auto-generated method stub
+		addRacerPARGRP(number, toFront);
+	}
+
+	@Override
+	public Racer getRacer(int number, boolean byPlace) {
+		// TODO Auto-generated method stub
+		return getRacerPARGRP(number, byPlace);
+	}
+
+	@Override
+	public boolean removeRacer(int number) {
+		// TODO Auto-generated method stub
+		return removeRacerPARGRP(number);
+	}
+
+	@Override
+	public boolean isRacing(Racer racer) {
+		// TODO Auto-generated method stub
+		return isRacingPARGRP(racer);
+	}
+
+	@Override
+	public boolean canBeMoved(Racer racer) {
+		// TODO Auto-generated method stub
+		return moveToFirstPARGRP(racer);
+	}
+
+	@Override
+	public boolean canStart() {
+		// TODO Auto-generated method stub
+		return canStart ? true : canStartPARGRP();
+	}
+
+	@Override
+	public void end() {
+		// TODO Auto-generated method stub
+		ongoing = false;
+		ended = true;
+		endPARGRP();
+		ChronoTimer.log.addToExport(exportMe());
+	}
 }
