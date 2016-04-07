@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
@@ -16,13 +17,50 @@ import javax.swing.plaf.basic.BasicArrowButton;
 public class Gui {
 	
 	private JFrame frame;
+	private JTextArea printerText;
+	private JTextArea displayText;
+	private JScrollPane scrollPane;
+	private String[][] simpleMenu = new String[3][3];
+	private int currentRow;
+	private int currentCol;
+	
 	
 	/**
 	 * Constructor for Gui class
 	 * 
 	 */
 	public Gui() {
+		// row column
+		currentRow = 0;
+		currentCol = 0;
+		simpleMenu[0][0] = "Item 0 0";
+		simpleMenu[0][1] = "Item 0 1";
+		simpleMenu[0][2] = "Item 0 2";
+		simpleMenu[1][0] = "Item 1 0";
+		simpleMenu[1][1] = "Item 1 1";
+		simpleMenu[1][2] = "Item 1 2";
+		simpleMenu[2][0] = "Item 2 0";
+		simpleMenu[2][1] = "Item 2 1";
+		simpleMenu[2][2] = "Item 2 2";
+		
 		initialize();
+	}
+	
+	private void updateMenu(String whoAskedForUpdate){
+		if(whoAskedForUpdate.equals("up")){
+			
+			displayText.setText(updateTextItems(simpleMenu));
+		}
+	}
+	
+	private String updateTextItems(String[][] simpleMenu){
+		String temp = "";
+		
+		for(int i = 0; i < simpleMenu[0].length; i++){
+			temp += simpleMenu[i][0] + "\n";
+		}
+		
+		return temp;		
 	}
 	
 	
@@ -33,6 +71,7 @@ public class Gui {
 	public JFrame getFrame(){
 		return frame;
 	}
+	
 	
 	/**
 	 * Method to initialize all window components and functions
@@ -76,6 +115,7 @@ public class Gui {
 		up.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Up");
+				updateMenu("up");
 			}
 		});
 		up.setBounds(90, 180, 25, 25);
@@ -295,7 +335,7 @@ public class Gui {
 		frame.getContentPane().add(togChan8);
 		
 		// Display text area
-		JTextArea displayText = new JTextArea();
+		displayText = new JTextArea();
 		displayText.setBounds(297, 172, 250, 250);
 		displayText.setEditable(false);
 		frame.getContentPane().add(displayText);		
@@ -304,17 +344,21 @@ public class Gui {
 		JButton printerPower = new JButton("Printer");
 		printerPower.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Printer Power button");
+//				System.out.println("Printer Power button");
+				printerText.append("Printer Power button\n");
 			}
 		});
 		printerPower.setBounds(665, 11, 89, 23);
 		frame.getContentPane().add(printerPower);
 		
 		// Text area for printer output
-		JTextArea printerText = new JTextArea();
-		printerText.setBounds(630, 41, 150, 200);
+		printerText = new JTextArea();
+//		printerText.setBounds(630, 41, 150, 200);
 		printerText.setEditable(false);
-		frame.getContentPane().add(printerText);		
+		scrollPane = new JScrollPane(printerText);
+		scrollPane.setBounds(630, 41, 150, 200);
+		frame.getContentPane().add(scrollPane);		
+
 
 		// Numpad section
 		JButton num_1 = new JButton("1");
