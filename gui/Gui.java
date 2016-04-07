@@ -14,6 +14,8 @@ import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.plaf.basic.BasicArrowButton;
 
+import main.ChronoTimer;
+
 public class Gui {
 	
 	private JFrame frame;
@@ -23,13 +25,15 @@ public class Gui {
 	private String[][] simpleMenu = new String[3][3];
 	private int currentRow;
 	private int currentCol;
+	ChronoTimer chronoT;
 	
 	
 	/**
 	 * Constructor for Gui class
 	 * 
 	 */
-	public Gui() {
+	public Gui(ChronoTimer chrono) {
+		chronoT = chrono;
 		// row column
 		currentRow = 0;
 		currentCol = 0;

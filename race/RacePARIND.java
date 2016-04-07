@@ -25,7 +25,6 @@ public class RacePARIND extends Race{
 	 Initializes the Parallel Individual components of Race.
 	 */
 	public RacePARIND(){
-		// TODO
 		super("PARIND");
 		for (int i=0; i < 4; i++) {
 			lanes.add(new Lane(i));
@@ -323,7 +322,7 @@ public class RacePARIND extends Race{
 		if (!usedChannel)
 			retMes += " - CHANNEL IS NOT USED";
 		update();
-		return retMes; //  TODO
+		return retMes;
 	}
 
 	/**

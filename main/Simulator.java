@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
+import gui.Gui; //gui example. Place this import in class that will create gui window
+
 
 /**
  -- ChronoTimer 1009 --
@@ -38,5 +40,15 @@ public class Simulator {
 		while(true) {
 			handler.handleCommand(scanner.nextLine());
 		}
+	}
+
+	public void gui() {
+		//gui example. Place this code in class that will create gui window
+		try {
+			Gui window = new Gui(chrono);
+			window.getFrame().setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}// end of gui example
 	}
 }
