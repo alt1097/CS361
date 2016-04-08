@@ -18,13 +18,17 @@ public class RaceGRP extends Race{
 	 */
 	private ArrayList<Racer> racers = new ArrayList<>();
 	/**
-	 Index of the first Racer.
+	 Current place number of Racer to finish.
 	 */
-	private int firstIndex = 0;
+	private int placeNumber = 1;
 	/**
-	 Index of the first not racing.
+	 Index of Racer who has not been assigned number.
 	 */
-	private int queueIndex = 0;
+	private int trackNumber = 0;
+	/**
+	 Start time to use for all Racers.
+	 */
+	private Date startTime;
 	/**
 	 Reference to the assigned start Channel.
 	 */
@@ -40,7 +44,6 @@ public class RaceGRP extends Race{
 	public RaceGRP(){
 		super("GRP");
 		channelVerifyGRP();
-		//  TODO
 	}
 
 	//  ----------  RACER MANAGEMENT  ----------
@@ -51,11 +54,9 @@ public class RaceGRP extends Race{
 	 @param toFront True if Racer should be added to the front of lane.
 	 */
 	public void addRacerGRP(int number, boolean toFront){
-		if(toFront){
-			racers.add(0, new Racer(number));
-		}
-		else{
-			racers.add(new Racer(number));
+		if(trackNumber < racers.size()){
+			racers.get(trackNumber).setNumber(number);
+			trackNumber++;
 		}
 	}
 
@@ -85,7 +86,7 @@ public class RaceGRP extends Race{
 	 @return If the Racer exists.
 	 */
 	public boolean removeRacerGRP(int number){
-		return racers.remove(getRacerGRP(number, false));
+		return false;
 	}
 
 	/**
@@ -94,8 +95,7 @@ public class RaceGRP extends Race{
 	 @return True if the Racer is racing.
 	 */
 	public boolean isRacingGRP(Racer racer){
-		int index = racers.indexOf(racer);
-		return !(index >= queueIndex || index < firstIndex);
+		return false;
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class RaceGRP extends Race{
 	 @return True if Racer can be moved.
 	 */
 	public boolean canBeMovedGRP(Racer racer){
-		return racers.indexOf(racer) <= firstIndex;
+		return false;
 	}
 
 	/**
@@ -113,11 +113,6 @@ public class RaceGRP extends Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean moveToFirstGRP(Racer racer){
-		if(queueIndex - firstIndex > 1){
-			racers.remove(racer);
-			racers.add(firstIndex, racer);
-			return true;
-		}
 		return false;
 	}
 
@@ -127,11 +122,6 @@ public class RaceGRP extends Race{
 	 @return True if Racer could be moved.
 	 */
 	public boolean moveToNextGRP(Racer racer){
-		if(queueIndex < racers.size() - 1){
-			racers.remove(racer);
-			racers.add(queueIndex, racer);
-			return true;
-		}
 		return false;
 	}
 
@@ -139,8 +129,6 @@ public class RaceGRP extends Race{
 	 The Racer in first will be marked to not finish.
 	 */
 	public void dnf(){
-		firstIndex++;
-		update();
 	}
 
 	//  ----------  EVENT MANAGEMENT  ----------
@@ -150,14 +138,37 @@ public class RaceGRP extends Race{
 	 @return True if Race can start.
 	 */
 	public boolean canStartGRP(){
-		return false;  //  TODO
+		boolean pass = true;
+		if(startChannel == null || finishChannel == null){
+			pass = false;
+		}
+		canStart = pass;
+		return pass;
 	}
 
 	/**
 	 Verifies that Channels are set up so that a Group Race can proceed.
 	 */
 	public void channelVerifyGRP(){
-		//  TODO
+		boolean fail = true;
+		for(int i = 0; i < 8; i += 2){
+			Channel tempStart = ChronoTimer.getChannel(i);
+			if(tempStart != null && tempStart.isOn()){
+				Channel tempFinish = ChronoTimer.getChannel(i + 1);
+				if(tempFinish != null && tempFinish.isOn()){
+					tempStart.setChanType("START");
+					startChannel = tempStart;
+					tempFinish.setChanType("FINISH");
+					finishChannel = tempFinish;
+					fail = false;
+					break;
+				}
+			}
+		}
+		if(fail){
+			startChannel = null;
+			finishChannel = null;
+		}
 	}
 
 	/**
@@ -166,23 +177,49 @@ public class RaceGRP extends Race{
 	 @return String of any messages.
 	 */
 	public String triggerGRP(Channel channel){
-		//  TODO
-		update();
-		return "";  //  TODO
+		String retMes = "";
+		if(channel == startChannel){
+			if(ongoing){
+				retMes += " - START TIME ALREADY ESTABLISHED";
+			}
+			else{
+				ongoing = true;
+				startTime = ChronoTimer.getTime();
+				ChronoTimer.output("TRIG "+(startChannel.getName() + 1));
+			}
+		}
+		else if(channel == finishChannel){
+			if(ongoing){
+				Racer racer = new Racer(placeNumber);
+				racer.setStartTime(startTime);
+				finishChannel.fireChannel(racer);
+				finishChannel.reset();
+				placeNumber++;
+				racers.add(racer);
+				ChronoTimer.output(racer.getNumber()+" TRIG "+(finishChannel.getName() + 1));
+				ChronoTimer.output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
+			}
+			else{
+				retMes += " - START HAS NOT BEEN TRIGGERED";
+			}
+		}
+		else{
+			retMes += " - CHANNEL IS NOT USED";
+		}
+		return retMes;
 	}
 
 	/**
 	 Runs various checks every time a trigger occurs.
 	 */
 	private void update(){
-		//  TODO
 	}
 
 	/**
 	 Runs the actions to finalize a Group Race.
 	 */
 	public void endGRP(){
-		//  TODO
+		ChronoTimer.log.add(printGRP());
 	}
 	
 	/**
@@ -193,7 +230,7 @@ public class RaceGRP extends Race{
 		String sep = "--------------------";
 		String record = "";
 		record += sep+"\n";
-		record += ": : Run #"+ChronoTimer.log.getLogNumber()+" : : ";
+		record += ": : Run #"+ChronoTimer.log.getLogNumber()+" : : "+eventType+" : : ";
 		if(ended()){
 			record += "Ended";
 		}
@@ -241,14 +278,27 @@ public class RaceGRP extends Race{
 	 Exports Group Race data into JSON format String.
 	 @param data Hash table to add to.
 	 */
-	public void exportMeGRP(Hashtable<String, Serializable> data){
-		//  TODO
-	}
+//	public void exportMeGRP(){
+
+//	}
 
 	@Override
 	public String exportMe() {
-		// TODO Implement
-		return null;
+		Hashtable<String, Serializable> data = new Hashtable<>();
+		data.put("eventType", super.eventType);
+		data.put("canStart", super.canStart);
+		data.put("ongoing", super.ongoing);
+		data.put("ended", super.ended);
+		data.put("racers", racers);
+		data.put("placeNumber", placeNumber);
+		data.put("trackNumber", trackNumber);
+		if(startChannel != null){
+			data.put("startChannel", startChannel.getName());
+		}
+		if(finishChannel != null){
+			data.put("finishChannel", finishChannel.getName());
+		}		
+		return ChronoTimer.export.objectToJsonString(data);
 	}
 
 	@Override
