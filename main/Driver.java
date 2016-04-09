@@ -26,8 +26,8 @@ public class Driver {
 		Scanner scanner = new Scanner(System.in);
 		simulator = new Simulator();
 		System.out.print("Choose file (f), console (c), or GUI (g) input:  ");
-		String inputType = scanner.nextLine();
-//		String	inputType = "g";
+//		String inputType = scanner.nextLine();
+		String	inputType = "g";
 		if (inputType.startsWith("f"))
 		{
 			System.out.println("Please enter the filename of the test data:");

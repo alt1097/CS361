@@ -15,6 +15,8 @@ import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.plaf.basic.BasicArrowButton;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import main.ChronoTimer;
 
@@ -24,13 +26,14 @@ public class Gui {
 	private JTextArea printerText;
 	private JTextArea displayText;
 	private JScrollPane scrollPane;
-	private String[][] simpleMenu = new String[3][3];
-	private int currentRow;
-	private int currentCol;
+	private String[][] simpleMenu = new String[5][4];
+	private int row;
+	private int col;
 	private ChronoTimer chrono;
 	private boolean printerSwitch;
 	
-	
+	private boolean numPadActive;
+	private boolean guiActive;
 	
 	
 	/**
@@ -40,54 +43,96 @@ public class Gui {
 	public Gui(ChronoTimer chrono) {
 		this.chrono = chrono;
 		// row column
-		currentRow = 0;
-		currentCol = 0;
-		simpleMenu[0][0] = "Item 0 0";
-		simpleMenu[0][1] = "Item 0 1";
-		simpleMenu[0][2] = "Item 0 2";
-		simpleMenu[1][0] = "Item 1 0";
-		simpleMenu[1][1] = "Item 1 1";
-		simpleMenu[1][2] = "Item 1 2";
-		simpleMenu[2][0] = "Item 2 0";
-		simpleMenu[2][1] = "Item 2 1";
-		simpleMenu[2][2] = "Item 2 2";		
+//		row = 0;
+//		col = 0;
+		
+		// main menu
+		simpleMenu[0][0] = "New Race";
+		simpleMenu[0][1] = "Add/Clr racer";
+		simpleMenu[0][2] = "PRINT";
+		simpleMenu[0][3] = "Export";
+		
+		// new race type menu
+		simpleMenu[1][0] = "IND";
+		simpleMenu[1][1] = "PARIND";
+		simpleMenu[1][2] = "GRP";
+		simpleMenu[1][3] = "PARGRP";
+		
+		// add racer function
+		simpleMenu[2][0] = "num";
+		simpleMenu[2][1] = "clr";
+//		simpleMenu[2][2] = null;
+//		simpleMenu[2][3] = null;
+		
+		// generic menu page
+		simpleMenu[3][0] = "Item 4 0";
+		simpleMenu[3][1] = "Item 4 1";
+		simpleMenu[3][2] = "Item 4 2";
+		simpleMenu[3][3] = "Item 4 2";
+		
+		// export menu
+		simpleMenu[4][0] = "File 2 0";
+		simpleMenu[4][1] = "Server 2 1";
+		simpleMenu[4][2] = "Item 2 2";
+		simpleMenu[4][3] = "Item 2 2";
+		
+////		// generic menu page
+//		simpleMenu[4][0] = "Item 4 0";
+//		simpleMenu[4][1] = "Item 4 1";
+//		simpleMenu[4][2] = "Item 4 2";
+//		simpleMenu[4][3] = "Item 4 2";
+		
+		
 		initialize();
 	}
 	
 	
-	
-	public void receiveMessage(String someText){
-		appendToDisplay(someText);
-	}
-	
-	public void appendToDisplay(String stringToAppend){
-		displayText.append(stringToAppend + "\n");
-	}
-	
-	public void setDisplay(String stringToAppend){
-		displayText.setText(stringToAppend);
-	}
-	
-	
-	private void updateMenu(String whoAskedForUpdate){
-		if(whoAskedForUpdate.equals("up")){			
-			displayText.setText(updateTextItems(simpleMenu));
+
+//	private void drawCell(int x, int y){
+//		appendToDisplay(simpleMenu[x][y]);
+//	}
+
+
+	private void drawCol() {
+		if(guiActive){
+					displayText.setText("");
+		for (int i = 0; i < simpleMenu[0].length; i++) {
+			if ((simpleMenu[row][i] != null)) {
+				if (i == col) {
+					displayText.append("* " + simpleMenu[row][i] + "\n");
+				} else {
+					appendToDisplay(simpleMenu[row][i]);
+				}
+			}
+
 		}
-	}
-	
-	private String updateTextItems(String[][] simpleMenu){
-		String temp = "";
-		
-		for(int i = 0; i < simpleMenu[0].length; i++){
-			temp += simpleMenu[i][0] + "\n";
 		}
-		
-		return temp;		
+
 	}
 	
-	private void drawMenu(){
-		appendToDisplay("FUNC");
+	// remove or modify later
+	private String getNumPadNumber(){		
+		if(numPadActive){
+			displayText.setText("");			
+		}		
+		return null;
 	}
+	
+	
+	private void clear(){
+		displayText.setText("");
+		wipe();
+	}
+	
+	private void wipe(){
+		col = 0;
+		row = 0;
+	}
+	
+	
+	
+	
+	
 	
 	
 	/**
@@ -120,6 +165,21 @@ public class Gui {
 		}
 	}
 	
+	/**
+	 * Append given text to text box as a new line
+	 * @param stringToAppend - some text to append
+	 */
+	public void appendToDisplay(String stringToAppend){
+		displayText.append(stringToAppend + "\n");
+	}
+	
+	/**
+	 * Wipe current text from text box and add some new text
+	 * @param stringToAppend - some text to set
+	 */
+	public void setDisplay(String stringToAppend){
+		displayText.setText(stringToAppend);
+	}		
 	
 	/**
 	 * Method to initialize all window components and functions
@@ -137,6 +197,16 @@ public class Gui {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Power");
 				chrono.power();
+							
+				guiActive = guiActive ? false:true;				
+				
+				if(guiActive){
+					drawCol();
+				}else{
+					clear();
+				}
+				
+				
 			}
 		});
 		power.setBounds(61, 11, 80, 23);
@@ -146,7 +216,7 @@ public class Gui {
 		function.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Function");
-				drawMenu();
+				
 			}
 		});
 		function.setBounds(61, 141, 80, 23);
@@ -165,8 +235,11 @@ public class Gui {
 		BasicArrowButton up = new BasicArrowButton(BasicArrowButton.NORTH);
 		up.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Up");
-				updateMenu("up");
+//				System.out.println("Up");			
+				if((--col < 0)){
+					col = simpleMenu[0].length - 1;
+				}
+				drawCol();
 			}
 		});
 		up.setBounds(90, 180, 25, 25);
@@ -175,7 +248,16 @@ public class Gui {
 		BasicArrowButton left = new BasicArrowButton(BasicArrowButton.WEST);
 		left.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Left");
+//				System.out.println("Left");
+				
+				if((row-1) >= 0){
+					col = row - 1;
+				}	
+				
+				// TODO this need to be changed for bigger menu
+				row = 0;
+				
+				drawCol();	
 			}
 		});
 		left.setBounds(65, 205, 25, 25);
@@ -184,7 +266,28 @@ public class Gui {
 		BasicArrowButton right = new BasicArrowButton(BasicArrowButton.EAST);
 		right.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Right");
+//				System.out.println("Right");
+				
+				// quick fix to eliminate infinite right click
+				if(row == 1){ // race type menu page
+					chrono.event(simpleMenu[row][col]);
+					return;
+				}else if(row == 2){ // add racer menu
+					numPadActive = true; // activate numpad
+					getNumPadNumber();
+					return;
+				}else if(row == 3){ // generic menu
+					// TODO do something
+					return;
+				}else if(row == 4){ // export menu
+					// TODO do something
+					return;
+				}else{
+					row = col+1;
+					col = 0;
+				}
+				
+				drawCol();				
 			}
 		});
 		right.setBounds(115, 205, 25, 25);
@@ -193,7 +296,11 @@ public class Gui {
 		BasicArrowButton down = new BasicArrowButton(BasicArrowButton.SOUTH);
 		down.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Down");
+//				System.out.println("Down");	
+				if((++col > (simpleMenu[0].length - 1))){
+					col = 0;
+				}
+				drawCol();
 			}
 		});
 		down.setBounds(90, 230, 25, 25);
@@ -428,7 +535,8 @@ public class Gui {
 			public void actionPerformed(ActionEvent e) {
 //				printerText.append("Printer Power button\n");
 				appendToPrinter("OKOKOKOKOKOKOKO");
-//				togglePrinter();				
+//				togglePrinter();	
+				chrono.print();
 			}
 		});
 		testButton.setBounds(500, 11, 89, 23);
@@ -450,6 +558,7 @@ public class Gui {
 		num_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Numpad button 1");
+				displayText.append("1");
 			}
 		});
 		num_1.setBounds(630, 250, 50, 50);
@@ -459,6 +568,7 @@ public class Gui {
 		num_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Numpad button 2");
+				displayText.append("2");
 			}
 		});
 		num_2.setBounds(680, 250, 50, 50);
@@ -468,6 +578,7 @@ public class Gui {
 		num_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Numpad button 3");
+				displayText.append("3");
 			}
 		});
 		num_3.setBounds(730, 250, 50, 50);
@@ -477,6 +588,7 @@ public class Gui {
 		num_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Numpad button 4");
+				displayText.append("4");
 			}
 		});
 		num_4.setBounds(630, 300, 50, 50);
@@ -486,6 +598,7 @@ public class Gui {
 		num_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Numpad button 5");
+				displayText.append("5");
 			}
 		});
 		num_5.setBounds(680, 300, 50, 50);
@@ -495,6 +608,7 @@ public class Gui {
 		num_6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Numpad button 6");
+				displayText.append("6");
 			}
 		});
 		num_6.setBounds(730, 300, 50, 50);
@@ -504,6 +618,7 @@ public class Gui {
 		num_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Numpad button 7");
+				displayText.append("7");
 			}
 		});
 		num_7.setBounds(630, 350, 50, 50);
@@ -513,6 +628,7 @@ public class Gui {
 		num_8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Numpad button 8");
+				displayText.append("8");
 			}
 		});
 		num_8.setBounds(680, 350, 50, 50);
@@ -522,6 +638,7 @@ public class Gui {
 		num_9.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Numpad button 9");
+				displayText.append("9");
 			}
 		});
 		num_9.setBounds(730, 350, 50, 50);
@@ -548,7 +665,30 @@ public class Gui {
 		JButton button_pound = new JButton("#");
 		button_pound.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button #");
+				
+				
+				if(numPadActive){
+					System.out.println("Numpad button #");
+				
+				 try {
+					Method m = ChronoTimer.class.getMethod(simpleMenu[row][col], int.class);
+					m.invoke(chrono, Integer.parseInt(displayText.getText()));
+				} catch (NoSuchMethodException | SecurityException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalArgumentException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InvocationTargetException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				}
+				 numPadActive = false;
+				 drawCol();
 			}
 		});
 		button_pound.setBounds(730, 400, 50, 50);

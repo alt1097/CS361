@@ -123,7 +123,6 @@ public class Channel implements SensorListener{
 		}
 		if (fieldSensor == null) {
 			fieldSensor = new FieldSensor(this, fieldSensorType);
-			System.out.println("Channel # " + number+ " " + type + " was successfully connected to " + fieldSensor.getType() + " sensor.");
 			ChronoTimer.debugLog.add("Channel # " + number+ " " + type + " was successfully connected to " + fieldSensor.getType() + " sensor.");
 		} else {
 			System.out.println("Something is already connected to this port, disconnect it firs");

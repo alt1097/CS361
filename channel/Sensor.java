@@ -12,7 +12,6 @@ public abstract class Sensor{
 	protected Channel whichChannelShouldReceiveEvent;
 
 	public Sensor(Channel channel, String type, boolean state){
-		System.out.println("GUI TEST sensor type " + type);
 		if(type.equalsIgnoreCase("EYE") || type.equalsIgnoreCase("GATE") || type.equalsIgnoreCase("PAD") || type.equalsIgnoreCase("FIRE_BUTTON")){
 			this.type = type;
 		}else{
