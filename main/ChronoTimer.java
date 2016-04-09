@@ -4,12 +4,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import race.*;
 import channel.Channel;
 import export.Export;
+import gui.Gui;
 
 import javax.swing.*;
 
@@ -66,7 +69,26 @@ public class ChronoTimer extends JFrame{
 	 Flag used to override certain functions from being used during JUnit testing.
 	 */
 	public static boolean flagJUnit;
-
+	
+	/**
+	 * Should not be static
+	 * Variable to hold reference to gui object
+	 */
+	private Gui chronoGui;
+	
+	/**
+	 * Everyone who has access to ChronoTimer can also
+	 * obtain access to gui public methods over this getter
+	 * @return	returns a reference to gui object
+	 * 			returns null if gui null
+	 * 
+	 * This is outsider responsibility to check it for null!
+	 * 
+	 */
+	public Gui getGui(){
+		return chronoGui == null ? null : chronoGui;
+	}
+	
 	/**
 	 Initializes the ChronoTimer.
 	 */
@@ -750,5 +772,48 @@ public class ChronoTimer extends JFrame{
 	public static void enableJUnit(){
 		flagJUnit = true;
 		debugLog.enableJUnit();
+	}
+	
+	/**
+	 * Adds reference to gui object.
+	 * @param myGui reference to gui object
+	 */
+	protected void addListener(Gui myGui){
+		//TODO keep it protected for now
+		chronoGui = myGui;
+	}
+	
+	// Examples below. If you would like to print from somewhere else
+	// You should implement something similar
+	/**
+	 * Appends a string to gui printer text frame
+	 * @param someText string formatted for printer output. ~15 chars length
+	 */
+	private void appendToGuiPrinter(String someText){
+		if(getGui() != null){
+			getGui().appendToPrinter(someText);
+		}	
+	}
+	
+	/**
+	 * Appends a string to gui display text frame
+	 * 
+	 * @param someText string formatted for printer output
+	 */
+	private void appendToGuiDisplay(String someText){
+		if(getGui() != null){
+			getGui().appendToDisplay(someText);
+		}		
+	}
+	
+	/**
+	 * Wipes a current display state and prints a string into it
+	 * 
+	 * @param someText string formatted for printer output
+	 */
+	private void setGuiDisplay(String someText){
+		if(getGui() != null){
+			getGui().setDisplay(someText);
+		}		
 	}
 }

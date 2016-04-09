@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
@@ -13,6 +14,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.plaf.basic.BasicArrowButton;
+
 
 import main.ChronoTimer;
 
@@ -25,7 +27,10 @@ public class Gui {
 	private String[][] simpleMenu = new String[3][3];
 	private int currentRow;
 	private int currentCol;
-	ChronoTimer chronoT;
+	private ChronoTimer chrono;
+	private boolean printerSwitch;
+	
+	
 	
 	
 	/**
@@ -33,7 +38,7 @@ public class Gui {
 	 * 
 	 */
 	public Gui(ChronoTimer chrono) {
-		chronoT = chrono;
+		this.chrono = chrono;
 		// row column
 		currentRow = 0;
 		currentCol = 0;
@@ -45,14 +50,27 @@ public class Gui {
 		simpleMenu[1][2] = "Item 1 2";
 		simpleMenu[2][0] = "Item 2 0";
 		simpleMenu[2][1] = "Item 2 1";
-		simpleMenu[2][2] = "Item 2 2";
-		
+		simpleMenu[2][2] = "Item 2 2";		
 		initialize();
 	}
 	
+	
+	
+	public void receiveMessage(String someText){
+		appendToDisplay(someText);
+	}
+	
+	public void appendToDisplay(String stringToAppend){
+		displayText.append(stringToAppend + "\n");
+	}
+	
+	public void setDisplay(String stringToAppend){
+		displayText.setText(stringToAppend);
+	}
+	
+	
 	private void updateMenu(String whoAskedForUpdate){
-		if(whoAskedForUpdate.equals("up")){
-			
+		if(whoAskedForUpdate.equals("up")){			
 			displayText.setText(updateTextItems(simpleMenu));
 		}
 	}
@@ -67,6 +85,10 @@ public class Gui {
 		return temp;		
 	}
 	
+	private void drawMenu(){
+		appendToDisplay("FUNC");
+	}
+	
 	
 	/**
 	 * Method to return JFrame object
@@ -74,6 +96,28 @@ public class Gui {
 	 */
 	public JFrame getFrame(){
 		return frame;
+	}
+	
+	/**
+	 * Toggle printer state. Flip-flop switch for printer.
+	 */
+	private void togglePrinter(){		
+		printerSwitch = printerSwitch ? false :true;
+	}
+	
+	/**
+	 * Appends a string of text to printer text field as a new line
+	 * if printer activated. Do nothing if printer deactivated
+	 * String length for current setup can be around 15 chars
+	 * 
+	 * @param stringToPrinter - string that will be attached to
+	 * 							the bottom of printer text frame
+	 * 							omit \n in chars in stringToPrinter
+	 */
+	public void appendToPrinter(String stringToPrinter){
+		if(printerSwitch){
+			printerText.append(stringToPrinter + "\n");
+		}
 	}
 	
 	
@@ -91,7 +135,8 @@ public class Gui {
 		JButton power = new JButton("Power");
 		power.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Power");
+//				System.out.println("Power");
+				chrono.power();
 			}
 		});
 		power.setBounds(61, 11, 80, 23);
@@ -100,7 +145,8 @@ public class Gui {
 		JButton function = new JButton("Function");
 		function.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Function");
+//				System.out.println("Function");
+				drawMenu();
 			}
 		});
 		function.setBounds(61, 141, 80, 23);
@@ -109,7 +155,8 @@ public class Gui {
 		JButton swap = new JButton("Swap");
 		swap.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Swap");
+//				System.out.println("Swap");
+				chrono.swap();
 			}
 		});
 		swap.setBounds(61, 332, 80, 23);
@@ -180,7 +227,8 @@ public class Gui {
 		fireChan1.setBounds(325, 11, 40, 23);
 		fireChan1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Chan 1 was fired by button fireChan1");
+//				System.out.println("Chan 1 was fired by button fireChan1");
+				chrono.trig(1);
 			}
 		});
 		frame.getContentPane().add(fireChan1);
@@ -188,7 +236,8 @@ public class Gui {
 		JRadioButton togChan1 = new JRadioButton("");
 		togChan1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Radio 1");
+//				System.out.println("Radio 1");
+				chrono.tog(1);
 			}
 		});
 		togChan1.setBounds(335, 41, 20, 20);
@@ -199,7 +248,8 @@ public class Gui {
 		JButton fireChan3 = new JButton("3");
 		fireChan3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Chan 3 was fired by button fireChan3");
+//				System.out.println("Chan 3 was fired by button fireChan3");
+				chrono.trig(3);
 			}
 		});
 		fireChan3.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -209,7 +259,8 @@ public class Gui {
 		JRadioButton togChan3 = new JRadioButton("");
 		togChan3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Radio 3");
+//				System.out.println("Radio 3");
+				chrono.tog(3);
 			}
 		});
 		togChan3.setBounds(385, 41, 20, 20);
@@ -219,7 +270,8 @@ public class Gui {
 		JButton fireChan5 = new JButton("5");
 		fireChan5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Chan 5 was fired by button fireChan5");
+//				System.out.println("Chan 5 was fired by button fireChan5");
+				chrono.trig(5);
 			}
 		});
 		fireChan5.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -229,31 +281,36 @@ public class Gui {
 		JRadioButton togChan5 = new JRadioButton("");
 		togChan5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Radio 5");
+//				System.out.println("Radio 5");
+				chrono.tog(5);
 			}
 		});
 		togChan5.setBounds(435, 41, 20, 20);
 		frame.getContentPane().add(togChan5);
 		
 		// Pair 4
-		JRadioButton togChan7 = new JRadioButton("");
-		togChan7.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Radio 7");
-			}
-		});
-		togChan7.setBounds(485, 41, 20, 20);
-		frame.getContentPane().add(togChan7);
-		
 		JButton fireChan7 = new JButton("7");
 		fireChan7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Chan 7 was fired by button fireChan7");
+//				System.out.println("Chan 7 was fired by button fireChan7");
+				chrono.trig(7);
 			}
 		});
 		fireChan7.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		fireChan7.setBounds(475, 11, 40, 23);
 		frame.getContentPane().add(fireChan7);
+		
+		JRadioButton togChan7 = new JRadioButton("");
+		togChan7.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				System.out.println("Radio 7");
+				chrono.tog(7);
+			}
+		});
+		togChan7.setBounds(485, 41, 20, 20);
+		frame.getContentPane().add(togChan7);
+		
+
 		
 
 		// Second row of pairs
@@ -261,7 +318,8 @@ public class Gui {
 		JButton fireChan2 = new JButton("2");
 		fireChan2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Chan 2 was fired by button fireChan2");
+//				System.out.println("Chan 2 was fired by button fireChan2");
+				chrono.trig(2);
 			}
 		});
 		fireChan2.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -271,7 +329,8 @@ public class Gui {
 		JRadioButton togChan2 = new JRadioButton("");
 		togChan2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Radio 2");
+//				System.out.println("Radio 2");
+				chrono.tog(2);
 			}
 		});
 		togChan2.setBounds(335, 115, 20, 20);
@@ -282,7 +341,8 @@ public class Gui {
 		JButton fireChan4 = new JButton("4");
 		fireChan4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Chan 4 was fired by button fireChan4");
+//				System.out.println("Chan 4 was fired by button fireChan4");
+				chrono.trig(4);
 			}
 		});
 		fireChan4.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -292,7 +352,8 @@ public class Gui {
 		JRadioButton togChan4 = new JRadioButton("");
 		togChan4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Radio 4");
+//				System.out.println("Radio 4");
+				chrono.tog(4);
 			}
 		});
 		togChan4.setBounds(385, 115, 20, 20);
@@ -302,7 +363,8 @@ public class Gui {
 		JButton fireChan6 = new JButton("6");
 		fireChan6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Chan 6 was fired by button fireChan6");
+//				System.out.println("Chan 6 was fired by button fireChan6");
+				chrono.trig(6);
 			}
 		});
 		fireChan6.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -312,7 +374,8 @@ public class Gui {
 		JRadioButton togChan6 = new JRadioButton("");
 		togChan6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Radio 6");
+//				System.out.println("Radio 6");
+				chrono.tog(6);
 			}
 		});
 		togChan6.setBounds(435, 115, 20, 20);
@@ -322,7 +385,8 @@ public class Gui {
 		JButton fireChan8 = new JButton("8");
 		fireChan8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Chan 8 was fired by button fireChan8");
+//				System.out.println("Chan 8 was fired by button fireChan8");
+				chrono.trig(8);
 			}
 		});
 		fireChan8.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -332,7 +396,8 @@ public class Gui {
 		JRadioButton togChan8 = new JRadioButton("");
 		togChan8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Radio 8");
+//				System.out.println("Radio 8");
+				chrono.tog(8);
 			}
 		});
 		togChan8.setBounds(485, 115, 20, 20);
@@ -345,15 +410,31 @@ public class Gui {
 		frame.getContentPane().add(displayText);		
 		
 		// Right section
-		JButton printerPower = new JButton("Printer");
+		JToggleButton printerPower = new JToggleButton("Printer");
 		printerPower.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				System.out.println("Printer Power button");
-				printerText.append("Printer Power button\n");
+//				printerText.append("Printer Power button\n");
+//				appendToPrinter("OK");
+				togglePrinter();
+				
 			}
 		});
 		printerPower.setBounds(665, 11, 89, 23);
 		frame.getContentPane().add(printerPower);
+		
+		// TEST BUTTON///////////////////////////////////////////////////////////////
+		JButton testButton = new JButton("TEST");
+		testButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				printerText.append("Printer Power button\n");
+				appendToPrinter("OKOKOKOKOKOKOKO");
+//				togglePrinter();				
+			}
+		});
+		testButton.setBounds(500, 11, 89, 23);
+		frame.getContentPane().add(testButton);
+		// TEST BUTTON///////////////////////////////////////////////////////////////
+		
 		
 		// Text area for printer output
 		printerText = new JTextArea();
@@ -475,112 +556,180 @@ public class Gui {
 		
 		
 		// Back view section
+		String[] sensors = {"-", "EYE", "GATE", "PAD"};
+		
 		JLabel backViewLabel = new JLabel("Back View");
 		backViewLabel.setBounds(375, 507, 66, 14);
 		frame.getContentPane().add(backViewLabel);
 		
-		JRadioButton backChan_1 = new JRadioButton("");
-		backChan_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Back radio 1");
-			}
-		});
-		backChan_1.setBounds(115, 560, 20, 20);
-		frame.getContentPane().add(backChan_1);
-		
-		JRadioButton backChan_3 = new JRadioButton("");
-		backChan_3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Back radio 3");
-			}
-		});
-		backChan_3.setBounds(165, 560, 20, 20);
-		frame.getContentPane().add(backChan_3);
-		
-		JRadioButton backChan_5 = new JRadioButton("");
-		backChan_5.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Back radio 5");
-			}
-		});
-		backChan_5.setBounds(215, 560, 20, 20);
-		frame.getContentPane().add(backChan_5);
-		
-		JRadioButton backChan_7 = new JRadioButton("");
-		backChan_7.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Back radio 7");
-			}
-		});
-		backChan_7.setBounds(265, 560, 20, 20);
-		frame.getContentPane().add(backChan_7);
-		
+		// this is a numbers above a channel type selector
 		JLabel backChanLabel_1 = new JLabel("1");
-		backChanLabel_1.setBounds(120, 540, 15, 14);
+		backChanLabel_1.setBounds(140, 540, 15, 14);
 		frame.getContentPane().add(backChanLabel_1);
 		
 		JLabel backChanLabel_3 = new JLabel("3");
-		backChanLabel_3.setBounds(170, 540, 15, 14);
+		backChanLabel_3.setBounds(200, 540, 15, 14);
 		frame.getContentPane().add(backChanLabel_3);
 		
 		JLabel backChanLabel_5 = new JLabel("5");
-		backChanLabel_5.setBounds(220, 539, 15, 14);
+		backChanLabel_5.setBounds(270, 539, 15, 14);
 		frame.getContentPane().add(backChanLabel_5);
 		
 		JLabel backChanLabel_7 = new JLabel("7");
-		backChanLabel_7.setBounds(270, 539, 15, 14);
+		backChanLabel_7.setBounds(330, 539, 15, 14);
 		frame.getContentPane().add(backChanLabel_7);
 		
 		JLabel backChanLabel_2 = new JLabel("2");
-		backChanLabel_2.setBounds(120, 589, 15, 14);
+		backChanLabel_2.setBounds(140, 589, 15, 14);
 		frame.getContentPane().add(backChanLabel_2);
 		
-		JRadioButton backChan_2 = new JRadioButton("");
-		backChan_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Back radio 2");
-			}
-		});
-		backChan_2.setBounds(115, 609, 20, 20);
-		frame.getContentPane().add(backChan_2);
-		
-		JRadioButton backChan_4 = new JRadioButton("");
-		backChan_4.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Back radio 4");
-			}
-		});
-		backChan_4.setBounds(165, 609, 20, 20);
-		frame.getContentPane().add(backChan_4);
-		
 		JLabel backChanLabel_4 = new JLabel("4");
-		backChanLabel_4.setBounds(170, 589, 15, 14);
+		backChanLabel_4.setBounds(200, 589, 15, 14);
 		frame.getContentPane().add(backChanLabel_4);
 		
 		JLabel backChanLabel_5_1 = new JLabel("6");
-		backChanLabel_5_1.setBounds(220, 588, 15, 14);
+		backChanLabel_5_1.setBounds(270, 588, 15, 14);
 		frame.getContentPane().add(backChanLabel_5_1);
 		
-		JRadioButton backChan_6 = new JRadioButton("");
-		backChan_6.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Back radio 6");
-			}
-		});
-		backChan_6.setBounds(215, 609, 20, 20);
-		frame.getContentPane().add(backChan_6);
-		
 		JLabel backChanLabel_8 = new JLabel("8");
-		backChanLabel_8.setBounds(270, 588, 15, 14);
+		backChanLabel_8.setBounds(330, 588, 15, 14);
 		frame.getContentPane().add(backChanLabel_8);
 		
-		JRadioButton backChan_8 = new JRadioButton("");
-		backChan_8.addActionListener(new ActionListener() {
+		
+		JComboBox<String> backChan_1 = new JComboBox<String>(sensors);
+		backChan_1.setSelectedIndex(0);
+		backChan_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Back radio 8");
+//				System.out.println("Back radio 1");
+				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
+				if(sensorType.equals("-")){
+					chrono.disc(1);
+				}else{
+					chrono.conn(sensorType, 1);
+				}	
 			}
 		});
-		backChan_8.setBounds(265, 609, 20, 20);
+		backChan_1.setBounds(115, 560, 60, 20);
+		frame.getContentPane().add(backChan_1);
+		
+		JComboBox<String> backChan_3 = new JComboBox<String>(sensors);
+		backChan_3.setSelectedIndex(0);
+		backChan_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				System.out.println("Back radio 3");
+				
+				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
+				if(sensorType.equals("-")){
+					chrono.disc(3);
+				}else{
+					chrono.conn(sensorType, 3);
+				}
+			}
+		});
+		backChan_3.setBounds(180, 560, 60, 20);
+		frame.getContentPane().add(backChan_3);
+		
+		JComboBox<String> backChan_5 = new JComboBox<String>(sensors);
+		backChan_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				System.out.println("Back radio 5");
+
+				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
+				if(sensorType.equals("-")){
+					chrono.disc(5);
+				}else{
+					chrono.conn(sensorType, 5);
+				}
+				
+			}
+		});
+		backChan_5.setBounds(245, 560, 60, 20);
+		frame.getContentPane().add(backChan_5);
+		
+		JComboBox<String> backChan_7 = new JComboBox<String>(sensors);
+		backChan_7.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				System.out.println("Back radio 7");
+				
+				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
+				if(sensorType.equals("-")){
+					chrono.disc(7);
+				}else{
+					chrono.conn(sensorType, 7);
+				}
+			}
+		});
+		backChan_7.setBounds(310, 560, 60, 20);
+		frame.getContentPane().add(backChan_7);
+		
+
+		
+		JComboBox<String> backChan_2 = new JComboBox<String>(sensors);
+		backChan_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				System.out.println("Back radio 2");
+				
+				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
+				if(sensorType.equals("-")){
+					chrono.disc(2);
+				}else{
+					chrono.conn(sensorType, 2);
+				}
+			}
+		});
+		backChan_2.setBounds(115, 609, 60, 20);
+		frame.getContentPane().add(backChan_2);
+		
+		JComboBox<String> backChan_4 = new JComboBox<String>(sensors);
+		backChan_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				System.out.println("Back radio 4");
+				
+				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
+				if(sensorType.equals("-")){
+					chrono.disc(4);
+				}else{
+					chrono.conn(sensorType, 4);
+				}
+			}
+		});
+		backChan_4.setBounds(180, 609, 60, 20);
+		frame.getContentPane().add(backChan_4);
+		
+
+		
+		JComboBox<String> backChan_6 = new JComboBox<String>(sensors);
+		backChan_6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				System.out.println("Back radio 6");
+				
+				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
+				if(sensorType.equals("-")){
+					chrono.disc(6);
+				}else{
+					chrono.conn(sensorType, 6);
+				}
+			}
+		});
+		backChan_6.setBounds(245, 609, 60, 20);
+		frame.getContentPane().add(backChan_6);
+		
+
+		
+		JComboBox<String> backChan_8 = new JComboBox<String>(sensors);
+		backChan_8.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				System.out.println("Back radio 8");
+				
+				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
+				if(sensorType.equals("-")){
+					chrono.disc(8);
+				}else{
+					chrono.conn(sensorType, 8);
+				}
+			}
+		});
+		backChan_8.setBounds(310, 609, 60, 20);
 		frame.getContentPane().add(backChan_8);
 		
 		JLabel backChanLabel = new JLabel("Channel");

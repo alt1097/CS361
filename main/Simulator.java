@@ -47,6 +47,7 @@ public class Simulator {
 		try {
 			Gui window = new Gui(chrono);
 			window.getFrame().setVisible(true);
+			chrono.addListener(window);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}// end of gui example
