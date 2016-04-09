@@ -4,10 +4,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import race.*;
 import channel.Channel;
@@ -767,6 +767,7 @@ public class ChronoTimer extends JFrame{
 	public static void output(String out){
 		System.out.println(out);
 		log.add(out);
+		// appendToGuiPrinter(out);  TODO:  NEEDS STATIC VARIABLES AND METHODS TO FUNCTION
 	}
 	
 	public static void enableJUnit(){
@@ -781,6 +782,12 @@ public class ChronoTimer extends JFrame{
 	protected void addListener(Gui myGui){
 		//TODO keep it protected for now
 		chronoGui = myGui;
+		new Timer().scheduleAtFixedRate(new TimerTask(){
+			@Override
+			public void run(){
+				setGuiDisplay(race.raceStats());
+			}
+		}, 0, 100);  //  TODO:  SET MILLISECONDS HERE, CURRENTLY 100 MS.
 	}
 	
 	// Examples below. If you would like to print from somewhere else

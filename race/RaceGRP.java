@@ -365,7 +365,7 @@ public class RaceGRP extends Race{
 	@Override
 	public boolean canStart() {
 		// TODO Auto-generated method stub
-		return canStart ? true : canStartGRP();
+		return canStart || canStartGRP();
 	}
 
 	@Override
@@ -375,5 +375,25 @@ public class RaceGRP extends Race{
 		ended = true;
 		endGRP();
 		ChronoTimer.log.addToExport(exportMe());
+	}
+
+	/**
+	 Builds Group Race text to display on center GUI screen.
+	 @return The displayed text for the GUI.
+	 */
+	public String raceStats(){
+		String output = "";
+		if(startTime == null){
+			output += "- RACE NOT STARTED -";
+		}
+		else{
+			output += "ELAPSED: "+(ChronoTimer.diffFormat.format(ChronoTimer.getTime().getTime() - startTime.getTime()));
+		}
+		int racersSize = racers.size();
+		if(racersSize > 0){
+			Racer lastRacer = racers.get(racersSize - 1);
+			output += "\n\n"+lastRacer.getNumber()+"\t"+lastRacer.getFinalTime()+" F";
+		}
+		return output;
 	}
 }
