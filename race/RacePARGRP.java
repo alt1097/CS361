@@ -253,7 +253,7 @@ public class RacePARGRP extends Race{
 	@Override
 	public boolean canStart() {
 		// TODO Auto-generated method stub
-		return canStart ? true : canStartPARGRP();
+		return canStart || canStartPARGRP();
 	}
 
 	@Override
@@ -263,5 +263,13 @@ public class RacePARGRP extends Race{
 		ended = true;
 		endPARGRP();
 		ChronoTimer.log.addToExport(exportMe());
+	}
+
+	/**
+	 Builds Parallel Group Race text to display on center GUI screen.
+	 @return The displayed text for the GUI.
+	 */
+	public String raceStats(){
+		return "";  //  TODO
 	}
 }

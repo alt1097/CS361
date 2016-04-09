@@ -425,7 +425,7 @@ public class RaceIND extends Race{
 	@Override
 	public boolean canStart() {
 		// TODO Auto-generated method stub
-		return canStart ? true : canStartIND();
+		return canStart || canStartIND();
 	}
 
 	@Override
@@ -436,10 +436,34 @@ public class RaceIND extends Race{
 		endIND();
 		ChronoTimer.log.addToExport(exportMe());
 	}
-	
-	
-	
-	
-	
-	
+
+	/**
+	 Builds Individual Race text to display on center GUI screen.
+	 @return The displayed text for the GUI.
+	 */
+	@Override
+	public String raceStats(){
+		String output = "";
+		int racersSize = racers.size();
+		if(racersSize > 0){
+			for(int i = queueIndex; i < queueIndex + 3 && i != racersSize; i++){
+				output += racers.get(i).getNumber();
+				if(i == queueIndex + 2 || i == racersSize - 1){
+					output += "\t>";
+				}
+				output += "\n";
+			}
+			output += "\n";
+			for(int i = firstIndex; i < queueIndex; i++){
+				Racer racer = racers.get(i);
+				output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getElapsedTime())+" R\n";
+			}
+			output += "\n";
+			if(queueIndex != 0 && firstIndex - 1 != -1){
+				Racer racer = racers.get(firstIndex - 1);
+				output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getFinalTime())+" F";
+			}
+		}
+		return output;
+	}
 }

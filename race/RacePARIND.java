@@ -516,7 +516,7 @@ public class RacePARIND extends Race{
 	@Override
 	public boolean canStart() {
 		// TODO Auto-generated method stub
-		return canStart ? true : canStartPARIND();
+		return canStart || canStartPARIND();
 	}
 
 	@Override
@@ -526,5 +526,43 @@ public class RacePARIND extends Race{
 		ended = true;
 		endPARIND();
 		ChronoTimer.log.addToExport(exportMe());
+	}
+
+	/**
+	 Builds Parallel Individual Race text to display on center GUI screen.
+	 @return The displayed text for the GUI.
+	 */
+	public String raceStats(){
+		String output = "";
+		int validLanes = 0;
+		for(Lane lane : lanes){
+			if(lane.isValid()){
+				validLanes += 1;
+			}
+		}
+		for(int i = 0; i < validLanes; i++){
+			output += queue.get(i).getNumber();
+			if(i == validLanes - 1){
+				output += "\t>";
+			}
+			output += "\n";
+		}
+		output += "\n";
+		for(Lane lane : lanes){
+			if(lane.isValid() && lane.racers.size() > 0){
+				for(int i = lane.firstIndex; i < lane.racers.size(); i++){
+					Racer racer = lane.racers.get(i);
+					output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getElapsedTime())+" R\n";
+				}
+			}
+		}
+		output += "\n";
+		for(Lane lane : lanes){
+			if(lane.isValid() && lane.racers.size() > 0 && lane.firstIndex - 1 != -1){
+				Racer racer = lane.racers.get(lane.firstIndex - 1);
+				output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getFinalTime())+" F\n";
+			}
+		}
+		return output;
 	}
 }

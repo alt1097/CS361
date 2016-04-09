@@ -161,5 +161,11 @@ public abstract class Race{
 //		data.put("ended", ended);
 //		return ChronoTimer.export.objectToJsonString(data);
 //	}	
-	public abstract String exportMe();	
+	public abstract String exportMe();
+
+	/**
+	 Builds text to display on center GUI screen.
+	 @return The displayed text for the GUI.
+	 */
+	public abstract String raceStats();
 }
