@@ -787,7 +787,7 @@ public class ChronoTimer extends JFrame{
 			public void run(){
 				setGuiDisplay(race.raceStats());
 			}
-		}, 0, 100);  //  TODO:  SET MILLISECONDS HERE, CURRENTLY 100 MS.
+		}, 0, 1);
 	}
 	
 	// Examples below. If you would like to print from somewhere else

@@ -261,6 +261,7 @@ public class RacePARGRP extends Race{
 		// TODO Auto-generated method stub
 		ongoing = false;
 		ended = true;
+		endedDisplay = raceStats();
 		endPARGRP();
 		ChronoTimer.log.addToExport(exportMe());
 	}

@@ -433,6 +433,7 @@ public class RaceIND extends Race{
 		// TODO Auto-generated method stub
 		ongoing = false;
 		ended = true;
+		endedDisplay = raceStats();
 		endIND();
 		ChronoTimer.log.addToExport(exportMe());
 	}
@@ -443,27 +444,32 @@ public class RaceIND extends Race{
 	 */
 	@Override
 	public String raceStats(){
-		String output = "";
-		int racersSize = racers.size();
-		if(racersSize > 0){
-			for(int i = queueIndex; i < queueIndex + 3 && i != racersSize; i++){
-				output += racers.get(i).getNumber();
-				if(i == queueIndex + 2 || i == racersSize - 1){
-					output += "\t>";
+		if(endedDisplay == null){
+			String output = "";
+			int racersSize = racers.size();
+			if(racersSize > 0){
+				for(int i = queueIndex; i < queueIndex + 3 && i != racersSize; i++){
+					output = racers.get(i).getNumber()+output;
+					if(i == queueIndex + 2 || i == racersSize - 1){
+						output += "\t>";
+					}
+					else{
+						output = "\n"+output;
+					}
+				}
+				output += "\n\n";
+				for(int i = firstIndex; i < queueIndex; i++){
+					Racer racer = racers.get(i);
+					output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getElapsedTime())+" R\n";
 				}
 				output += "\n";
+				if(queueIndex != 0 && firstIndex - 1 != -1){
+					Racer racer = racers.get(firstIndex - 1);
+					output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getFinalTime())+" F";
+				}
 			}
-			output += "\n";
-			for(int i = firstIndex; i < queueIndex; i++){
-				Racer racer = racers.get(i);
-				output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getElapsedTime())+" R\n";
-			}
-			output += "\n";
-			if(queueIndex != 0 && firstIndex - 1 != -1){
-				Racer racer = racers.get(firstIndex - 1);
-				output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getFinalTime())+" F";
-			}
+			return output;
 		}
-		return output;
+		return endedDisplay;
 	}
 }

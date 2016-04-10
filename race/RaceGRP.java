@@ -373,6 +373,7 @@ public class RaceGRP extends Race{
 		// TODO Auto-generated method stub
 		ongoing = false;
 		ended = true;
+		endedDisplay = raceStats();
 		endGRP();
 		ChronoTimer.log.addToExport(exportMe());
 	}
@@ -382,18 +383,20 @@ public class RaceGRP extends Race{
 	 @return The displayed text for the GUI.
 	 */
 	public String raceStats(){
-		String output = "";
-		if(startTime == null){
-			output += "- RACE NOT STARTED -";
+		if(endedDisplay == null){
+			String output = "";
+			if(startTime == null){
+				output += "- RACE NOT STARTED -";
+			}else{
+				output += "ELAPSED: "+(ChronoTimer.diffFormat.format(ChronoTimer.getTime().getTime() - startTime.getTime()));
+			}
+			int racersSize = racers.size();
+			if(racersSize > 0){
+				Racer lastRacer = racers.get(racersSize - 1);
+				output += "\n\n"+lastRacer.getNumber()+"\t"+lastRacer.getFinalTime()+" F";
+			}
+			return output;
 		}
-		else{
-			output += "ELAPSED: "+(ChronoTimer.diffFormat.format(ChronoTimer.getTime().getTime() - startTime.getTime()));
-		}
-		int racersSize = racers.size();
-		if(racersSize > 0){
-			Racer lastRacer = racers.get(racersSize - 1);
-			output += "\n\n"+lastRacer.getNumber()+"\t"+lastRacer.getFinalTime()+" F";
-		}
-		return output;
+		return endedDisplay;
 	}
 }

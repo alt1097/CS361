@@ -524,6 +524,7 @@ public class RacePARIND extends Race{
 		// TODO Auto-generated method stub
 		ongoing = false;
 		ended = true;
+		endedDisplay = raceStats();
 		endPARIND();
 		ChronoTimer.log.addToExport(exportMe());
 	}
@@ -533,36 +534,44 @@ public class RacePARIND extends Race{
 	 @return The displayed text for the GUI.
 	 */
 	public String raceStats(){
-		String output = "";
-		int validLanes = 0;
-		for(Lane lane : lanes){
-			if(lane.isValid()){
-				validLanes += 1;
-			}
-		}
-		for(int i = 0; i < validLanes; i++){
-			output += queue.get(i).getNumber();
-			if(i == validLanes - 1){
-				output += "\t>";
-			}
-			output += "\n";
-		}
-		output += "\n";
-		for(Lane lane : lanes){
-			if(lane.isValid() && lane.racers.size() > 0){
-				for(int i = lane.firstIndex; i < lane.racers.size(); i++){
-					Racer racer = lane.racers.get(i);
-					output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getElapsedTime())+" R\n";
+		if(endedDisplay == null){
+			String output = "";
+			int validLanes = 0;
+			for(Lane lane : lanes){
+				if(lane.isValid()){
+					validLanes += 1;
 				}
 			}
-		}
-		output += "\n";
-		for(Lane lane : lanes){
-			if(lane.isValid() && lane.racers.size() > 0 && lane.firstIndex - 1 != -1){
-				Racer racer = lane.racers.get(lane.firstIndex - 1);
-				output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getFinalTime())+" F\n";
+			int queueSize = queue.size();
+			for(int i = 0; i < validLanes && i < queueSize; i++){
+				output = queue.get(i).getNumber()+output;
+				if(i == validLanes - 1 || i == queueSize - 1){
+					output += "\t>";
+				}
+				else{
+					output = "\n"+output;
+				}
 			}
+			output += "\n\n";
+			for(Lane lane : lanes){
+				if(lane.isValid() && lane.racers.size() > 0){
+					for(int i = lane.firstIndex; i < lane.racers.size(); i++){
+						Racer racer = lane.racers.get(i);
+						if(racer.getStartTime() != null){
+							output += racer.getNumber()+"\t"+(lane.laneNum + 1)+"    "+ChronoTimer.diffFormat.format(racer.getElapsedTime())+" R\n";
+						}
+					}
+				}
+			}
+			output += "\n";
+			for(Lane lane : lanes){
+				if(lane.isValid() && lane.racers.size() > 0 && lane.firstIndex - 1 != -1){
+					Racer racer = lane.racers.get(lane.firstIndex - 1);
+					output += racer.getNumber()+"\t"+(lane.laneNum + 1)+"    "+ChronoTimer.diffFormat.format(racer.getFinalTime())+" F\n";
+				}
+			}
+			return output;
 		}
-		return output;
+		return endedDisplay;
 	}
 }

@@ -23,6 +23,10 @@ public abstract class Race{
 	 Indicates if the race is currently over.
 	 */
 	protected boolean ended = false;
+	/**
+	 Final displayed message once the race has ended.
+	 */
+	protected String endedDisplay;
 
 	/**
 	 Initializes the default Race requirements.
