@@ -17,6 +17,8 @@ import javax.swing.plaf.basic.BasicArrowButton;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.*;
+
 
 import main.ChronoTimer;
 
@@ -37,6 +39,8 @@ public class Gui {
 	private boolean allowOutsideInput;
 	private boolean functionsMenuActive;
 	
+	private ArrayList<JComboBox> comboBoxes; // = new ArrayList<String>();
+	private ArrayList<JRadioButton> radioButtons;
 	
 	/**
 	 * Constructor for Gui class
@@ -44,14 +48,15 @@ public class Gui {
 	 */
 	public Gui(ChronoTimer chrono) {
 		this.chrono = chrono;
-		// row column
-//		row = 0;
-//		col = 0;
+			
+		comboBoxes = new ArrayList<JComboBox>(); 
+		radioButtons = new ArrayList<JRadioButton>(); 
 		
+		// row column	
 		// main menu
 		simpleMenu[0][0] = "New Race";
 		simpleMenu[0][1] = "Add/Clr racer";
-		simpleMenu[0][2] = "PRINT";
+		simpleMenu[0][2] = "End run";
 		simpleMenu[0][3] = "Export";
 		
 		// new race type menu
@@ -63,11 +68,11 @@ public class Gui {
 		// add racer function
 		simpleMenu[2][0] = "num";
 		simpleMenu[2][1] = "clr";
-//		simpleMenu[2][2] = null;
-//		simpleMenu[2][3] = null;
+		simpleMenu[2][2] = "Item 2 2";
+		simpleMenu[2][3] = "Item 2 3";
 		
 		// generic menu page
-		simpleMenu[3][0] = "Item 4 0";
+		simpleMenu[3][0] = "End active run";
 		simpleMenu[3][1] = "Item 4 1";
 		simpleMenu[3][2] = "Item 4 2";
 		simpleMenu[3][3] = "Item 4 2";
@@ -82,8 +87,7 @@ public class Gui {
 //		simpleMenu[4][0] = "Item 4 0";
 //		simpleMenu[4][1] = "Item 4 1";
 //		simpleMenu[4][2] = "Item 4 2";
-//		simpleMenu[4][3] = "Item 4 2";
-		
+//		simpleMenu[4][3] = "Item 4 2";		
 		
 		initialize();
 	}
@@ -162,6 +166,7 @@ public class Gui {
 	private void clear(){
 		displayText.setText("");
 		wipe();
+		
 	}
 	
 	private void wipe(){
@@ -239,10 +244,31 @@ public class Gui {
 							
 				guiActive = guiActive ? false:true;				
 				
+				for(JRadioButton radio : radioButtons){
+					radio.setSelected(false);
+				}
+				
+				for(JComboBox comboBox : comboBoxes){
+					comboBox.setSelectedIndex(0);
+				}
+				
 				if(guiActive){
-					allowOutsideInput = true;
+//					allowOutsideInput = true;
+					
+					
 				}else{
+					allowOutsideInput = false;
 					clear();
+					
+					for(JRadioButton radio : radioButtons){
+						radio.setSelected(false);
+					}
+					
+					for(JComboBox comboBox : comboBoxes){
+						comboBox.setSelectedIndex(0);
+					}
+					
+					
 				}
 				
 				
@@ -250,6 +276,8 @@ public class Gui {
 		});
 		power.setBounds(61, 11, 80, 23);
 		frame.getContentPane().add(power);
+		
+
 		
 		JButton functions = new JButton("Functions");
 		functions.addActionListener(new ActionListener() {
@@ -289,11 +317,14 @@ public class Gui {
 		BasicArrowButton up = new BasicArrowButton(BasicArrowButton.NORTH);
 		up.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				System.out.println("Up");			
-				if((--col < 0)){
+//				System.out.println("Up");	
+				if(functionsMenuActive){
+									if((--col < 0)){
 					col = simpleMenu[0].length - 1;
 				}
 				drawCol();
+				}
+
 			}
 		});
 		up.setBounds(90, 180, 25, 25);
@@ -303,8 +334,8 @@ public class Gui {
 		left.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Left");
-				
-				if((row-1) >= 0){
+				if(functionsMenuActive){
+									if((row-1) >= 0){
 					col = row - 1;
 				}	
 				
@@ -312,6 +343,8 @@ public class Gui {
 				row = 0;
 				
 				drawCol();	
+				}
+
 			}
 		});
 		left.setBounds(65, 205, 25, 25);
@@ -322,6 +355,8 @@ public class Gui {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Right");
 				
+				if(functionsMenuActive){
+				
 				// quick fix to eliminate infinite right click
 				if(row == 1){ // race type menu page
 					chrono.event(simpleMenu[row][col]);
@@ -330,7 +365,9 @@ public class Gui {
 					numPadActive = true; // activate numpad
 					getNumPadNumber();
 					return;
-				}else if(row == 3){ // generic menu
+				}else if(row == 3){ // end run menu
+					chrono.endRun();
+					System.out.println("END RUN ISSUED");
 					// TODO do something
 					return;
 				}else if(row == 4){ // export menu
@@ -341,7 +378,8 @@ public class Gui {
 					col = 0;
 				}
 				
-				drawCol();				
+				drawCol();
+				}
 			}
 		});
 		right.setBounds(115, 205, 25, 25);
@@ -351,10 +389,13 @@ public class Gui {
 		down.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Down");	
-				if((++col > (simpleMenu[0].length - 1))){
+				if(functionsMenuActive){
+									if((++col > (simpleMenu[0].length - 1))){
 					col = 0;
 				}
 				drawCol();
+				}
+
 			}
 		});
 		down.setBounds(90, 230, 25, 25);
@@ -401,6 +442,7 @@ public class Gui {
 				chrono.tog(1);
 			}
 		});
+		radioButtons.add(togChan1);
 		togChan1.setBounds(335, 41, 20, 20);
 		frame.getContentPane().add(togChan1);
 		
@@ -424,6 +466,7 @@ public class Gui {
 				chrono.tog(3);
 			}
 		});
+		radioButtons.add(togChan3);
 		togChan3.setBounds(385, 41, 20, 20);
 		frame.getContentPane().add(togChan3);
 		
@@ -446,6 +489,7 @@ public class Gui {
 				chrono.tog(5);
 			}
 		});
+		radioButtons.add(togChan5);
 		togChan5.setBounds(435, 41, 20, 20);
 		frame.getContentPane().add(togChan5);
 		
@@ -468,6 +512,7 @@ public class Gui {
 				chrono.tog(7);
 			}
 		});
+		radioButtons.add(togChan7);
 		togChan7.setBounds(485, 41, 20, 20);
 		frame.getContentPane().add(togChan7);
 		
@@ -494,6 +539,7 @@ public class Gui {
 				chrono.tog(2);
 			}
 		});
+		radioButtons.add(togChan2);
 		togChan2.setBounds(335, 115, 20, 20);
 		frame.getContentPane().add(togChan2);
 		
@@ -517,6 +563,7 @@ public class Gui {
 				chrono.tog(4);
 			}
 		});
+		radioButtons.add(togChan4);
 		togChan4.setBounds(385, 115, 20, 20);
 		frame.getContentPane().add(togChan4);
 		
@@ -539,6 +586,7 @@ public class Gui {
 				chrono.tog(6);
 			}
 		});
+		radioButtons.add(togChan6);
 		togChan6.setBounds(435, 115, 20, 20);
 		frame.getContentPane().add(togChan6);
 		
@@ -561,6 +609,7 @@ public class Gui {
 				chrono.tog(8);
 			}
 		});
+		radioButtons.add(togChan8);
 		togChan8.setBounds(485, 115, 20, 20);
 		frame.getContentPane().add(togChan8);
 		
@@ -611,8 +660,11 @@ public class Gui {
 		JButton num_1 = new JButton("1");
 		num_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button 1");
-				displayText.append("1");
+				if(numPadActive){
+//					System.out.println("Numpad button 1");
+					displayText.append("1");	
+				}
+				
 			}
 		});
 		num_1.setBounds(630, 250, 50, 50);
@@ -621,8 +673,10 @@ public class Gui {
 		JButton num_2 = new JButton("2");
 		num_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button 2");
-				displayText.append("2");
+				if(numPadActive){
+//					System.out.println("Numpad button 2");
+					displayText.append("2");	
+				}
 			}
 		});
 		num_2.setBounds(680, 250, 50, 50);
@@ -631,8 +685,10 @@ public class Gui {
 		JButton num_3 = new JButton("3");
 		num_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button 3");
-				displayText.append("3");
+				if(numPadActive){
+//					System.out.println("Numpad button 3");
+					displayText.append("3");	
+				}
 			}
 		});
 		num_3.setBounds(730, 250, 50, 50);
@@ -641,8 +697,11 @@ public class Gui {
 		JButton num_4 = new JButton("4");
 		num_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button 4");
-				displayText.append("4");
+				if(numPadActive){
+//					System.out.println("Numpad button 4");
+					displayText.append("4");	
+				}
+				
 			}
 		});
 		num_4.setBounds(630, 300, 50, 50);
@@ -651,8 +710,11 @@ public class Gui {
 		JButton num_5 = new JButton("5");
 		num_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button 5");
-				displayText.append("5");
+				if(numPadActive){
+
+//					System.out.println("Numpad button 5");
+					displayText.append("5");	
+				}
 			}
 		});
 		num_5.setBounds(680, 300, 50, 50);
@@ -661,8 +723,11 @@ public class Gui {
 		JButton num_6 = new JButton("6");
 		num_6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button 6");
-				displayText.append("6");
+				if(numPadActive){
+
+					System.out.println("Numpad button 6");
+					displayText.append("6");	
+				}
 			}
 		});
 		num_6.setBounds(730, 300, 50, 50);
@@ -671,8 +736,11 @@ public class Gui {
 		JButton num_7 = new JButton("7");
 		num_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button 7");
-				displayText.append("7");
+				if(numPadActive){
+
+					System.out.println("Numpad button 7");
+					displayText.append("7");	
+				}
 			}
 		});
 		num_7.setBounds(630, 350, 50, 50);
@@ -681,8 +749,11 @@ public class Gui {
 		JButton num_8 = new JButton("8");
 		num_8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button 8");
-				displayText.append("8");
+				if(numPadActive){
+
+					System.out.println("Numpad button 8");
+					displayText.append("8");	
+				}
 			}
 		});
 		num_8.setBounds(680, 350, 50, 50);
@@ -691,8 +762,10 @@ public class Gui {
 		JButton num_9 = new JButton("9");
 		num_9.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button 9");
-				displayText.append("9");
+				if(numPadActive){
+					System.out.println("Numpad button 9");
+					displayText.append("9");	
+				}
 			}
 		});
 		num_9.setBounds(730, 350, 50, 50);
@@ -701,7 +774,11 @@ public class Gui {
 		JButton num_star = new JButton("*");
 		num_star.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button *");
+				if(numPadActive){
+//					System.out.println("Numpad button *");	
+					displayText.append("*");
+				}
+				
 			}
 		});
 		num_star.setBounds(630, 400, 50, 50);
@@ -710,7 +787,11 @@ public class Gui {
 		JButton num_0 = new JButton("0");
 		num_0.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Numpad button 8");
+				if(numPadActive){
+//					System.out.println("Numpad button 0");
+					displayText.append("0");					
+				}
+				
 			}
 		});
 		num_0.setBounds(680, 400, 50, 50);
@@ -803,6 +884,7 @@ public class Gui {
 				}	
 			}
 		});
+		comboBoxes.add(backChan_1);
 		backChan_1.setBounds(115, 560, 60, 20);
 		frame.getContentPane().add(backChan_1);
 		
@@ -820,6 +902,7 @@ public class Gui {
 				}
 			}
 		});
+		comboBoxes.add(backChan_3);
 		backChan_3.setBounds(180, 560, 60, 20);
 		frame.getContentPane().add(backChan_3);
 		
@@ -837,6 +920,7 @@ public class Gui {
 				
 			}
 		});
+		comboBoxes.add(backChan_5);
 		backChan_5.setBounds(245, 560, 60, 20);
 		frame.getContentPane().add(backChan_5);
 		
@@ -853,6 +937,7 @@ public class Gui {
 				}
 			}
 		});
+		comboBoxes.add(backChan_7);
 		backChan_7.setBounds(310, 560, 60, 20);
 		frame.getContentPane().add(backChan_7);
 		
@@ -871,6 +956,7 @@ public class Gui {
 				}
 			}
 		});
+		comboBoxes.add(backChan_2);
 		backChan_2.setBounds(115, 609, 60, 20);
 		frame.getContentPane().add(backChan_2);
 		
@@ -887,6 +973,7 @@ public class Gui {
 				}
 			}
 		});
+		comboBoxes.add(backChan_4);
 		backChan_4.setBounds(180, 609, 60, 20);
 		frame.getContentPane().add(backChan_4);
 		
@@ -905,6 +992,7 @@ public class Gui {
 				}
 			}
 		});
+		comboBoxes.add(backChan_6);
 		backChan_6.setBounds(245, 609, 60, 20);
 		frame.getContentPane().add(backChan_6);
 		
@@ -923,6 +1011,7 @@ public class Gui {
 				}
 			}
 		});
+		comboBoxes.add(backChan_8);
 		backChan_8.setBounds(310, 609, 60, 20);
 		frame.getContentPane().add(backChan_8);
 		
