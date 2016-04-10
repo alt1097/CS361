@@ -30,10 +30,12 @@ public class Gui {
 	private int row;
 	private int col;
 	private ChronoTimer chrono;
-	private boolean printerSwitch;
 	
+	private boolean printerSwitch;	
 	private boolean numPadActive;
 	private boolean guiActive;
+	private boolean allowOutsideInput;
+	private boolean functionsMenuActive;
 	
 	
 	/**
@@ -85,29 +87,68 @@ public class Gui {
 		
 		initialize();
 	}
+		
+	/**
+	 * Method to return JFrame object
+	 * 
+	 */
+	public JFrame getFrame(){
+		return frame;
+	}
 	
-	
+	/**
+	 * Appends a string of text to printer text field as a new line if printer
+	 * activated. Do nothing if printer deactivated String length for current
+	 * setup can be around 15 chars
+	 * 
+	 * @param stringToPrinter
+	 *            - string that will be attached to the bottom of printer text
+	 *            frame. Omit \n in chars in stringToPrinter
+	 */
+	public void appendToPrinter(String stringToPrinter) {
+		if (allowOutsideInput) {
+			appendToPrinterInternal(stringToPrinter);
+		}
+	}
 
-//	private void drawCell(int x, int y){
-//		appendToDisplay(simpleMenu[x][y]);
-//	}
+	/**
+	 * Append given text to text box as a new line
+	 * 
+	 * @param stringToAppend
+	 *            - some text to append
+	 */
+	public void appendToDisplay(String stringToAppend) {
+		if (allowOutsideInput) {
+			appendToDisplayInternal(stringToAppend);
+		}
+	}
+
+	/**
+	 * Wipe current text from text box and add some new text
+	 * 
+	 * @param stringToAppend
+	 *            - some text to set
+	 */
+	public void setDisplay(String stringToAppend) {
+		if (allowOutsideInput) {
+			setDisplayInternal(stringToAppend);
+		}
+	}	
 
 
 	private void drawCol() {
-		if(guiActive){
-					displayText.setText("");
-		for (int i = 0; i < simpleMenu[0].length; i++) {
-			if ((simpleMenu[row][i] != null)) {
-				if (i == col) {
-					displayText.append("* " + simpleMenu[row][i] + "\n");
-				} else {
-					appendToDisplay(simpleMenu[row][i]);
+		if (guiActive) {
+			displayText.setText("");
+			for (int i = 0; i < simpleMenu[0].length; i++) {
+				if ((simpleMenu[row][i] != null)) {
+					if (i == col) {
+						displayText.append("* " + simpleMenu[row][i] + "\n");
+					} else {
+						appendToDisplayInternal(simpleMenu[row][i]);
+					}
 				}
 			}
-
 		}
-		}
-
 	}
 	
 	// remove or modify later
@@ -116,8 +157,7 @@ public class Gui {
 			displayText.setText("");			
 		}		
 		return null;
-	}
-	
+	}	
 	
 	private void clear(){
 		displayText.setText("");
@@ -129,57 +169,56 @@ public class Gui {
 		row = 0;
 	}
 	
-	
-	
-	
-	
-	
-	
-	/**
-	 * Method to return JFrame object
-	 * 
-	 */
-	public JFrame getFrame(){
-		return frame;
-	}
-	
 	/**
 	 * Toggle printer state. Flip-flop switch for printer.
 	 */
-	private void togglePrinter(){		
-		printerSwitch = printerSwitch ? false :true;
+	private void togglePrinter() {
+		printerSwitch = printerSwitch ? false : true;
 	}
 	
-	/**
-	 * Appends a string of text to printer text field as a new line
-	 * if printer activated. Do nothing if printer deactivated
-	 * String length for current setup can be around 15 chars
-	 * 
-	 * @param stringToPrinter - string that will be attached to
-	 * 							the bottom of printer text frame
-	 * 							omit \n in chars in stringToPrinter
-	 */
-	public void appendToPrinter(String stringToPrinter){
-		if(printerSwitch){
-			printerText.append(stringToPrinter + "\n");
-		}
-	}
 	
-	/**
-	 * Append given text to text box as a new line
-	 * @param stringToAppend - some text to append
-	 */
-	public void appendToDisplay(String stringToAppend){
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	private void appendToDisplayInternal(String stringToAppend){
 		displayText.append(stringToAppend + "\n");
 	}
 	
-	/**
-	 * Wipe current text from text box and add some new text
-	 * @param stringToAppend - some text to set
-	 */
-	public void setDisplay(String stringToAppend){
+	private void setDisplayInternal(String stringToAppend){
 		displayText.setText(stringToAppend);
-	}		
+	}
+	
+	private void appendToPrinterInternal(String stringToPrinter){		
+		if(printerSwitch){
+			printerText.append(stringToPrinter + "\n");
+		}		
+	}
+	// ex
+//	if(new Exception().getStackTrace()[1].getClassName().toString().equals("main.ChronoTimer")){
+//	return;
+//}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 	
 	/**
 	 * Method to initialize all window components and functions
@@ -201,7 +240,7 @@ public class Gui {
 				guiActive = guiActive ? false:true;				
 				
 				if(guiActive){
-					drawCol();
+					allowOutsideInput = true;
 				}else{
 					clear();
 				}
@@ -212,15 +251,30 @@ public class Gui {
 		power.setBounds(61, 11, 80, 23);
 		frame.getContentPane().add(power);
 		
-		JButton function = new JButton("Function");
-		function.addActionListener(new ActionListener() {
+		JButton functions = new JButton("Functions");
+		functions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Function");
 				
+//				functionsMenuActive = functionsMenuActive ? true : false;				
+				
+				
+				functionsMenuActive = functionsMenuActive ? false : true;
+				
+				
+				if(functionsMenuActive){
+					allowOutsideInput = false;
+					drawCol();
+				}else{
+					allowOutsideInput = true;
+					clear();
+				}
+				
+				
 			}
 		});
-		function.setBounds(61, 141, 80, 23);
-		frame.getContentPane().add(function);
+		functions.setBounds(61, 141, 80, 23);
+		frame.getContentPane().add(functions);
 		
 		JButton swap = new JButton("Swap");
 		swap.addActionListener(new ActionListener() {
