@@ -32,7 +32,7 @@ public class Gui {
 	private JTextArea printerText; // text area for printer output
 	private JTextArea displayText; // text area for display output
 	private JScrollPane scrollPane; // addition for printer text box to make it scroll
-	private String[][] simpleMenu = new String[5][4]; // menu items array. Do not treat it as a two dimensional array even if it looks like one
+	private String[][] simpleMenu = new String[6][5]; // menu items array. Do not treat it as a two dimensional array even if it looks like one
 	private int row; // current row
 	private int col; // current column
 	private ChronoTimer chrono; // reference to ChronoTimer instance
@@ -46,6 +46,9 @@ public class Gui {
 	
 	private ArrayList<JComboBox> comboBoxes; // holds sensor type comboboxe instances
 	private ArrayList<JRadioButton> radioButtons; // holds enable/disable radiobutton instances
+	Map<String, String> map;
+	
+
 	
 	/**
 	 * Constructor for Gui class
@@ -53,40 +56,60 @@ public class Gui {
 	 */
 	public Gui(ChronoTimer chrono) {
 		this.chrono = chrono;
-			
+		map = new HashMap<String, String>();
+		map.put("Create a new run", "newRun");
+		map.put("End current run", "endRun");
+		map.put("Add new racer", "num");
+		map.put("Remove racer", "clr");
+		map.put("Individual", "IND");
+		map.put("Parallel", "PARIND");
+		map.put("Group", "GRP");
+		map.put("Group parallel", "PARGRP");
+		map.put("Export to USB", "export");
+		map.put("Show all stats", null);
+		map.put("Show only one", "print");
+		
 		comboBoxes = new ArrayList<JComboBox>(); 
 		radioButtons = new ArrayList<JRadioButton>(); 
 		
 		// row column	
 		// main menu
-		simpleMenu[0][0] = "New Race";
-		simpleMenu[0][1] = "Add/Clr racer";
-		simpleMenu[0][2] = "End run";
+		simpleMenu[0][0] = "Choose race type";
+		simpleMenu[0][1] = "Add/Remove racer";
+		simpleMenu[0][2] = "New run/End run";
 		simpleMenu[0][3] = "Export";
+		simpleMenu[0][4] = "Print";
+		
 		
 		// new race type menu
-		simpleMenu[1][0] = "IND";
-		simpleMenu[1][1] = "PARIND";
-		simpleMenu[1][2] = "GRP";
-		simpleMenu[1][3] = "PARGRP";
+		simpleMenu[1][0] = "Individual";
+		simpleMenu[1][1] = "Parallel";
+		simpleMenu[1][2] = "Group";
+		simpleMenu[1][3] = "Group parallel";
 		
 		// add racer function
-		simpleMenu[2][0] = "num";
-		simpleMenu[2][1] = "clr";
+		simpleMenu[2][0] = "Add new racer";
+		simpleMenu[2][1] = "Remove racer";
 		simpleMenu[2][2] = "Item 2 2";
 		simpleMenu[2][3] = "Item 2 3";
 		
 		// generic menu page
-		simpleMenu[3][0] = "End active run";
-		simpleMenu[3][1] = "Item 4 1";
+		simpleMenu[3][0] = "Create a new run";
+		simpleMenu[3][1] = "End current run";
 		simpleMenu[3][2] = "Item 4 2";
 		simpleMenu[3][3] = "Item 4 2";
 		
 		// export menu
-		simpleMenu[4][0] = "export";
+		simpleMenu[4][0] = "Export to USB";
 		simpleMenu[4][1] = "Item 2 1";
 		simpleMenu[4][2] = "Item 2 2";
 		simpleMenu[4][3] = "Item 2 2";
+		
+		// print menu page
+		simpleMenu[5][0] = "Show all stats";
+		simpleMenu[5][1] = "Show only one";
+		simpleMenu[5][2] = "Item 4 2";
+		simpleMenu[5][3] = "Item 4 2";
 		
 ////		// generic menu page
 //		simpleMenu[4][0] = "Item 4 0";
@@ -172,6 +195,35 @@ public class Gui {
 					}
 				}
 			}
+		}
+	}
+	
+	private void invoke(String what){
+		try {
+			ChronoTimer.class.getMethod(what).invoke(chrono);
+		} catch (Exception cause) {
+		    StackTraceElement elements[] = cause.getStackTrace();
+		    for (int i = 0, n = elements.length; i < n; i++) {       
+		        System.err.println(elements[i].getFileName()
+		            + ":" + elements[i].getLineNumber() 
+		            + ">> "
+		            + elements[i].getMethodName() + "()");
+		    }
+		}
+	}
+	
+	private void invoke(String what, int arg){
+		try {
+//			Method m = ChronoTimer.class.getMethod(what, int.class);
+			ChronoTimer.class.getMethod(what, int.class).invoke(chrono, arg);
+		} catch (NoSuchMethodException | SecurityException e1) {
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			e1.printStackTrace();
+		} catch (IllegalArgumentException e1) {
+			e1.printStackTrace();
+		} catch (InvocationTargetException e1) {
+			e1.printStackTrace();
 		}
 	}
 	
@@ -326,9 +378,9 @@ public class Gui {
 		right.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// System.out.println("Right");
-				if (functionsMenuActive) {
-					if (row == 1) { // race type menu page
-						chrono.event(simpleMenu[row][col]);
+				if (functionsMenuActive) {					
+					if (row == 1) { // race type menu page						
+						chrono.event(map.get(simpleMenu[row][col]));
 						return;
 					} else if (row == 2) { // add racer menu page
 						numPadActive = true; // activate numpad
@@ -338,7 +390,7 @@ public class Gui {
 						return;
 					} else if (row == 3) { // end run menu page
 						chrono.endRun();
-						System.out.println("END RUN IVOKED");
+						invoke(map.get(simpleMenu[row][col]));
 						return;
 					} else if (row == 4) { // export menu
 						if (usbActive) {
@@ -350,6 +402,16 @@ public class Gui {
 							displayText.setText("There is no USB drive connected");
 						}
 						return;
+					} else if (row == 5) { // print menu
+						if(map.get(simpleMenu[row][col]) == null){
+							chrono.print();
+						}else{
+							numPadActive = true;
+							// it is necessary to have whitespace at the end of
+							// menu description
+							displayText.setText("Provide a run number to print: ");
+						}
+						return;	
 					} else {
 						row = col + 1;
 						col = 0;
@@ -761,19 +823,7 @@ public class Gui {
 
 				if (numPadActive) {
 					// System.out.println("Numpad button #");
-					try {
-						Method m = ChronoTimer.class.getMethod(simpleMenu[row][col], int.class);
-						m.invoke(chrono, Integer
-								.parseInt(displayText.getText().substring(displayText.getText().lastIndexOf(' ') + 1)));
-					} catch (NoSuchMethodException | SecurityException e1) {
-						e1.printStackTrace();
-					} catch (IllegalAccessException e1) {
-						e1.printStackTrace();
-					} catch (IllegalArgumentException e1) {
-						e1.printStackTrace();
-					} catch (InvocationTargetException e1) {
-						e1.printStackTrace();
-					}
+					invoke(map.get(simpleMenu[row][col]), Integer.parseInt(displayText.getText().substring(displayText.getText().lastIndexOf(' ') + 1)));
 				}
 				numPadActive = false;
 				drawCol();
@@ -781,6 +831,8 @@ public class Gui {
 		});
 		button_pound.setBounds(730, 400, 50, 50);
 		frame.getContentPane().add(button_pound);
+		
+
 		
 		
 		// Back view section
