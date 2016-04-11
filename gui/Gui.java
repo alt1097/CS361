@@ -138,9 +138,9 @@ public class Gui {
 	 *            frame. Omit \n in chars in stringToPrinter
 	 */
 	public void appendToPrinter(String stringToPrinter) {
-		if (allowOutsideInput) {
+//		if (allowOutsideInput) {
 			appendToPrinterInternal(stringToPrinter);
-		}
+//		}
 	}
 
 	/**

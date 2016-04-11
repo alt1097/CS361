@@ -41,8 +41,8 @@ public class RaceGRP extends Race{
 	/**
 	 Initializes the Group components of Race.
 	 */
-	public RaceGRP(){
-		super("GRP");
+	public RaceGRP(ChronoTimer chrono){
+		super("GRP", chrono);
 		channelVerifyGRP();
 	}
 
@@ -191,7 +191,7 @@ public class RaceGRP extends Race{
 			else{
 				ongoing = true;
 				startTime = ChronoTimer.getTime();
-				ChronoTimer.output("TRIG "+(startChannel.getName() + 1));
+				getChrono().output("TRIG "+(startChannel.getName() + 1));
 			}
 		}
 		else if(channel == finishChannel){
@@ -202,8 +202,8 @@ public class RaceGRP extends Race{
 				finishChannel.reset();
 				placeNumber++;
 				racers.add(racer);
-				ChronoTimer.output(racer.getNumber()+" TRIG "+(finishChannel.getName() + 1));
-				ChronoTimer.output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
+				getChrono().output(racer.getNumber()+" TRIG "+(finishChannel.getName() + 1));
+				getChrono().output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
 			}
 			else{
 				retMes += " - START HAS NOT BEEN TRIGGERED";

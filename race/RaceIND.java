@@ -37,8 +37,8 @@ public class RaceIND extends Race{
 	/**
 	 Initializes the Individual components of Race.
 	 */
-	public RaceIND(){
-		super("IND");
+	public RaceIND(ChronoTimer chrono){
+		super("IND", chrono);
 		channelVerifyIND();
 	}
 
@@ -170,7 +170,7 @@ public class RaceIND extends Race{
 	 The Racer in first will be marked to not finish.
 	 */
 	public void dnf(){
-		ChronoTimer.output(getRacerIND(firstIndex, true).getNumber()+" DNF");
+		getChrono().output(getRacerIND(firstIndex, true).getNumber()+" DNF");
 		firstIndex++;
 		update();
 	}
@@ -235,7 +235,7 @@ public class RaceIND extends Race{
 				startChannel.fireChannel(racer);
 				startChannel.reset();
 				queueIndex++;
-				ChronoTimer.output(racer.getNumber()+" TRIG "+(startChannel.getName() + 1));
+				getChrono().output(racer.getNumber()+" TRIG "+(startChannel.getName() + 1));
 			}
 		}
 		else if(channel == finishChannel){
@@ -247,8 +247,8 @@ public class RaceIND extends Race{
 				finishChannel.fireChannel(racer);
 				finishChannel.reset();
 				firstIndex++;
-				ChronoTimer.output(racer.getNumber()+" TRIG "+(finishChannel.getName() + 1));
-				ChronoTimer.output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
+				getChrono().output(racer.getNumber()+" TRIG "+(finishChannel.getName() + 1));
+				getChrono().output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
 			}
 		}
 		else{

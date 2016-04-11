@@ -37,8 +37,8 @@ public class RacePARGRP extends Race{
 	/**
 	 Initializes the Parallel Groups components of Race.
 	 */
-	public RacePARGRP(){
-		super("PARGRP");
+	public RacePARGRP(ChronoTimer chrono){
+		super("PARGRP", chrono);
 		channelVerifyPARGRP();
 		//  TODO
 	}

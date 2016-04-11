@@ -24,8 +24,8 @@ public class RacePARIND extends Race{
 	/**
 	 Initializes the Parallel Individual components of Race.
 	 */
-	public RacePARIND(){
-		super("PARIND");
+	public RacePARIND(ChronoTimer chrono){
+		super("PARIND", chrono);
 		for (int i=0; i < 4; i++) {
 			lanes.add(new Lane(i));
 		}
@@ -303,7 +303,7 @@ public class RacePARIND extends Race{
 					lane.racers.add(racer);
 					lane.startChannel.fireChannel(racer);
 					lane.startChannel.reset();
-					ChronoTimer.output(racer.getNumber()+" TRIG "+(lane.startChannel.getName() + 1));
+					getChrono().output(racer.getNumber()+" TRIG "+(lane.startChannel.getName() + 1));
 				}
 			}
 			else if (channel.equals(lane.finishChannel)) {
@@ -316,8 +316,8 @@ public class RacePARIND extends Race{
 					lane.finishChannel.fireChannel(racer);
 					lane.finishChannel.reset();
 					++lane.firstIndex;
-					ChronoTimer.output(racer.getNumber()+" TRIG "+(lane.finishChannel.getName() + 1));
-					ChronoTimer.output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
+					getChrono().output(racer.getNumber()+" TRIG "+(lane.finishChannel.getName() + 1));
+					getChrono().output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
 				}
 			}
 		}

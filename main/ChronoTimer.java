@@ -102,7 +102,7 @@ public class ChronoTimer extends JFrame{
 		for(int i = 0; i < 8; i++){
 			channels[i] = new Channel(i);
 		}
-		race = new RaceIND();
+		race = new RaceIND(this);
 		debugLog = new DebugLog("ChronoTimer Debug.txt");
 		debugLog.add("\t\t"+new Date(System.currentTimeMillis()).toString());
 		log = new Log();
@@ -204,7 +204,7 @@ public class ChronoTimer extends JFrame{
 				channels[i].toggle();
 			}
 		}
-		race = new RaceIND();
+		race = new RaceIND(this);
 		log = new Log();
 		if(!silent){
 			output("SYSTEM RESET");
@@ -360,16 +360,16 @@ public class ChronoTimer extends JFrame{
 				}
 				switch(type){
 					case "IND":
-						race = new RaceIND();
+						race = new RaceIND(this);
 						break;
 					case "PARIND":
-						race = new RacePARIND();
+						race = new RacePARIND(this);
 						break;
 					case "GRP":
-						race = new RaceGRP();
+						race = new RaceGRP(this);
 						break;
 					case "PARGRP":
-						race = new RacePARGRP();
+						race = new RacePARGRP(this);
 						break;
 					default:
 						//  TODO
@@ -767,7 +767,7 @@ public class ChronoTimer extends JFrame{
 	 Prints input to the screen and records it to Log.
 	 @param out Text to print and save.
 	 */
-	public static void output(String out){
+	public void output(String out){
 		System.out.println(out);
 		log.add(out);
 		appendToGuiPrinter(out);

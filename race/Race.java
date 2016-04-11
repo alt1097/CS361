@@ -1,6 +1,7 @@
 package race;
 
 import channel.Channel;
+import main.ChronoTimer;
 
 /**
  -- ChronoTimer 1009 --
@@ -27,18 +28,25 @@ public abstract class Race{
 	 Final displayed message once the race has ended.
 	 */
 	protected String endedDisplay;
+	
+	private ChronoTimer chronoTimer;
 
 	/**
 	 Initializes the default Race requirements.
 	 @param type Type the Race should be.
 	 */
-	public Race(String type){
+	public Race(String type, ChronoTimer chrono){
 		if(type.matches("IND|PARIND|GRP|PARGRP")){
 			eventType = type;
+			chronoTimer = chrono;
 		}else{
 			//  TODO - Ignore race instantiation due to incorrect race type
 			// add error to log or interrupt program
 		}		
+	}
+	
+	protected ChronoTimer getChrono(){
+		return chronoTimer;
 	}
 
 	//  ----------  RACER MANAGEMENT  ----------
