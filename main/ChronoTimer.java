@@ -415,7 +415,9 @@ public class ChronoTimer extends JFrame{
 		String logOut = format.format(getTime())+" PRINT";
 		if(powerState){
 			output("PRINTING RACE STATUS...");
-			System.out.println(race.print());
+			String output = race.print();
+			output(output);
+			System.out.println(output);
 		}
 		else{
 			logOut += " - SYSTEM NOT ON";
@@ -433,6 +435,7 @@ public class ChronoTimer extends JFrame{
 			String runLog = log.getRuns(run);
 			if(runLog != null){
 				output("PRINTING LOG FOR RUN "+run+"...");
+				output(runLog);
 				System.out.println(runLog);
 			}else{
 				logOut += " - RUN DOES NOT EXIST";
@@ -767,7 +770,7 @@ public class ChronoTimer extends JFrame{
 	public static void output(String out){
 		System.out.println(out);
 		log.add(out);
-		// appendToGuiPrinter(out);  TODO:  NEEDS STATIC VARIABLES AND METHODS TO FUNCTION
+		appendToGuiPrinter(out);
 	}
 	
 	public static void enableJUnit(){
