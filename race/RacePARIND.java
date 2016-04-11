@@ -73,14 +73,16 @@ public class RacePARIND extends Race{
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
 	 @param toFront True if Racer should be added to the front of lane.
+	 @return String of any messages.
 	 */
-	public void addRacerPARIND(int number, boolean toFront){
+	public String addRacerPARIND(int number, boolean toFront){
 		if (toFront) {
 			queue.add(0, new Racer(number));
 		}
 		else {
 			queue.add(new Racer(number));
 		}
+		return "";
 	}
 
 	/**
@@ -484,9 +486,9 @@ public class RacePARIND extends Race{
 	}
 
 	@Override
-	public void addRacer(int number, boolean toFront) {
+	public String addRacer(int number, boolean toFront) {
 		// TODO Auto-generated method stub
-		addRacerPARIND(number, toFront);
+		return addRacerPARIND(number, toFront);
 	}
 
 	@Override

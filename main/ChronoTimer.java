@@ -507,7 +507,7 @@ public class ChronoTimer extends JFrame{
 					logOut += " - RACE HAS ENDED";
 				}
 				else{
-					race.addRacer(number, false);
+					logOut += race.addRacer(number, false);
 					output("RACER "+number+" ADDED");
 				}
 			}

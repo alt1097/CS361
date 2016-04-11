@@ -49,15 +49,21 @@ public class RaceGRP extends Race{
 	//  ----------  RACER MANAGEMENT  ----------
 
 	/**
-	 If the racer doesn't exist, then add them to the race.
-	 @param number Number of the racer to add.
+	 Changes the number of the next placeholder Racer number.
+	 @param number Number of the Racer to add.
 	 @param toFront True if Racer should be added to the front of lane.
+	 @return String of any messages.
 	 */
-	public void addRacerGRP(int number, boolean toFront){
+	public String addRacerGRP(int number, boolean toFront){
+		String logOut = "";
 		if(trackNumber < racers.size()){
 			racers.get(trackNumber).setNumber(number);
 			trackNumber++;
 		}
+		else{
+			logOut += " - NO RACER IS LEFT TO RE-NUMBER";
+		}
+		return logOut;
 	}
 
 	/**
@@ -333,9 +339,9 @@ public class RaceGRP extends Race{
 	}
 
 	@Override
-	public void addRacer(int number, boolean toFront) {
+	public String addRacer(int number, boolean toFront) {
 		// TODO Auto-generated method stub
-		addRacerGRP(number, toFront);
+		return addRacerGRP(number, toFront);
 	}
 
 	@Override

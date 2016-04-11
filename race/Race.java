@@ -47,8 +47,9 @@ public abstract class Race{
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
 	 @param toFront True if Racer should be added to the front of lane.
+	 @return String of any messages.
 	 */
-	public abstract void addRacer(int number, boolean toFront);
+	public abstract String addRacer(int number, boolean toFront);
 
 	/**
 	 Gets the desired Racer from number.

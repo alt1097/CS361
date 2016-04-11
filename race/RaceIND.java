@@ -66,14 +66,16 @@ public class RaceIND extends Race{
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
 	 @param toFront True if Racer should be added to the front of lane.
+	 @return String of any messages.
 	 */
-	public void addRacerIND(int number, boolean toFront){
+	public String addRacerIND(int number, boolean toFront){
 		if(toFront){
 			racers.add(0, new Racer(number));
 		}
 		else{
 			racers.add(new Racer(number));
 		}
+		return "";
 	}
 
 	/**
@@ -392,9 +394,9 @@ public class RaceIND extends Race{
 	}
 
 	@Override
-	public void addRacer(int number, boolean toFront) {
+	public String addRacer(int number, boolean toFront) {
 		// TODO Auto-generated method stub
-		addRacerIND(number, toFront);
+		return addRacerIND(number, toFront);
 		
 	}
 
@@ -465,7 +467,12 @@ public class RaceIND extends Race{
 				output += "\n";
 				if(queueIndex != 0 && firstIndex - 1 != -1){
 					Racer racer = racers.get(firstIndex - 1);
-					output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getFinalTime())+" F";
+					if(racer.getEndTime() == null){
+						output += racer.getNumber()+"\tDNF F";
+					}
+					else{
+						output += racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getFinalTime())+" F";
+					}
 				}
 			}
 			return output;

@@ -49,9 +49,10 @@ public class RacePARGRP extends Race{
 	 If the racer doesn't exist, then add them to the race.
 	 @param number Number of the racer to add.
 	 @param toFront True if Racer should be added to the front of lane.
+	 @return String of any messages.
 	 */
-	public void addRacerPARGRP(int number, boolean toFront){
-		//  TODO
+	public String addRacerPARGRP(int number, boolean toFront){
+		return "";  //  TODO
 	}
 
 	/**
@@ -221,9 +222,9 @@ public class RacePARGRP extends Race{
 	}
 
 	@Override
-	public void addRacer(int number, boolean toFront) {
+	public String addRacer(int number, boolean toFront) {
 		// TODO Auto-generated method stub
-		addRacerPARGRP(number, toFront);
+		return addRacerPARGRP(number, toFront);
 	}
 
 	@Override
