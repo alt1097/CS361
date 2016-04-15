@@ -39,7 +39,7 @@ public class RaceIND extends Race{
 	 */
 	public RaceIND(ChronoTimer chrono){
 		super("IND", chrono);
-		channelVerifyIND();
+		channelVerify();
 	}
 
 	// this is example of how to use export to save object variables as JSON
@@ -68,7 +68,8 @@ public class RaceIND extends Race{
 	 @param toFront True if Racer should be added to the front of lane.
 	 @return String of any messages.
 	 */
-	public String addRacerIND(int number, boolean toFront){
+	@Override
+	public String addRacer(int number, boolean toFront){
 		if(toFront){
 			racers.add(0, new Racer(number));
 		}
@@ -84,7 +85,8 @@ public class RaceIND extends Race{
 	 @param byPlace True to get a Racer based on position in Individual Race.
 	 @return The Racer object.
 	 */
-	public Racer getRacerIND(int number, boolean byPlace){
+	@Override
+	public Racer getRacer(int number, boolean byPlace){
 		if(byPlace){
 			return racers.get(number);
 		}
@@ -103,8 +105,9 @@ public class RaceIND extends Race{
 	 @param number Number of the Racer to remove.
 	 @return If the Racer exists.
 	 */
-	public boolean removeRacerIND(int number){
-		return racers.remove(getRacerIND(number, false));
+	@Override
+	public boolean removeRacer(int number){
+		return racers.remove(getRacer(number, false));
 	}
 
 	/**
@@ -112,7 +115,8 @@ public class RaceIND extends Race{
 	 @param racer Racer Object to check if racing.
 	 @return True if the Racer is racing.
 	 */
-	public boolean isRacingIND(Racer racer){
+	@Override
+	public boolean isRacing(Racer racer){
 		int index = racers.indexOf(racer);
 		return !(index >= queueIndex || index < firstIndex);
 	}
@@ -122,7 +126,8 @@ public class RaceIND extends Race{
 	 @param racer The Racer to check.
 	 @return True if Racer can be moved.
 	 */
-	public boolean canBeMovedIND(Racer racer){
+	@Override
+	public boolean canBeMoved(Racer racer){
 		return racers.indexOf(racer) > firstIndex;
 	}
 
@@ -131,7 +136,8 @@ public class RaceIND extends Race{
 	 @param racer Racer to move.
 	 @return True if Racer could be moved.
 	 */
-	public boolean moveToFirstIND(Racer racer){
+	@Override
+	public boolean moveToFirst(Racer racer){
 		if(queueIndex - firstIndex > 1){
 			racers.remove(racer);
 			racers.add(firstIndex, racer);
@@ -145,7 +151,8 @@ public class RaceIND extends Race{
 	 @param racer Racer to move.
 	 @return True if Racer could be moved.
 	 */
-	public boolean moveToNextIND(Racer racer){
+	@Override
+	public boolean moveToNext(Racer racer){
 		if(queueIndex < racers.size() - 1){
 			racers.remove(racer);
 			racers.add(queueIndex, racer);
@@ -161,7 +168,7 @@ public class RaceIND extends Race{
 	public boolean swap(){
 		if(firstIndex + 1 < racers.size()){
 			Racer racer = racers.get(firstIndex + 1);
-			return racer != null && moveToFirstIND(racer);
+			return racer != null && moveToFirst(racer);
 		}
 		return false;
 	}
@@ -170,7 +177,7 @@ public class RaceIND extends Race{
 	 The Racer in first will be marked to not finish.
 	 */
 	public void dnf(){
-		getChrono().output(getRacerIND(firstIndex, true).getNumber()+" DNF");
+		getChrono().output(getRacer(firstIndex, true).getNumber()+" DNF");
 		firstIndex++;
 		update();
 	}
@@ -181,7 +188,8 @@ public class RaceIND extends Race{
 	 True if the Race is able to listen to triggers for Individual Race.
 	 @return True if Race can start.
 	 */
-	public boolean canStartIND(){
+	@Override
+	public boolean canStart(){
 		boolean pass = true;
 		if(racers.size() == 0){
 			pass = false;
@@ -196,7 +204,8 @@ public class RaceIND extends Race{
 	/**
 	 Verifies that Channels are set up so that an Individual Race can proceed.
 	 */
-	public void channelVerifyIND(){
+	@Override
+	public void channelVerify(){
 		boolean fail = true;
 		for(int i = 0; i < 8; i += 2){
 			Channel tempStart = ChronoTimer.getChannel(i);
@@ -223,7 +232,8 @@ public class RaceIND extends Race{
 	 @param channel Channel Object.
 	 @return String of any messages.
 	 */
-	public String triggerIND(Channel channel){
+	@Override
+	public String trigger(Channel channel){
 		String retMes = "";
 		if(channel == startChannel){
 			if(queueIndex == racers.size()){
@@ -231,7 +241,7 @@ public class RaceIND extends Race{
 			}
 			else{
 				ongoing = true;
-				Racer racer = getRacerIND(queueIndex, true);
+				Racer racer = getRacer(queueIndex, true);
 				startChannel.fireChannel(racer);
 				startChannel.reset();
 				queueIndex++;
@@ -243,7 +253,7 @@ public class RaceIND extends Race{
 				retMes += " - NO RACER CURRENTLY RACING";
 			}
 			else{
-				Racer racer = getRacerIND(firstIndex, true);
+				Racer racer = getRacer(firstIndex, true);
 				finishChannel.fireChannel(racer);
 				finishChannel.reset();
 				firstIndex++;
@@ -271,14 +281,15 @@ public class RaceIND extends Race{
 	 Runs the actions to finalize an Individual Race.
 	 */
 	public void endIND(){
-		ChronoTimer.log.add(printIND());
+		ChronoTimer.log.add(print());
 	}
 
 	/**
 	 Prints the current status of all Racers in Individual Race.
 	 @return The Racer status printout.
 	 */
-	public String printIND(){
+	@Override
+	public String print(){
 		String sep = "--------------------";
 		String record = "";
 		record += sep+"\n";
@@ -363,76 +374,7 @@ public class RaceIND extends Race{
 	}
 
 	@Override
-	public String print() {
-		// TODO Merge this with printIND into one method		
-		return printIND();
-	}
-
-	@Override
-	public String trigger(Channel channel) {
-		// TODO Merge this with triggerIND into one method		
-		return triggerIND(channel);
-	}
-
-	@Override
-	public void channelVerify() {
-		// TODO Auto-generated method stub
-		channelVerifyIND();
-		
-	}
-
-	@Override
-	public boolean moveToNext(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToNextIND(racer);
-	}
-
-	@Override
-	public boolean moveToFirst(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToFirstIND(racer);
-	}
-
-	@Override
-	public String addRacer(int number, boolean toFront) {
-		// TODO Auto-generated method stub
-		return addRacerIND(number, toFront);
-		
-	}
-
-	@Override
-	public Racer getRacer(int number, boolean byPlace) {
-		// TODO Auto-generated method stub
-		return getRacerIND(number, byPlace);
-	}
-
-	@Override
-	public boolean removeRacer(int number) {
-		// TODO Auto-generated method stub
-		return removeRacerIND(number);
-	}
-
-	@Override
-	public boolean isRacing(Racer racer) {
-		// TODO Auto-generated method stub
-		return isRacingIND(racer);
-	}
-
-	@Override
-	public boolean canBeMoved(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToFirstIND(racer);
-	}
-
-	@Override
-	public boolean canStart() {
-		// TODO Auto-generated method stub
-		return canStart || canStartIND();
-	}
-
-	@Override
 	public void end() {
-		// TODO Auto-generated method stub
 		ongoing = false;
 		ended = true;
 		endedDisplay = raceStats();

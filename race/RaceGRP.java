@@ -43,7 +43,7 @@ public class RaceGRP extends Race{
 	 */
 	public RaceGRP(ChronoTimer chrono){
 		super("GRP", chrono);
-		channelVerifyGRP();
+		channelVerify();
 	}
 
 	//  ----------  RACER MANAGEMENT  ----------
@@ -54,7 +54,8 @@ public class RaceGRP extends Race{
 	 @param toFront True if Racer should be added to the front of lane.
 	 @return String of any messages.
 	 */
-	public String addRacerGRP(int number, boolean toFront){
+	@Override
+	public String addRacer(int number, boolean toFront){
 		String logOut = "";
 		if(trackNumber < racers.size()){
 			racers.get(trackNumber).setNumber(number);
@@ -72,7 +73,8 @@ public class RaceGRP extends Race{
 	 @param byPlace True to get a Racer based on position in Group Race.
 	 @return The Racer object.
 	 */
-	public Racer getRacerGRP(int number, boolean byPlace){
+	@Override
+	public Racer getRacer(int number, boolean byPlace){
 		if(byPlace){
 			return racers.get(number);
 		}
@@ -91,7 +93,8 @@ public class RaceGRP extends Race{
 	 @param number Number of the Racer to remove.
 	 @return If the Racer exists.
 	 */
-	public boolean removeRacerGRP(int number){
+	@Override
+	public boolean removeRacer(int number){
 		return false;
 	}
 
@@ -100,7 +103,8 @@ public class RaceGRP extends Race{
 	 @param racer Racer Object to check if racing.
 	 @return True if the Racer is racing.
 	 */
-	public boolean isRacingGRP(Racer racer){
+	@Override
+	public boolean isRacing(Racer racer){
 		return false;
 	}
 
@@ -109,7 +113,8 @@ public class RaceGRP extends Race{
 	 @param racer The Racer to check.
 	 @return True if Racer can be moved.
 	 */
-	public boolean canBeMovedGRP(Racer racer){
+	@Override
+	public boolean canBeMoved(Racer racer){
 		return false;
 	}
 
@@ -118,7 +123,8 @@ public class RaceGRP extends Race{
 	 @param racer Racer to move.
 	 @return True if Racer could be moved.
 	 */
-	public boolean moveToFirstGRP(Racer racer){
+	@Override
+	public boolean moveToFirst(Racer racer){
 		return false;
 	}
 
@@ -127,7 +133,8 @@ public class RaceGRP extends Race{
 	 @param racer Racer to move.
 	 @return True if Racer could be moved.
 	 */
-	public boolean moveToNextGRP(Racer racer){
+	@Override
+	public boolean moveToNext(Racer racer){
 		return false;
 	}
 
@@ -143,7 +150,8 @@ public class RaceGRP extends Race{
 	 True if the Race is able to listen to triggers for Group Race.
 	 @return True if Race can start.
 	 */
-	public boolean canStartGRP(){
+	@Override
+	public boolean canStart(){
 		boolean pass = true;
 		if(startChannel == null || finishChannel == null){
 			pass = false;
@@ -155,7 +163,8 @@ public class RaceGRP extends Race{
 	/**
 	 Verifies that Channels are set up so that a Group Race can proceed.
 	 */
-	public void channelVerifyGRP(){
+	@Override
+	public void channelVerify(){
 		boolean fail = true;
 		for(int i = 0; i < 8; i += 2){
 			Channel tempStart = ChronoTimer.getChannel(i);
@@ -182,7 +191,8 @@ public class RaceGRP extends Race{
 	 @param channel Channel Object.
 	 @return String of any messages.
 	 */
-	public String triggerGRP(Channel channel){
+	@Override
+	public String trigger(Channel channel){
 		String retMes = "";
 		if(channel == startChannel){
 			if(ongoing){
@@ -221,18 +231,13 @@ public class RaceGRP extends Race{
 	private void update(){
 	}
 
-	/**
-	 Runs the actions to finalize a Group Race.
-	 */
-	public void endGRP(){
-		ChronoTimer.log.add(printGRP());
-	}
 	
 	/**
 	 Prints the current status of all Racers in Group Race.
 	 @return The Racer status printout.
 	 */
-	public String printGRP(){
+	@Override
+	public String print(){
 		String sep = "--------------------";
 		String record = "";
 		record += sep+"\n";
@@ -284,10 +289,6 @@ public class RaceGRP extends Race{
 	 Exports Group Race data into JSON format String.
 	 @param data Hash table to add to.
 	 */
-//	public void exportMeGRP(){
-
-//	}
-
 	@Override
 	public String exportMe() {
 		Hashtable<String, Serializable> data = new Hashtable<>();
@@ -306,81 +307,16 @@ public class RaceGRP extends Race{
 		}		
 		return ChronoTimer.export.objectToJsonString(data);
 	}
-
-	@Override
-	public String print() {
-		// TODO Merge or replace with printGRP
-		return printGRP();
-	}
-
-	@Override
-	public String trigger(Channel channel) {
-		// TODO Merge or replace with triggerGRP
-		return triggerGRP(channel);
-	}
-
-	@Override
-	public void channelVerify() {
-		// TODO Merge/replace with channelVerifyGRP
-		channelVerifyGRP();
-		
-	}
-
-	@Override
-	public boolean moveToNext(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToNextGRP(racer);
-	}
-
-	@Override
-	public boolean moveToFirst(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToFirstGRP(racer);
-	}
-
-	@Override
-	public String addRacer(int number, boolean toFront) {
-		// TODO Auto-generated method stub
-		return addRacerGRP(number, toFront);
-	}
-
-	@Override
-	public Racer getRacer(int number, boolean byPlace) {
-		// TODO Auto-generated method stub
-		return getRacerGRP(number, byPlace);
-	}
-
-	@Override
-	public boolean removeRacer(int number) {
-		// TODO Auto-generated method stub
-		return removeRacerGRP(number);
-	}
-
-	@Override
-	public boolean isRacing(Racer racer) {
-		// TODO Auto-generated method stub
-		return isRacingGRP(racer);
-	}
-
-	@Override
-	public boolean canBeMoved(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToFirstGRP(racer);
-	}
-
-	@Override
-	public boolean canStart() {
-		// TODO Auto-generated method stub
-		return canStart || canStartGRP();
-	}
-
+	
+	/**
+	 Runs the actions to finalize a Group Race.
+	 */
 	@Override
 	public void end() {
-		// TODO Auto-generated method stub
 		ongoing = false;
 		ended = true;
 		endedDisplay = raceStats();
-		endGRP();
+		ChronoTimer.log.add(print());
 		ChronoTimer.log.addToExport(exportMe());
 	}
 

@@ -46,6 +46,7 @@ public class Gui {
 	
 	private ArrayList<JComboBox> comboBoxes; // holds sensor type comboboxe instances
 	private ArrayList<JRadioButton> radioButtons; // holds enable/disable radiobutton instances
+	private ArrayList<JToggleButton> toggleButtons;
 	Map<String, String> map;
 	
 
@@ -71,7 +72,7 @@ public class Gui {
 		
 		comboBoxes = new ArrayList<JComboBox>(); 
 		radioButtons = new ArrayList<JRadioButton>(); 
-		
+		toggleButtons = new ArrayList<JToggleButton>(); 
 		// row column	
 		// main menu
 		simpleMenu[0][0] = "Choose race type";
@@ -230,6 +231,7 @@ public class Gui {
 	
 	private void clear(){
 		displayText.setText("");
+		//printerText.setText(""); // if printer text need to be wiped
 		wipe();
 		
 	}
@@ -281,32 +283,25 @@ public class Gui {
 				chrono.power();
 				indicator.setForeground(Color.GREEN);
 				guiActive = guiActive ? false : true;
-
-				for (JRadioButton radio : radioButtons) {
-					radio.setSelected(false);
-				}
-
-				for (JComboBox comboBox : comboBoxes) {
-					comboBox.setSelectedIndex(0);
-				}
-
-				if (guiActive) {
-					// allowOutsideInput = true;
-					// this section use for tests, keep it
-				} else {
-					allowOutsideInput = false;
-					clear();
-
-					for (JRadioButton radio : radioButtons) {
-						radio.setSelected(false);
-					}
-
+				
+				if(!guiActive){
+					allowOutsideInput = false;					
+					
 					for (JComboBox comboBox : comboBoxes) {
 						comboBox.setSelectedIndex(0);
 					}
+					for (JRadioButton radio : radioButtons) {
+						radio.setSelected(false);
+					}
+					for(JToggleButton toggle : toggleButtons){
+						if(toggle.isSelected()){
+							toggle.doClick();
+						}					
+					}
 					
 					indicator.setForeground(Color.RED);
-
+					clear();
+					printerText.setText(""); // get rid of "sensor disconnected" message in printer box
 				}
 			}
 		});
@@ -386,7 +381,8 @@ public class Gui {
 						numPadActive = true; // activate numpad
 						// it is necessary to have whitespace at the end of menu
 						// description
-						displayText.setText("Enter racer's bib number: ");
+						displayText.setText("Enter racer's bib number. \n");
+						displayText.append("(use keypad and # to input): ");
 						return;
 					} else if (row == 3) { // end run menu page
 						chrono.endRun();
@@ -397,7 +393,8 @@ public class Gui {
 							numPadActive = true;
 							// it is necessary to have whitespace at the end of
 							// menu description
-							displayText.setText("Provide a run number for export: ");
+							displayText.setText("Provide a run number for export. \n");
+							displayText.append("(use keypad and # to input): ");
 						} else {
 							displayText.setText("There is no USB drive connected");
 						}
@@ -409,7 +406,8 @@ public class Gui {
 							numPadActive = true;
 							// it is necessary to have whitespace at the end of
 							// menu description
-							displayText.setText("Provide a run number to print: ");
+							displayText.setText("Provide a run number to print. \n");
+							displayText.append("(use keypad and # to input): ");
 						}
 						return;	
 					} else {
@@ -661,10 +659,12 @@ public class Gui {
 			public void actionPerformed(ActionEvent e) {
 //				printerText.append("Printer Power button\n");
 //				appendToPrinter("OK");
-				togglePrinter();
-				
+				//if(guiActive){
+					togglePrinter();
+				//}					
 			}
 		});
+		toggleButtons.add(printerPower);
 		printerPower.setBounds(665, 11, 89, 23);
 		frame.getContentPane().add(printerPower);	
 		
@@ -673,7 +673,7 @@ public class Gui {
 //		printerText.setBounds(630, 41, 150, 200);
 		printerText.setEditable(false);
 		scrollPane = new JScrollPane(printerText);
-		scrollPane.setBounds(630, 41, 150, 200);
+		scrollPane.setBounds(615, 40, 175, 200);
 		frame.getContentPane().add(scrollPane);	
 
 		// Numpad section
@@ -1027,16 +1027,18 @@ public class Gui {
 		JToggleButton usbConnect = new JToggleButton("Connect");
 		usbConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				System.out.println("USB connect");				
-				usbActive = usbActive ? false : true;				
+//				System.out.println("USB connect");	
+				//if(guiActive){
+					usbActive = usbActive ? false : true;		
+				//}							
 			}
 		});
-		// TODO add reset setSelected(selected)
-		usbConnect.setBounds(384, 563, 121, 23);
+		toggleButtons.add(usbConnect);
+		usbConnect.setBounds(384, 558, 121, 23);
 		frame.getContentPane().add(usbConnect);
 		
 		JLabel usbLabel = new JLabel("Usb port");
-		usbLabel.setBounds(420, 545, 66, 14);
+		usbLabel.setBounds(420, 543, 66, 14);
 		frame.getContentPane().add(usbLabel);
 		
 		JSeparator separator = new JSeparator();
@@ -1047,50 +1049,50 @@ public class Gui {
 		// buttons to test specific functions not available for user
 		
 		// TEST BUTTONS///////////////////////////////////////////////////////////////
-		JButton testButton_1 = new JButton("Prnt Test");
-		testButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				appendToPrinterInternal("OKOKOKOKOKOKOKO");
-			}
-		});
-		testButton_1.setBounds(600, 510, 90, 25);
-		frame.getContentPane().add(testButton_1);
-
-		JButton testButton_2 = new JButton("Rst Test");
-		testButton_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				chrono.reset();
-			}
-		});
-		testButton_2.setBounds(600, 540, 90, 25);
-		frame.getContentPane().add(testButton_2);
-		
-		JButton testButton_3 = new JButton("Dnf Test");
-		testButton_3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				chrono.dnf();
-			}
-		});
-		testButton_3.setBounds(600, 570, 90, 25);
-		frame.getContentPane().add(testButton_3);
-		
-		JButton testButton_4 = new JButton("Strt Test");
-		testButton_4.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {	
-				chrono.start();
-			}
-		});
-		testButton_4.setBounds(600, 600, 90, 25);
-		frame.getContentPane().add(testButton_4);
-		
-		JButton testButton_5 = new JButton("Fin Test");
-		testButton_5.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				chrono.finish();
-			}
-		});
-		testButton_5.setBounds(600, 630, 90, 25);
-		frame.getContentPane().add(testButton_5);
+//		JButton testButton_1 = new JButton("Prnt Test");
+//		testButton_1.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				appendToPrinterInternal("OKOKOKOKOKOKOKO");
+//			}
+//		});
+//		testButton_1.setBounds(600, 510, 90, 25);
+//		frame.getContentPane().add(testButton_1);
+//
+//		JButton testButton_2 = new JButton("Rst Test");
+//		testButton_2.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				chrono.reset();
+//			}
+//		});
+//		testButton_2.setBounds(600, 540, 90, 25);
+//		frame.getContentPane().add(testButton_2);
+//		
+//		JButton testButton_3 = new JButton("Dnf Test");
+//		testButton_3.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				chrono.dnf();
+//			}
+//		});
+//		testButton_3.setBounds(600, 570, 90, 25);
+//		frame.getContentPane().add(testButton_3);
+//		
+//		JButton testButton_4 = new JButton("Strt Test");
+//		testButton_4.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {	
+//				chrono.start();
+//			}
+//		});
+//		testButton_4.setBounds(600, 600, 90, 25);
+//		frame.getContentPane().add(testButton_4);
+//		
+//		JButton testButton_5 = new JButton("Fin Test");
+//		testButton_5.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				chrono.finish();
+//			}
+//		});
+//		testButton_5.setBounds(600, 630, 90, 25);
+//		frame.getContentPane().add(testButton_5);
 		
 		
 	}

@@ -29,7 +29,7 @@ public class RacePARIND extends Race{
 		for (int i=0; i < 4; i++) {
 			lanes.add(new Lane(i));
 		}
-		channelVerifyPARIND();
+		channelVerify();
 	}
 
 	private class Lane {
@@ -75,7 +75,8 @@ public class RacePARIND extends Race{
 	 @param toFront True if Racer should be added to the front of lane.
 	 @return String of any messages.
 	 */
-	public String addRacerPARIND(int number, boolean toFront){
+	@Override
+	public String addRacer(int number, boolean toFront){
 		if (toFront) {
 			queue.add(0, new Racer(number));
 		}
@@ -91,7 +92,8 @@ public class RacePARIND extends Race{
 	 @param byPlace True to get a Racer based on position in Parallel Individual Race.
 	 @return The Racer object.
 	 */
-	public Racer getRacerPARIND(int number, boolean byPlace){
+	@Override
+	public Racer getRacer(int number, boolean byPlace){
 		if (byPlace) {
 			// TODO I don't understand this in the context of PARIND races.
 			return null;
@@ -123,7 +125,8 @@ public class RacePARIND extends Race{
 	 @param number Number of the Racer to remove.
 	 @return If the Racer exists.
 	 */
-	public boolean removeRacerPARIND(int number){
+	@Override
+	public boolean removeRacer(int number){
 		for (Racer racer : queue) {
 			if (racer.getNumber() == number) {
 				queue.remove(racer);
@@ -155,7 +158,8 @@ public class RacePARIND extends Race{
 	 @param racer The Racer to check.
 	 @return True if Racer can be moved.
 	 */
-	public boolean canBeMovedPARIND(Racer racer){
+	@Override
+	public boolean canBeMoved(Racer racer){
 		if (queue.contains(racer))
 			return true;
 		for (Lane lane : lanes) {
@@ -175,7 +179,8 @@ public class RacePARIND extends Race{
 	 @param racer Racer Object to check if racing.
 	 @return True if the Racer is racing.
 	 */
-	public boolean isRacingPARIND(Racer racer){
+	@Override
+	public boolean isRacing(Racer racer){
 		// If the racer is still in the queue, they are not currently racing.
 		if (queue.contains(racer))
 			return false;
@@ -194,7 +199,8 @@ public class RacePARIND extends Race{
 	 @param racer Racer to move.
 	 @return True if Racer could be moved.
 	 */
-	public boolean moveToFirstPARIND(Racer racer){
+	@Override
+	public boolean moveToFirst(Racer racer){
 		Lane lane = getLane(racer);
 		if (lane != null) {
 			// Make sure racer is not already in first or finished
@@ -212,7 +218,8 @@ public class RacePARIND extends Race{
 	 @param racer Racer to move.
 	 @return True if Racer could be moved.
 	 */
-	public boolean moveToNextPARIND(Racer racer){
+	@Override
+	public boolean moveToNext(Racer racer){
 		int racerIndex = queue.indexOf(racer);
 		if (racerIndex > 0) {
 			queue.remove(racer);
@@ -228,7 +235,13 @@ public class RacePARIND extends Race{
 	 True if the Race is able to listen to triggers for Parallel Individual Race.
 	 @return True if Race can start.
 	 */
-	public boolean canStartPARIND(){
+	@Override
+	public boolean canStart(){
+		
+		if(canStart){
+			return true;
+		}
+		
 		boolean startable = true;
 		// Must be racers in the queue
 		if (queue.size() == 0) {
@@ -256,7 +269,8 @@ public class RacePARIND extends Race{
 	/**
 	 Verifies that Channels are set up so that a Parallel Individual Race can proceed.
 	 */
-	public void channelVerifyPARIND(){
+	@Override
+	public void channelVerify(){
 		for(int i = 0; i < 8; i += 2){
 			// Check start channel
 			Channel tempStart = ChronoTimer.getChannel(i);
@@ -288,7 +302,8 @@ public class RacePARIND extends Race{
 	 @param channel Channel Object.
 	 @return String of any messages.
 	 */
-	public String triggerPARIND(Channel channel){
+	@Override
+	public String trigger(Channel channel){
 		boolean usedChannel = false;
 		String retMes = "";
 		for (Lane lane : lanes) {
@@ -343,18 +358,13 @@ public class RacePARIND extends Race{
 			end();
 	}
 
-	/**
-	 Runs the actions to finalize a Parallel Individual Race.
-	 */
-	public void endPARIND(){
-		ChronoTimer.log.add(printPARIND());
-	}
 
 	/**
 	 Prints the current status of all Racers in Parallel Individual Race.
 	 @return The Racer status printout.
 	 */
-	public String printPARIND(){
+	@Override
+	public String print(){
 		String sep = "--------------------";
 		String record = "";
 		record += sep+"\n";
@@ -455,79 +465,11 @@ public class RacePARIND extends Race{
 	}
 
 	@Override
-	public String print() {
-		// TODO Merge or replace with printPARIND
-		return printPARIND();
-	}
-
-	@Override
-	public String trigger(Channel channel) {
-		// TODO Merge or replace with triggerPARIND
-		return triggerPARIND(channel);
-	}
-
-	@Override
-	public void channelVerify() {
-		// TODO Merge/replace with channelVerifyPARIND
-		channelVerifyPARIND();
-		
-	}
-
-	@Override
-	public boolean moveToNext(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToNextPARIND(racer);
-	}
-
-	@Override
-	public boolean moveToFirst(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToFirstPARIND(racer);
-	}
-
-	@Override
-	public String addRacer(int number, boolean toFront) {
-		// TODO Auto-generated method stub
-		return addRacerPARIND(number, toFront);
-	}
-
-	@Override
-	public Racer getRacer(int number, boolean byPlace) {
-		// TODO Auto-generated method stub
-		return getRacerPARIND(number, byPlace);
-	}
-
-	@Override
-	public boolean removeRacer(int number) {
-		// TODO Auto-generated method stub
-		return removeRacerPARIND(number);
-	}
-
-	@Override
-	public boolean isRacing(Racer racer) {
-		// TODO Auto-generated method stub
-		return isRacingPARIND(racer);
-	}
-
-	@Override
-	public boolean canBeMoved(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToFirstPARIND(racer);
-	}
-
-	@Override
-	public boolean canStart() {
-		// TODO Auto-generated method stub
-		return canStart || canStartPARIND();
-	}
-
-	@Override
 	public void end() {
-		// TODO Auto-generated method stub
 		ongoing = false;
 		ended = true;
 		endedDisplay = raceStats();
-		endPARIND();
+		ChronoTimer.log.add(print());
 		ChronoTimer.log.addToExport(exportMe());
 	}
 

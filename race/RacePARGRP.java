@@ -39,7 +39,7 @@ public class RacePARGRP extends Race{
 	 */
 	public RacePARGRP(ChronoTimer chrono){
 		super("PARGRP", chrono);
-		channelVerifyPARGRP();
+		channelVerify();
 		//  TODO
 	}
 
@@ -51,7 +51,8 @@ public class RacePARGRP extends Race{
 	 @param toFront True if Racer should be added to the front of lane.
 	 @return String of any messages.
 	 */
-	public String addRacerPARGRP(int number, boolean toFront){
+	@Override
+	public String addRacer(int number, boolean toFront){
 		return "";  //  TODO
 	}
 
@@ -61,7 +62,8 @@ public class RacePARGRP extends Race{
 	 @param byPlace True to get a Racer based on position in Parallel Group Race.
 	 @return The Racer object.
 	 */
-	public Racer getRacerPARGRP(int number, boolean byPlace){
+	@Override
+	public Racer getRacer(int number, boolean byPlace){
 		if(byPlace){
 			for(ArrayList<Racer> lane : lanes){
 				Racer tempRacer = lane.get(number);
@@ -87,7 +89,8 @@ public class RacePARGRP extends Race{
 	 @param number Number of the Racer to remove.
 	 @return If the Racer exists.
 	 */
-	public boolean removeRacerPARGRP(int number){
+	@Override
+	public boolean removeRacer(int number){
 		return false;  //  TODO
 	}
 
@@ -96,7 +99,8 @@ public class RacePARGRP extends Race{
 	 @param racer Racer Object to check if racing.
 	 @return True if the Racer is racing.
 	 */
-	public boolean isRacingPARGRP(Racer racer){
+	@Override
+	public boolean isRacing(Racer racer){
 		return false;  //  TODO
 	}
 
@@ -105,7 +109,8 @@ public class RacePARGRP extends Race{
 	 @param racer The Racer to check.
 	 @return True if Racer can be moved.
 	 */
-	public boolean canBeMovedPARGRP(Racer racer){
+	@Override
+	public boolean canBeMoved(Racer racer){
 		return false;  //  TODO
 	}
 
@@ -114,7 +119,8 @@ public class RacePARGRP extends Race{
 	 @param racer Racer to move.
 	 @return True if Racer could be moved.
 	 */
-	public boolean moveToFirstPARGRP(Racer racer){
+	@Override
+	public boolean moveToFirst(Racer racer){
 		return false;  //  TODO
 	}
 
@@ -123,7 +129,8 @@ public class RacePARGRP extends Race{
 	 @param racer Racer to move.
 	 @return True if Racer could be moved.
 	 */
-	public boolean moveToNextPARGRP(Racer racer){
+	@Override
+	public boolean moveToNext(Racer racer){
 		return false;  //  TODO
 	}
 
@@ -133,14 +140,19 @@ public class RacePARGRP extends Race{
 	 True if the Race is able to listen to triggers for Parallel Group Race.
 	 @return True if Race can start.
 	 */
-	public boolean canStartPARGRP(){
+	@Override
+	public boolean canStart(){
+		if(canStart){ // it was like this before canStart || canStartPARGRP();
+			return true;
+		}
 		return false;  //  TODO
 	}
 
 	/**
 	 Verifies that Channels are set up so that a Parallel Group Race can proceed.
 	 */
-	public void channelVerifyPARGRP(){
+	@Override
+	public void channelVerify(){
 		//  TODO
 	}
 
@@ -149,7 +161,8 @@ public class RacePARGRP extends Race{
 	 @param channel Channel Object.
 	 @return String of any messages.
 	 */
-	public String triggerPARGRP(Channel channel){
+	@Override
+	public String trigger(Channel channel){
 		//  TODO
 		update();
 		return "";  //  TODO
@@ -173,7 +186,8 @@ public class RacePARGRP extends Race{
 	 Prints the current status of all Racers in Parallel Group Race.
 	 @return The Racer status printout.
 	 */
-	public String printPARGRP(){
+	@Override
+	public String print(){
 		return "";  //  TODO
 	}
 
@@ -189,72 +203,6 @@ public class RacePARGRP extends Race{
 	public String exportMe() {
 		// TODO Implement
 		return null;
-	}
-
-	@Override
-	public String print() {
-		// TODO Implement and merge/replace with printPARGRP
-		return null;
-	}
-
-	@Override
-	public String trigger(Channel channel) {
-		// TODO Merge or replace with triggerPARGRP
-		return triggerPARGRP(channel);
-	}
-
-	@Override
-	public void channelVerify() {
-		// TODO Auto-generated method stub
-		channelVerifyPARGRP();
-	}
-
-	@Override
-	public boolean moveToNext(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToNextPARGRP(racer);
-	}
-
-	@Override
-	public boolean moveToFirst(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToFirstPARGRP(racer);
-	}
-
-	@Override
-	public String addRacer(int number, boolean toFront) {
-		// TODO Auto-generated method stub
-		return addRacerPARGRP(number, toFront);
-	}
-
-	@Override
-	public Racer getRacer(int number, boolean byPlace) {
-		// TODO Auto-generated method stub
-		return getRacerPARGRP(number, byPlace);
-	}
-
-	@Override
-	public boolean removeRacer(int number) {
-		// TODO Auto-generated method stub
-		return removeRacerPARGRP(number);
-	}
-
-	@Override
-	public boolean isRacing(Racer racer) {
-		// TODO Auto-generated method stub
-		return isRacingPARGRP(racer);
-	}
-
-	@Override
-	public boolean canBeMoved(Racer racer) {
-		// TODO Auto-generated method stub
-		return moveToFirstPARGRP(racer);
-	}
-
-	@Override
-	public boolean canStart() {
-		// TODO Auto-generated method stub
-		return canStart || canStartPARGRP();
 	}
 
 	@Override
