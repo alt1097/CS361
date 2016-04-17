@@ -417,7 +417,6 @@ public class ChronoTimer extends JFrame{
 			output("PRINTING RACE STATUS...");
 			String output = race.print();
 			output(output);
-			System.out.println(output);
 		}
 		else{
 			logOut += " - SYSTEM NOT ON";
@@ -436,7 +435,6 @@ public class ChronoTimer extends JFrame{
 			if(runLog != null){
 				output("PRINTING LOG FOR RUN "+run+"...");
 				output(runLog);
-				System.out.println(runLog);
 			}else{
 				logOut += " - RUN DOES NOT EXIST";
 			}

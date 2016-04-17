@@ -152,6 +152,9 @@ public class RaceGRP extends Race{
 	 */
 	@Override
 	public boolean canStart(){
+		if(canStart){
+			return true;
+		}
 		boolean pass = true;
 		if(startChannel == null || finishChannel == null){
 			pass = false;
@@ -231,7 +234,6 @@ public class RaceGRP extends Race{
 	private void update(){
 	}
 
-	
 	/**
 	 Prints the current status of all Racers in Group Race.
 	 @return The Racer status printout.
@@ -287,7 +289,6 @@ public class RaceGRP extends Race{
 
 	/**
 	 Exports Group Race data into JSON format String.
-	 @param data Hash table to add to.
 	 */
 	@Override
 	public String exportMe() {

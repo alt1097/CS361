@@ -190,6 +190,9 @@ public class RaceIND extends Race{
 	 */
 	@Override
 	public boolean canStart(){
+		if(canStart){
+			return true;
+		}
 		boolean pass = true;
 		if(racers.size() == 0){
 			pass = false;
@@ -278,13 +281,6 @@ public class RaceIND extends Race{
 	}
 
 	/**
-	 Runs the actions to finalize an Individual Race.
-	 */
-	public void endIND(){
-		ChronoTimer.log.add(print());
-	}
-
-	/**
 	 Prints the current status of all Racers in Individual Race.
 	 @return The Racer status printout.
 	 */
@@ -342,18 +338,6 @@ public class RaceIND extends Race{
 	 @param data Hash table to add to.
 	 * @return 
 	 */
-//	public void exportMeIND(Hashtable<String, Serializable> data){
-//		data.put("racers", racers);
-//		data.put("firstIndex", firstIndex);
-//		data.put("queueIndex", queueIndex);
-//		if(startChannel != null){
-//			data.put("startChannel", startChannel.getName());
-//		}
-//		if(finishChannel != null){
-//			data.put("finishChannel", finishChannel.getName());
-//		}
-//	}
-	
 	@Override
 	public String exportMe(){
 		Hashtable<String, Serializable> data = new Hashtable<>();
@@ -378,7 +362,7 @@ public class RaceIND extends Race{
 		ongoing = false;
 		ended = true;
 		endedDisplay = raceStats();
-		endIND();
+		ChronoTimer.log.add(print());
 		ChronoTimer.log.addToExport(exportMe());
 	}
 

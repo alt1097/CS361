@@ -174,13 +174,6 @@ public class RacePARGRP extends Race{
 	private void update(){
 		//  TODO
 	}
-
-	/**
-	 Runs the actions to finalize a Parallel Groups Race.
-	 */
-	public void endPARGRP(){
-		//  TODO
-	}
 	
 	/**
 	 Prints the current status of all Racers in Parallel Group Race.
@@ -193,12 +186,7 @@ public class RacePARGRP extends Race{
 
 	/**
 	 Exports Parallel Group Race data into JSON format String.
-	 @param data Hash table to add to.
 	 */
-	public void exportMePARGRP(Hashtable<String, Serializable> data){
-		//  TODO
-	}
-
 	@Override
 	public String exportMe() {
 		// TODO Implement
@@ -207,11 +195,10 @@ public class RacePARGRP extends Race{
 
 	@Override
 	public void end() {
-		// TODO Auto-generated method stub
 		ongoing = false;
 		ended = true;
 		endedDisplay = raceStats();
-		endPARGRP();
+		ChronoTimer.log.add(print());
 		ChronoTimer.log.addToExport(exportMe());
 	}
 

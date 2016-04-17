@@ -237,11 +237,9 @@ public class RacePARIND extends Race{
 	 */
 	@Override
 	public boolean canStart(){
-		
 		if(canStart){
 			return true;
 		}
-		
 		boolean startable = true;
 		// Must be racers in the queue
 		if (queue.size() == 0) {
@@ -423,23 +421,6 @@ public class RacePARIND extends Race{
 	 Exports Parallel Individual Race data into JSON format String.
 	 @param data Hash table to add to.
 	 */
-	public void exportMePARIND(Hashtable<String, Serializable> data) {
-		data.put("queue", queue);
-		Hashtable<String, Serializable> laneHash = new Hashtable<>();
-		for (int i = 0; i < 4; i++) {
-			Lane lane = lanes.get(i);
-			Hashtable<String, Serializable> singleLaneHash = new Hashtable<>();
-			if (lane.startChannel != null)
-				singleLaneHash.put("startChannel", lane.startChannel.getName());
-			if (lane.finishChannel != null)
-				singleLaneHash.put("finishChannel", lane.finishChannel.getName());
-			singleLaneHash.put("firstIndex", lane.firstIndex);
-			singleLaneHash.put("racers", lane.getRacers());
-			laneHash.put("lane_" + i, singleLaneHash);
-		}
-		data.put("lanes", laneHash);
-	}
-
 	@Override
 	public String exportMe() {
 		Hashtable<String, Serializable> data = new Hashtable<>();

@@ -102,6 +102,11 @@ public class Driver {
 	}
 
 	@Test
+	public void testAddRacerNoneAvailableGRP(){
+		testUnit("testAddRacerNoneAvailableGRP");
+	}
+
+	@Test
 	public void testAddTwoRacers(){
 		testUnit("testAddTwoRacers");
 	}
@@ -152,6 +157,16 @@ public class Driver {
 	}
 
 	@Test
+	public void testData3(){
+		testUnit("testData3");
+	}
+
+	@Test
+	public void testEmptyFunctionalityGRP(){
+		testUnit("testEmptyFunctionalityGRP");
+	}
+
+	@Test
 	public void testOneRacerDNF(){
 		testUnit("testOneRacerDNF");
 	}
@@ -174,6 +189,11 @@ public class Driver {
 	@Test
 	public void testOnlyOneRacerTriggersStartAndFinishPARIND(){
 		testUnit("testOnlyOneRacerTriggersStartAndFinishPARIND");
+	}
+
+	@Test
+	public void testRunCompleteRaceGRP(){
+		testUnit("testRunCompleteRaceGRP");
 	}
 
 	@Test
