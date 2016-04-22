@@ -16,6 +16,8 @@ import gui.Gui;
 
 import javax.swing.*;
 
+import Client.Client;
+
 /**
  -- ChronoTimer 1009 --
  Author:  The Unnameables
@@ -392,7 +394,13 @@ public class ChronoTimer extends JFrame{
 	 If there is a race ongoing, then trigger the end of the race.
 	 */
 	public void endRun(){
+		// how to send json array to server:
+//		Client c = new Client("http://localhost", 8000);
+//		String test = "[{\"number\": 111,\"startTime\": \"Apr 21, 2016 10:25:17 PM\",\"endTime\": \"Apr 21, 2016 10:25:32 PM\"},{\"number\": 222,\"startTime\": \"Apr 21, 2016 10:25:18 PM\",\"endTime\": \"Apr 21, 2016 10:25:33 PM\"},{\"number\": 333,\"startTime\": \"Apr 21, 2016 10:25:19 PM\",\"endTime\": \"Apr 21, 2016 10:25:34 PM\"},{\"number\": 444,\"startTime\": \"Apr 21, 2016 10:25:20 PM\",\"endTime\": \"Apr 21, 2016 10:25:35 PM\"},{\"number\": 555,\"startTime\": \"Apr 21, 2016 10:25:21 PM\",\"endTime\": \"Apr 21, 2016 10:25:37 PM\"}]";
+//		c.sendData("sendresults", test);
+//		return;		
 		String logOut = format.format(getTime())+" ENDRUN";
+		System.out.println(logOut);
 		if(powerState){
 			if(race.ongoing()){
 				race.end();

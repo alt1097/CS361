@@ -20,6 +20,9 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
 
+import Client.Client;
+import Server.Server;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -385,7 +388,7 @@ public class Gui {
 						displayText.append("(use keypad and # to input): ");
 						return;
 					} else if (row == 3) { // end run menu page
-						chrono.endRun();
+						//chrono.endRun();
 						invoke(map.get(simpleMenu[row][col]));
 						return;
 					} else if (row == 4) { // export menu
@@ -1049,23 +1052,30 @@ public class Gui {
 		// buttons to test specific functions not available for user
 		
 		// TEST BUTTONS///////////////////////////////////////////////////////////////
-//		JButton testButton_1 = new JButton("Prnt Test");
-//		testButton_1.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				appendToPrinterInternal("OKOKOKOKOKOKOKO");
-//			}
-//		});
-//		testButton_1.setBounds(600, 510, 90, 25);
-//		frame.getContentPane().add(testButton_1);
+		JButton testButton_1 = new JButton("Run server");
+		testButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				 try {
+		                Server.main(new String[0]);
+		            } catch (Exception e1) {
+		                e1.printStackTrace();
+		          }
+				
+			}
+		});
+		testButton_1.setBounds(600, 510, 90, 25);
+		frame.getContentPane().add(testButton_1);
 //
-//		JButton testButton_2 = new JButton("Rst Test");
-//		testButton_2.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				chrono.reset();
-//			}
-//		});
-//		testButton_2.setBounds(600, 540, 90, 25);
-//		frame.getContentPane().add(testButton_2);
+		JButton testButton_2 = new JButton("Test serv");
+		testButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Client c = new Client("http://localhost", 8000);
+				String test = "[{\"number\": 111,\"startTime\": \"Apr 21, 2016 10:25:17 PM\",\"endTime\": \"Apr 21, 2016 10:25:32 PM\"},{\"number\": 222,\"startTime\": \"Apr 21, 2016 10:25:18 PM\",\"endTime\": \"Apr 21, 2016 10:25:33 PM\"},{\"number\": 333,\"startTime\": \"Apr 21, 2016 10:25:19 PM\",\"endTime\": \"Apr 21, 2016 10:25:34 PM\"},{\"number\": 444,\"startTime\": \"Apr 21, 2016 10:25:20 PM\",\"endTime\": \"Apr 21, 2016 10:25:35 PM\"},{\"number\": 555,\"startTime\": \"Apr 21, 2016 10:25:21 PM\",\"endTime\": \"Apr 21, 2016 10:25:37 PM\"}]";
+				c.sendData("sendresults", test);
+			}
+		});
+		testButton_2.setBounds(600, 540, 90, 25);
+		frame.getContentPane().add(testButton_2);
 //		
 //		JButton testButton_3 = new JButton("Dnf Test");
 //		testButton_3.addActionListener(new ActionListener() {
