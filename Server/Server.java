@@ -58,7 +58,7 @@ public class Server {
                 "<th class=\"text-left\">Name</th>" +
                 "<th class=\"text-left\"><a href=\"/displayresults/starttime\">Start time</a></th>" +
                 "<th class=\"text-left\"><a href=\"/displayresults/endtime\">Finish time</a></th>" +
-                "<th class=\"text-left\"><a href=\"/displayresults/elapsed\">Elapsed time</a></th>" +
+                "<th class=\"text-left\"><a href=\"/displayresults/elapsed\">Final time</a></th>" +
                 "</tr></thead><tbody class=\"table-hover\">";
         for (Racer e : fromJson) {
             result += "<tr>" +
@@ -67,7 +67,7 @@ public class Server {
                     "<td class=\"text-left\">" + (getName(e.getNumber())) + "</td>" +
                     "<td class=\"text-left\">" + e.getStartTime() + "</td>" +
                     "<td class=\"text-left\">" + e.getEndTime() + "</td>" +
-                    "<td class=\"text-left\">" + e.getElapsedTime() + "</td>" +
+                    "<td class=\"text-left\">" + e.getFinalTime() + "</td>" +
                     "</tr>";            
         }
         result += "</tbody></table>";
@@ -76,7 +76,7 @@ public class Server {
     
     private static String getName(int bib){
     	
-    	String fileName = "racers.txt";
+    	String fileName = "src/racers.txt";
     	String line = "";
 
         try {
@@ -95,7 +95,7 @@ public class Server {
         catch(IOException ex) {
             System.out.println("Error reading file " + fileName);
         }
-        return line;
+        return "";
     }
 
     private static void createResponseWithComparator(HttpExchange t, Comparator c) throws IOException {
@@ -223,10 +223,10 @@ public class Server {
             // respond to the POST with ROGER
             String postResponse = "ROGER JSON RECEIVED";
 
-//            System.out.println("response: " + sharedResponse);
+ //           System.out.println("response: " + sharedResponse);
             
-            Desktop dt = Desktop.getDesktop();
-            dt.open(new File("raceresults.html"));          
+//            Desktop dt = Desktop.getDesktop();
+//            dt.open(new File("src/raceresults.html"));          
             
 
             // assume that stuff works all the time
@@ -243,7 +243,7 @@ public class Server {
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String filename = httpExchange.getRequestURI().toString();
-            File file = new File("Server/" + filename.substring(filename.lastIndexOf('/') + 1));
+            File file = new File("src/Server/" + filename.substring(filename.lastIndexOf('/') + 1));
             Headers h = httpExchange.getResponseHeaders();
             h.set("Content-Type", "text/css");
             OutputStream os = httpExchange.getResponseBody();

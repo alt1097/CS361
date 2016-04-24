@@ -49,7 +49,7 @@ public class Client {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return response.toString();
 	}

@@ -341,19 +341,19 @@ public class RaceIND extends Race{
 	@Override
 	public String exportMe(){
 		Hashtable<String, Serializable> data = new Hashtable<>();
-		data.put("eventType", super.eventType);
-		data.put("canStart", super.canStart);
-		data.put("ongoing", super.ongoing);
-		data.put("ended", super.ended);
+//		data.put("eventType", super.eventType);
+//		data.put("canStart", super.canStart);
+//		data.put("ongoing", super.ongoing);
+//		data.put("ended", super.ended);
 		data.put("racers", racers);
-		data.put("firstIndex", firstIndex);
-		data.put("queueIndex", queueIndex);
-		if(startChannel != null){
-			data.put("startChannel", startChannel.getName());
-		}
-		if(finishChannel != null){
-			data.put("finishChannel", finishChannel.getName());
-		}		
+//		data.put("firstIndex", firstIndex);
+//		data.put("queueIndex", queueIndex);
+//		if(startChannel != null){
+//			data.put("startChannel", startChannel.getName());
+//		}
+//		if(finishChannel != null){
+//			data.put("finishChannel", finishChannel.getName());
+//		}		
 		return ChronoTimer.export.objectToJsonString(data);
 	}
 

@@ -16,24 +16,16 @@ public class RacePARGRP extends Race{
 	/**
 	 Contains the Racers in the race according to which lane they're in.
 	 */
-	private ArrayList<ArrayList<Racer>> lanes = new ArrayList<>();
+	private ArrayList<Racer> racers = new ArrayList<>();
 	/**
-	 Indexes of the first Racers by lane.
+	 References to the assigned Channels by lane.
 	 */
-	private ArrayList<Integer> firstIndexes = new ArrayList<>();
+	private ArrayList<Channel> channels = new ArrayList<>();
 	/**
-	 Indexes of the first not racing by lane.
+	 Start time to use for all Racers.
 	 */
-	private ArrayList<Integer> queueIndexes = new ArrayList<>();
-	/**
-	 References to the assigned start Channels by lane.
-	 */
-	private ArrayList<Channel> startChannels = new ArrayList<>();
-	/**
-	 Reference to the assigned finish Channels by lane.
-	 */
-	private ArrayList<Channel> finishChannels = new ArrayList<>();
-
+	private Date startTime;
+	
 	/**
 	 Initializes the Parallel Groups components of Race.
 	 */
@@ -53,7 +45,23 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public String addRacer(int number, boolean toFront){
-		return "";  //  TODO
+		String logOut = "";
+		if(!ongoing)
+		{
+			if(racers.size() < 8)
+			{
+				racers.add(new Racer(number));
+			}
+			else
+			{
+				logOut += " - 8 RACERS ALREADY ENTERED";
+			}
+		}
+		else
+		{
+			logOut += " - RACE IS ONGOING";
+		}
+			return logOut;
 	}
 
 	/**
@@ -65,19 +73,12 @@ public class RacePARGRP extends Race{
 	@Override
 	public Racer getRacer(int number, boolean byPlace){
 		if(byPlace){
-			for(ArrayList<Racer> lane : lanes){
-				Racer tempRacer = lane.get(number);
-				if(tempRacer != null){
-					return tempRacer;
-				}
-			}
+			return racers.get(number);
 		}
 		else{
-			for(ArrayList<Racer> lane : lanes){
-				for(Racer racer : lane){
-					if(racer.getNumber() == number){
-						return racer;
-					}
+			for(Racer racer : racers){
+				if(racer.getNumber() == number){
+					return racer;
 				}
 			}
 		}
@@ -91,7 +92,7 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public boolean removeRacer(int number){
-		return false;  //  TODO
+		return racers.remove(getRacer(number, false));
 	}
 
 	/**
@@ -101,7 +102,7 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public boolean isRacing(Racer racer){
-		return false;  //  TODO
+		return true;
 	}
 
 	/**
@@ -111,7 +112,7 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public boolean canBeMoved(Racer racer){
-		return false;  //  TODO
+		return false;
 	}
 
 	/**
@@ -121,7 +122,7 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public boolean moveToFirst(Racer racer){
-		return false;  //  TODO
+		return false;
 	}
 
 	/**
@@ -131,7 +132,7 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public boolean moveToNext(Racer racer){
-		return false;  //  TODO
+		return false;
 	}
 
 	//  ----------  EVENT MANAGEMENT  ----------
@@ -142,10 +143,26 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public boolean canStart(){
-		if(canStart){ // it was like this before canStart || canStartPARGRP();
+		if(canStart){
 			return true;
 		}
-		return false;  //  TODO
+		boolean pass = true;
+		if(racers.size() > 0)
+		{
+			for(int i = 0; i < racers.size(); ++i)
+			{
+				if(channels.get(i) == null){
+					pass = false;
+					break;
+				}
+			}
+		}
+		else
+		{
+			pass = false;
+		}
+		canStart = pass;
+		return pass;
 	}
 
 	/**
@@ -153,7 +170,25 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public void channelVerify(){
-		//  TODO
+		boolean fail = false;
+		
+		for(int i = 0; i < racers.size(); ++i)
+		{
+			Channel temp = ChronoTimer.getChannel(i);
+			if(temp != null && temp.isOn()){
+				temp.setChanType("FINISH");
+				channels.set(i, temp);
+			}
+			else
+			{
+				fail = true;
+				break;
+			}
+		}	
+		if(fail)
+		{
+			channels.clear();
+		}
 	}
 
 	/**
@@ -163,16 +198,64 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public String trigger(Channel channel){
-		//  TODO
+		String retMes = "";
+		
+		if(channels.contains(channel))
+		{
+			if(channel.getName() == 0 && startTime == null)
+			{
+				startTime = ChronoTimer.getTime();
+				ongoing = true;
+				for(Racer r: racers)
+				{
+					r.setStartTime(startTime);
+				}
+				getChrono().output("TRIG RACE HAS STARTED");
+			}
+			else
+			{
+				if(startTime == null)
+				{
+					retMes += " - RACE HASN'T STARTED";
+				}
+				else
+				{
+					Racer racer = racers.get(channel.getName());
+					channel.fireChannel(racer);
+					channel.reset();
+					getChrono().output(racer.getNumber()+" TRIG "+(channel.getName() + 1));
+					getChrono().output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
+				}
+			}
+		}
+		else
+		{
+			retMes += " - CHANNEL IS NOT USED";
+		}
+		
 		update();
-		return "";  //  TODO
+		return retMes;
 	}
 
 	/**
 	 Runs various checks every time a trigger occurs.
 	 */
 	private void update(){
-		//  TODO
+	boolean hasEnded = true;
+		
+		for(Racer r : racers)
+		{
+			if(r.getEndTime() == null)
+			{
+				hasEnded = false;
+				break;
+			}
+		}
+		
+		if(hasEnded)
+		{
+			end();
+		}
 	}
 	
 	/**
@@ -189,8 +272,9 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public String exportMe() {
-		// TODO Implement
-		return null;
+		Hashtable<String, Serializable> data = new Hashtable<>();
+		data.put("racers", racers);
+		return ChronoTimer.export.objectToJsonString(data);
 	}
 
 	@Override

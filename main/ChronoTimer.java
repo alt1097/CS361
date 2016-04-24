@@ -2,6 +2,7 @@ package main;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -71,13 +72,16 @@ public class ChronoTimer extends JFrame{
 	 Flag used to override certain functions from being used during JUnit testing.
 	 */
 	public static boolean flagJUnit;
-	
+	/**
+	 Client reference to allow for internet access of results
+	 */
+	private Client c = new Client("http://localhost", 8000);
 	/**
 	 * Should not be static
 	 * Variable to hold reference to gui object
 	 */
 	private Gui chronoGui;
-	
+
 	/**
 	 * Everyone who has access to ChronoTimer can also
 	 * obtain access to gui public methods over this getter
@@ -90,7 +94,7 @@ public class ChronoTimer extends JFrame{
 	public Gui getGui(){
 		return chronoGui == null ? null : chronoGui;
 	}
-	
+
 	/**
 	 Initializes the ChronoTimer.
 	 */
@@ -794,6 +798,7 @@ public class ChronoTimer extends JFrame{
 		new Timer().scheduleAtFixedRate(new TimerTask(){
 			@Override
 			public void run(){
+				c.sendData("sendresults", race.exportMe());
 				setGuiDisplay(race.raceStats());
 			}
 		}, 0, 1);
