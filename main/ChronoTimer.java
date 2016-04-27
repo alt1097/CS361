@@ -47,7 +47,7 @@ public class ChronoTimer extends JFrame{
 	/**
 	 Used to immediately use a specified Date instead of getting the current time's.
 	 */
-	private static Date overrideDate;
+	private static Long overrideDate;
 	/**
 	 Reference to all the channels on the system.
 	 */
@@ -744,7 +744,7 @@ public class ChronoTimer extends JFrame{
 	 */
 	public void useTime(String time){
 		try{
-			overrideDate = format.parse(time);
+			overrideDate = format.parse(time).getTime();
 
 		}catch(ParseException e){
 			debugLog.add("---- "+format.format(getTime())+" DATE ENTERED WAS IMPROPERLY FORMATTED");
@@ -763,14 +763,14 @@ public class ChronoTimer extends JFrame{
 	 Gets the unit's current time.
 	 @return Current unit time as Date.
 	 */
-	public static Date getTime(){
+	public static Long getTime(){
 		if(overrideDate != null){
 			return overrideDate;
 		}
 		if(systemStartTime == null){
-			return new Date(System.currentTimeMillis());
+			return System.currentTimeMillis();
 		}
-		return new Date(System.currentTimeMillis() - systemStartTime + newOffset);
+		return System.currentTimeMillis() - systemStartTime + newOffset;
 	}
 
 	/**
@@ -798,10 +798,16 @@ public class ChronoTimer extends JFrame{
 		new Timer().scheduleAtFixedRate(new TimerTask(){
 			@Override
 			public void run(){
-				c.sendData("sendresults", race.exportMe());
 				setGuiDisplay(race.raceStats());
 			}
 		}, 0, 1);
+
+		new Timer().scheduleAtFixedRate(new TimerTask(){
+			@Override
+			public void run(){
+				c.sendData("sendresults", race.exportMe());
+			}
+		}, 0, 5000);
 	}
 	
 	// Examples below. If you would like to print from somewhere else

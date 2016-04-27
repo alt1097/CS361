@@ -303,7 +303,7 @@ public class RaceIND extends Race{
 		for(Racer racer : racers){
 			record += "#"+racer.getNumber()+"\tStart: ";
 			boolean printDif = true;
-			Date tempTime = racer.getStartTime();
+			Long tempTime = racer.getStartTime();
 			if(tempTime == null){
 				record += "DID NOT START";
 				printDif = false;
@@ -335,25 +335,23 @@ public class RaceIND extends Race{
 
 	/**
 	 Exports Individual Race data into JSON format String.
-	 @param data Hash table to add to.
-	 * @return 
 	 */
 	@Override
 	public String exportMe(){
 		Hashtable<String, Serializable> data = new Hashtable<>();
-//		data.put("eventType", super.eventType);
-//		data.put("canStart", super.canStart);
-//		data.put("ongoing", super.ongoing);
-//		data.put("ended", super.ended);
+		data.put("eventType", super.eventType);
+		data.put("canStart", super.canStart);
+		data.put("ongoing", super.ongoing);
+		data.put("ended", super.ended);
 		data.put("racers", racers);
-//		data.put("firstIndex", firstIndex);
-//		data.put("queueIndex", queueIndex);
-//		if(startChannel != null){
-//			data.put("startChannel", startChannel.getName());
-//		}
-//		if(finishChannel != null){
-//			data.put("finishChannel", finishChannel.getName());
-//		}		
+		data.put("firstIndex", firstIndex);
+		data.put("queueIndex", queueIndex);
+		if(startChannel != null){
+			data.put("startChannel", startChannel.getName());
+		}
+		if(finishChannel != null){
+			data.put("finishChannel", finishChannel.getName());
+		}
 		return ChronoTimer.export.objectToJsonString(data);
 	}
 

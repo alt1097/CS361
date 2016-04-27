@@ -28,7 +28,7 @@ public class RaceGRP extends Race{
 	/**
 	 Start time to use for all Racers.
 	 */
-	private Date startTime;
+	private Long startTime;
 	/**
 	 Reference to the assigned start Channel.
 	 */
@@ -257,7 +257,7 @@ public class RaceGRP extends Race{
 		for(Racer racer : racers){
 			record += "#"+racer.getNumber()+"\tStart: ";
 			boolean printDif = true;
-			Date tempStartTime = racer.getStartTime();
+			Long tempStartTime = racer.getStartTime();
 			if(tempStartTime == null){
 				record += "DID NOT START";
 				printDif = false;
@@ -266,7 +266,7 @@ public class RaceGRP extends Race{
 				record += ChronoTimer.format.format(tempStartTime);
 			}
 			record += "\t\tFinish: ";
-			Date tempEndTime = racer.getEndTime();
+			Long tempEndTime = racer.getEndTime();
 			if(tempEndTime == null){
 				record += "DID NOT FINISH";
 				printDif = false;
@@ -293,19 +293,20 @@ public class RaceGRP extends Race{
 	@Override
 	public String exportMe() {
 		Hashtable<String, Serializable> data = new Hashtable<>();
-//		data.put("eventType", super.eventType);
-//		data.put("canStart", super.canStart);
-//		data.put("ongoing", super.ongoing);
-//		data.put("ended", super.ended);
+		data.put("eventType", super.eventType);
+		data.put("canStart", super.canStart);
+		data.put("ongoing", super.ongoing);
+		data.put("ended", super.ended);
 		data.put("racers", racers);
-//		data.put("placeNumber", placeNumber);
-//		data.put("trackNumber", trackNumber);
-//		if(startChannel != null){
-//			data.put("startChannel", startChannel.getName());
-//		}
-//		if(finishChannel != null){
-//			data.put("finishChannel", finishChannel.getName());
-//		}		
+		data.put("placeNumber", placeNumber);
+		data.put("trackNumber", trackNumber);
+		data.put("startTime", startTime);
+		if(startChannel != null){
+			data.put("startChannel", startChannel.getName());
+		}
+		if(finishChannel != null){
+			data.put("finishChannel", finishChannel.getName());
+		}
 		return ChronoTimer.export.objectToJsonString(data);
 	}
 	
@@ -331,7 +332,7 @@ public class RaceGRP extends Race{
 			if(startTime == null){
 				output += "- RACE NOT STARTED -";
 			}else{
-				output += "ELAPSED: "+(ChronoTimer.diffFormat.format(ChronoTimer.getTime().getTime() - startTime.getTime()));
+				output += "ELAPSED: "+(ChronoTimer.diffFormat.format(ChronoTimer.getTime() - startTime));
 			}
 			int racersSize = racers.size();
 			if(racersSize > 0){

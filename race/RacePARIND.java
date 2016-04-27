@@ -384,7 +384,7 @@ public class RacePARIND extends Race{
 				for (Racer racer : lane.racers) {
 					record += "#" + racer.getNumber() + "\tStart: ";
 					boolean printDif = true;
-					Date tempTime = racer.getStartTime();
+					Long tempTime = racer.getStartTime();
 					if (tempTime == null) {
 						record += "DID NOT START";
 						printDif = false;
@@ -419,25 +419,24 @@ public class RacePARIND extends Race{
 
 	/**
 	 Exports Parallel Individual Race data into JSON format String.
-	 @param data Hash table to add to.
 	 */
 	@Override
 	public String exportMe() {
 		Hashtable<String, Serializable> data = new Hashtable<>();
-//		data.put("eventType", super.eventType);
-//		data.put("canStart", super.canStart);
-//		data.put("ongoing", super.ongoing);
-//		data.put("ended", super.ended);
-//		data.put("queue", queue);
+		data.put("eventType", super.eventType);
+		data.put("canStart", super.canStart);
+		data.put("ongoing", super.ongoing);
+		data.put("ended", super.ended);
+		data.put("queue", queue);
 		Hashtable<String, Serializable> laneHash = new Hashtable<>();
 		for (int i = 0; i < 4; i++) {
 			Lane lane = lanes.get(i);
 			Hashtable<String, Serializable> singleLaneHash = new Hashtable<>();
-//			if (lane.startChannel != null)
-//				singleLaneHash.put("startChannel", lane.startChannel.getName());
-//			if (lane.finishChannel != null)
-//				singleLaneHash.put("finishChannel", lane.finishChannel.getName());
-//			singleLaneHash.put("firstIndex", lane.firstIndex);
+			if (lane.startChannel != null)
+				singleLaneHash.put("startChannel", lane.startChannel.getName());
+			if (lane.finishChannel != null)
+				singleLaneHash.put("finishChannel", lane.finishChannel.getName());
+			singleLaneHash.put("firstIndex", lane.firstIndex);
 			singleLaneHash.put("racers", lane.getRacers());
 			laneHash.put("lane_" + i, singleLaneHash);
 		}

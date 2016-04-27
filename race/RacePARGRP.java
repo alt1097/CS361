@@ -24,13 +24,17 @@ public class RacePARGRP extends Race{
 	/**
 	 Start time to use for all Racers.
 	 */
-	private Date startTime;
+	private Long startTime;
 	
 	/**
 	 Initializes the Parallel Groups components of Race.
 	 */
 	public RacePARGRP(ChronoTimer chrono){
 		super("PARGRP", chrono);
+		for(int i = 0; i < 8; i++){
+			racers.add(null);
+			channels.add(null);
+		}
 		channelVerify();
 		//  TODO
 	}
@@ -50,7 +54,12 @@ public class RacePARGRP extends Race{
 		{
 			if(racers.size() < 8)
 			{
-				racers.add(new Racer(number));
+				for(int i = 0; i < 8; i++){
+					if(racers.get(i) == null){
+						racers.set(i, new Racer(number));
+						break;
+					}
+				}
 			}
 			else
 			{
@@ -92,7 +101,12 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public boolean removeRacer(int number){
-		return racers.remove(getRacer(number, false));
+		int index = racers.indexOf(getRacer(number, false));
+		if(index != -1){
+			racers.set(index, null);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -102,7 +116,7 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public boolean isRacing(Racer racer){
-		return true;
+		return false;
 	}
 
 	/**
@@ -171,23 +185,27 @@ public class RacePARGRP extends Race{
 	@Override
 	public void channelVerify(){
 		boolean fail = false;
-		
-		for(int i = 0; i < racers.size(); ++i)
+		for(int i = 0; i < 8; ++i)
 		{
-			Channel temp = ChronoTimer.getChannel(i);
-			if(temp != null && temp.isOn()){
-				temp.setChanType("FINISH");
-				channels.set(i, temp);
-			}
-			else
-			{
-				fail = true;
-				break;
+			if(racers.get(i) != null){
+				Channel temp = ChronoTimer.getChannel(i);
+				if(temp != null && temp.isOn()){
+					temp.setChanType("FINISH");
+					channels.set(i, temp);
+					System.out.println("HERE");
+				}
+				else
+				{
+					fail = true;
+					break;
+				}
 			}
 		}	
 		if(fail)
 		{
-			channels.clear();
+			for(int i = 0; i < 8; i++){
+				channels.set(i, null);
+			}
 		}
 	}
 

@@ -18,12 +18,12 @@ public class Racer
 	/**
 	 * The time that the racer started a race
 	 */
-	private Date startTime;
+	private Long startTime;
 	
 	/**
 	 * The time that the racer ended a race
 	 */
-	private Date endTime;
+	private Long endTime;
 
 	/**
 	 * Creates a racer with a unique number
@@ -54,36 +54,36 @@ public class Racer
 
 	/**
 	 * Gets the start time of a racer
-	 * @return startTime The time (in date format) that the racer started a race
+	 * @return startTime The time (in long format) that the racer started a race
 	 */
-	public Date getStartTime()
+	public Long getStartTime()
 	{
 		return startTime;
 	}
 
 	/**
 	 * Sets the start time of a racer
-	 * @param startTime The time (in date format) that the racer started a race
+	 * @param startTime The time (in long format) that the racer started a race
 	 */
-	public void setStartTime(Date startTime)
+	public void setStartTime(Long startTime)
 	{
 		this.startTime = startTime;
 	}
 
 	/**
 	 * Gets the end time of a racer
-	 * @return endTime The time (in date format) that the racer completed a race
+	 * @return endTime The time (in long format) that the racer completed a race
 	 */
-	public Date getEndTime()
+	public Long getEndTime()
 	{
 		return endTime;
 	}
 
 	/**
 	 * Sets the end time of a racer
-	 * @param endTime The time (in date format) that the racer completed a race
+	 * @param endTime The time (in long format) that the racer completed a race
 	 */
-	public void setEndTime(Date endTime)
+	public void setEndTime(Long endTime)
 	{
 		this.endTime = endTime;
 	}
@@ -93,15 +93,13 @@ public class Racer
 	 * time from their end time.
 	 * @return finalTime
 	 */
-	public Date getFinalTime()
+	public Long getFinalTime()
 	{
 		if(endTime == null){
 			return null;
 		}
 		else{
-			Date finalTime = new Date();
-			finalTime.setTime(endTime.getTime() - startTime.getTime());
-			return finalTime;
+			return endTime - startTime;
 		}
 	}
 
@@ -110,10 +108,8 @@ public class Racer
 	 * by subtracting their start time from the current system time.
 	 * @return elapsedTime How long a racer has been running for at any given time during a race
 	 */
-	public Date getElapsedTime()
+	public Long getElapsedTime()
 	{
-		Date elapsedTime = new Date();
-		elapsedTime.setTime(ChronoTimer.getTime().getTime() - startTime.getTime());
-		return elapsedTime;
+		return ChronoTimer.getTime() - startTime;
 	}
 }

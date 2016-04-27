@@ -48,7 +48,7 @@ public class ChannelFireButton extends Sensor{
 //			racer.addHistory(ChronoTimer.currentEventType + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " +ChronoTimer.format.format(ChronoTimer.pcTime));
 //			super.trigger(super.getType() + " " + name + " at " + ChronoTimer.format.format(ChronoTimer.pcTime));
 		//	racer.addHistory(timer.getTime() + " racer " + racer.getNumber() + " triggered " + super.getType() + " # " + name + " at " + elapsedTime + "\n");
-			super.trigger(super.getType() + " " + name + " at " + ChronoTimer.getTime().getTime());
+			super.trigger(super.getType() + " " + name + " at " + ChronoTimer.getTime());
 
 		}
 
