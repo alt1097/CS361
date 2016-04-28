@@ -422,6 +422,10 @@ public class RacePARIND extends Race{
 	 */
 	@Override
 	public String exportMe() {
+		// this is how JSON object looks like after this method for a case with a 4 racers:
+		// ,"ongoing":false,"canStart":true,"lanes":{"lane_3":{"firstIndex":0,"racers":[]},"lane_2":{"firstIndex":0,"racers":[]},"lane_1":{"firstIndex":2,"racers":[{"number":2,"startTime":1461827762967,"endTime":1461827763970},{"number":4,"startTime":1461827766669,"endTime":1461827768055}],"finishChannel":3,"startChannel":2},"lane_0":{"firstIndex":2,"racers":[{"number":1,"startTime":1461827759126,"endTime":1461827762187},{"number":3,"startTime":1461827764791,"endTime":1461827765956}]
+		// this is how properly formatted JSON looks like for 4 racers:
+		// [{"number":1,"startTime":1461828279044,"endTime":1461828280672},{"number":2,"startTime":1461828281708,"endTime":1461828283059},{"number":3,"startTime":1461828284077,"endTime":1461828285206},{"number":4,"startTime":1461828286191,"endTime":1461828287336}]
 		Hashtable<String, Serializable> data = new Hashtable<>();
 		data.put("eventType", super.eventType);
 		data.put("canStart", super.canStart);

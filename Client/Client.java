@@ -26,7 +26,7 @@ public class Client {
 		url = ip + ":" + port + "/";
 	}
 
-	public String sendData(String route, String data) {
+	public String sendData(String route, String data){
 		String urlSite = url + route;
 		StringBuilder response = new StringBuilder();
 		try {
@@ -49,7 +49,8 @@ public class Client {
 			}
 
 		} catch (IOException e) {
-			//e.printStackTrace();
+			System.out.println("No response from server. Check server instance/port settings");
+//			e.printStackTrace();
 		}
 		return response.toString();
 	}

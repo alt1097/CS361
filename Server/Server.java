@@ -7,6 +7,7 @@ package Server;
 import java.awt.Desktop;
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import race.Racer;
@@ -22,7 +23,7 @@ import com.sun.net.httpserver.HttpServer;
 public class Server {
 
     // a shared area where we get the POST data and then use it in the other handler
-    static String sharedResponse = "data=[{\"title\":\"Mrs.\",\"firstName\":\"wqewq\",\"lastName\":\"bbbbb\",\"department\":\"aaaaa\",\"phoneNumber\":\"23113\",\"gender\":\"Male\"},{\"title\":\"Col.\",\"firstName\":\"wqeq\",\"lastName\":\"aaaaa\",\"department\":\"bbbbb\",\"phoneNumber\":\"3243324\",\"gender\":\"Female\"}]\n";
+    static String sharedResponse = "data=[]\n";
     static boolean gotMessageFlag = false;
 
     public static void main(String[] args) throws Exception {
@@ -45,8 +46,9 @@ public class Server {
         System.out.println("Starting Server...");
         server.start();
     }
-
+    
     private static String getResponseBodyFromArrayList(ArrayList<Racer> fromJson) {
+    	SimpleDateFormat millisFormat = new SimpleDateFormat("H:mm:ss.SSS");
     	int counter = 0;
         String result = "<link rel=\"stylesheet\" type=\"text/css\" href=\"mystyle.css\">";
         result += "<script type=\"text/javascript\">setTimeout(function () { location.reload();}, 15 * 1000);</script>";
@@ -58,16 +60,16 @@ public class Server {
                 "<th class=\"text-left\">Name</th>" +
                 "<th class=\"text-left\"><a href=\"/displayresults/starttime\">Start time</a></th>" +
                 "<th class=\"text-left\"><a href=\"/displayresults/endtime\">Finish time</a></th>" +
-                "<th class=\"text-left\"><a href=\"/displayresults/elapsed\">Final time</a></th>" +
+                "<th class=\"text-left\"><a href=\"/displayresults/elapsed\">Elapsed time</a></th>" +
                 "</tr></thead><tbody class=\"table-hover\">";
         for (Racer e : fromJson) {
             result += "<tr>" +
             		"<td class=\"text-left\">" + (++counter) + "</td>" +
                     "<td class=\"text-left\">" + e.getNumber() + "</td>" +
                     "<td class=\"text-left\">" + (getName(e.getNumber())) + "</td>" +
-                    "<td class=\"text-left\">" + e.getStartTime() + "</td>" +
-                    "<td class=\"text-left\">" + e.getEndTime() + "</td>" +
-                    "<td class=\"text-left\">" + e.getFinalTime() + "</td>" +
+                    "<td class=\"text-left\">" + millisFormat.format((new Date(e.getStartTime()))) + "</td>" +
+                    "<td class=\"text-left\">" + millisFormat.format((new Date(e.getEndTime()))) + "</td>" +
+                    "<td class=\"text-left\">" + millisFormat.format((new Date(e.getFinalTime()))) + "</td>" +
                     "</tr>";            
         }
         result += "</tbody></table>";
@@ -76,7 +78,7 @@ public class Server {
     
     private static String getName(int bib){
     	
-    	String fileName = "src/racers.txt";
+    	String fileName = "racers.txt";
     	String line = "";
 
         try {
@@ -95,7 +97,7 @@ public class Server {
         catch(IOException ex) {
             System.out.println("Error reading file " + fileName);
         }
-        return "";
+        return line;
     }
 
     private static void createResponseWithComparator(HttpExchange t, Comparator c) throws IOException {
@@ -223,10 +225,10 @@ public class Server {
             // respond to the POST with ROGER
             String postResponse = "ROGER JSON RECEIVED";
 
- //           System.out.println("response: " + sharedResponse);
+            System.out.println("response: " + sharedResponse);
             
 //            Desktop dt = Desktop.getDesktop();
-//            dt.open(new File("src/raceresults.html"));          
+//            dt.open(new File("./raceresults.html"));          
             
 
             // assume that stuff works all the time
@@ -243,7 +245,7 @@ public class Server {
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String filename = httpExchange.getRequestURI().toString();
-            File file = new File("src/Server/" + filename.substring(filename.lastIndexOf('/') + 1));
+            File file = new File("./Server/" + filename.substring(filename.lastIndexOf('/') + 1));
             Headers h = httpExchange.getResponseHeaders();
             h.set("Content-Type", "text/css");
             OutputStream os = httpExchange.getResponseBody();
