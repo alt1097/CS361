@@ -95,26 +95,26 @@ public class Gui {
 		// add racer function
 		simpleMenu[2][0] = "Add new racer";
 		simpleMenu[2][1] = "Remove racer";
-		simpleMenu[2][2] = "Item 2 2";
-		simpleMenu[2][3] = "Item 2 3";
+//		simpleMenu[2][2] = null;
+//		simpleMenu[2][3] = null;
 		
 		// generic menu page
 		simpleMenu[3][0] = "Create a new run";
 		simpleMenu[3][1] = "End current run";
-		simpleMenu[3][2] = "Item 4 2";
-		simpleMenu[3][3] = "Item 4 2";
+//		simpleMenu[3][2] = null;
+//		simpleMenu[3][3] = null;
 		
 		// export menu
 		simpleMenu[4][0] = "Export to USB";
-		simpleMenu[4][1] = "Item 2 1";
-		simpleMenu[4][2] = "Item 2 2";
-		simpleMenu[4][3] = "Item 2 2";
+//		simpleMenu[4][1] = null;
+//		simpleMenu[4][2] = null;
+//		simpleMenu[4][3] = null;
 		
 		// print menu page
 		simpleMenu[5][0] = "Show all stats";
 		simpleMenu[5][1] = "Show only one";
-		simpleMenu[5][2] = "Item 4 2";
-		simpleMenu[5][3] = "Item 4 2";
+//		simpleMenu[5][2] = null;
+//		simpleMenu[5][3] = null;
 		
 ////		// generic menu page
 //		simpleMenu[4][0] = "Item 4 0";
@@ -245,6 +245,21 @@ public class Gui {
 		row = 0;
 	}	
 	
+	/*
+	 * Returns a "length" of an menu array
+	 * This is not an actual array length
+	 * This number shows how many items in array is not null i.e. shows textual menu options
+	 */
+	private int getLength(String[] someArray){
+		int counter = 0;
+		for(int i = 0; i < someArray.length; i++){
+			if(someArray[i] != null){
+				counter++;
+			}
+		}		
+		return counter;
+	}
+	
 	private void appendToDisplayInternal(String stringToAppend){
 		displayText.append(stringToAppend + "\n");
 	}
@@ -257,12 +272,7 @@ public class Gui {
 		if(printerSwitch){
 			printerText.append(stringToPrinter + "\n");
 		}		
-	}
-
-
-//	(new Exception().getStackTrace()[1].getClassName().toString().equals("main.ChronoTimer"))	
-
-	
+	}	
 	/*
 	 * Method to initialize all window components and functions
 	 */
@@ -290,28 +300,7 @@ public class Gui {
 				
 				if(!guiActive){
 					allowOutsideInput = false;					
-					
-//					for (JComboBox comboBox : comboBoxes) {
-//						comboBox.setSelectedIndex(0);
-//					}
-//					for (JRadioButton radio : radioButtons) {
-//						// do nothing with radio buttons on power off routine
-//						// they state should be preserved
-//						// below commented lines can be removed later
-////						radio.setSelected(false);
-////						radio.setEnabled(false);
-//						// below condition need to be adjusted to work properly
-////						if(radio.isSelected()){
-////							radio.doClick();
-////						}
-//					}
-					
-//					for(JToggleButton toggle : toggleButtons){
-//						if(toggle.isSelected()){
-//							toggle.doClick();
-//						}					
-//					}
-					
+					functionsMenuActive = false; // this line allows to fix bug with double click on function button
 					indicator.setForeground(Color.RED);
 					clear();
 					printerText.setText(""); // get rid of "sensor disconnected" messages in printer box
@@ -341,23 +330,24 @@ public class Gui {
 		power.setBounds(61, 11, 80, 23);
 		frame.getContentPane().add(power);
 		
-		JButton functions = new JButton("Functions");
+		JButton functions = new JButton("Funct");
 		functions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				System.out.println("Function");			
-				
-				functionsMenuActive = functionsMenuActive ? false : true;				
-				
-				if(functionsMenuActive){
-					allowOutsideInput = false;
-					drawCol();
-				}else{
-					allowOutsideInput = true;
-					clear();
-				}				
+				// functions menu active only when whole gui accessible
+				// this is why there is AND comparison in parentheses
+				if (guiActive) {
+					functionsMenuActive = (functionsMenuActive) ? false : true;
+					if (functionsMenuActive) {
+						allowOutsideInput = false;
+						drawCol();
+					} else {
+						allowOutsideInput = true;
+						clear();
+					}
+				}
 			}
 		});
-		functions.setBounds(61, 141, 80, 23);
+		functions.setBounds(61, 170, 80, 23);
 		frame.getContentPane().add(functions);
 		
 		JButton swap = new JButton("Swap");
@@ -367,22 +357,23 @@ public class Gui {
 				chrono.swap();
 			}
 		});
-		swap.setBounds(61, 332, 80, 23);
+		swap.setBounds(61, 400, 80, 23);
 		frame.getContentPane().add(swap);
 		
 		BasicArrowButton up = new BasicArrowButton(BasicArrowButton.NORTH);
 		up.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				System.out.println("Up");	
-				if(functionsMenuActive){
-									if((--col < 0)){
-					col = simpleMenu[0].length - 1;
-				}
+				System.out.println("Up col: " + col +" row: " + row);	
+				if(functionsMenuActive){ // TODO
+					if((--col < 0)){
+//						col = simpleMenu[row].length - 1;
+						col = getLength(simpleMenu[row]) - 1; // such approach allows to avoid scrolling menu over "invisible" menu items
+					}
 				drawCol();
 				}
 			}
 		});
-		up.setBounds(90, 180, 25, 25);
+		up.setBounds(90, 260, 25, 25);
 		frame.getContentPane().add(up);
 		
 		BasicArrowButton left = new BasicArrowButton(BasicArrowButton.WEST);
@@ -399,7 +390,7 @@ public class Gui {
 				}
 			}
 		});
-		left.setBounds(65, 205, 25, 25);
+		left.setBounds(65, 285, 25, 25);
 		frame.getContentPane().add(left);
 		
 		BasicArrowButton right = new BasicArrowButton(BasicArrowButton.EAST);
@@ -415,7 +406,7 @@ public class Gui {
 						// it is necessary to have whitespace at the end of menu
 						// description
 						displayText.setText("Enter racer's bib number. \n");
-						displayText.append("(use keypad and # to input): ");
+						displayText.append("(keypad and #): ");
 						return;
 					} else if (row == 3) { // end run menu page
 						//chrono.endRun();
@@ -426,10 +417,10 @@ public class Gui {
 							numPadActive = true;
 							// it is necessary to have whitespace at the end of
 							// menu description
-							displayText.setText("Provide a run number for export. \n");
-							displayText.append("(use keypad and # to input): ");
+							displayText.setText("Provide a run number. \n");
+							displayText.append("(keypad and #): ");
 						} else {
-							displayText.setText("There is no USB drive connected");
+							displayText.setText("USB not found");
 						}
 						return;
 					} else if (row == 5) { // print menu
@@ -439,8 +430,8 @@ public class Gui {
 							numPadActive = true;
 							// it is necessary to have whitespace at the end of
 							// menu description
-							displayText.setText("Provide a run number to print. \n");
-							displayText.append("(use keypad and # to input): ");
+							displayText.setText("Provide a run number. \n");
+							displayText.append("(keypad and #): ");
 						}
 						return;	
 					} else {
@@ -451,7 +442,7 @@ public class Gui {
 				}
 			}
 		});
-		right.setBounds(115, 205, 25, 25);
+		right.setBounds(115, 285, 25, 25);
 		frame.getContentPane().add(right);
 		
 		BasicArrowButton down = new BasicArrowButton(BasicArrowButton.SOUTH);
@@ -459,14 +450,14 @@ public class Gui {
 			public void actionPerformed(ActionEvent e) {
 				// System.out.println("Down");
 				if (functionsMenuActive) {
-					if ((++col > (simpleMenu[0].length - 1))) {
+					if ((++col > (getLength(simpleMenu[row]) - 1))) {
 						col = 0;
 					}
 					drawCol();
 				}
 			}
 		});
-		down.setBounds(90, 230, 25, 25);
+		down.setBounds(90, 310, 25, 25);
 		frame.getContentPane().add(down);		
 		
 		// Middle Section
@@ -681,9 +672,11 @@ public class Gui {
 		frame.getContentPane().add(togChan8);
 		
 		// Display text area
+		Font displayTextFont = new Font("Verdana", Font.BOLD, 16);
 		displayText = new JTextArea();
-		displayText.setBounds(297, 172, 250, 250);
+		displayText.setBounds(290, 170, 250, 250);
 		displayText.setEditable(false);
+		displayText.setFont(displayTextFont);
 		frame.getContentPane().add(displayText);		
 		
 		// Right section
