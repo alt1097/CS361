@@ -294,7 +294,15 @@ public class Gui {
 						comboBox.setSelectedIndex(0);
 					}
 					for (JRadioButton radio : radioButtons) {
-						radio.setSelected(false);
+						// do nothing with radio buttons on power off routine
+						// they state should be preserved
+						// below commented lines can be removed later
+//						radio.setSelected(false);
+//						radio.setEnabled(false);
+						// below condition need to be adjusted to work properly
+//						if(radio.isSelected()){
+//							radio.doClick();
+//						}
 					}
 					for(JToggleButton toggle : toggleButtons){
 						if(toggle.isSelected()){
@@ -304,7 +312,15 @@ public class Gui {
 					
 					indicator.setForeground(Color.RED);
 					clear();
-					printerText.setText(""); // get rid of "sensor disconnected" message in printer box
+					printerText.setText(""); // get rid of "sensor disconnected" messages in printer box
+				}else{
+					for (JRadioButton radio : radioButtons) {
+						// logic is follow: channel selector radio button can be activated even when system is off
+						// during the power on routine all necessary channels will be toggled if radio button is in active state 
+						if(radio.isSelected()){
+							radio.getActionListeners()[0].actionPerformed(null);
+						}
+					}
 				}
 			}
 		});
