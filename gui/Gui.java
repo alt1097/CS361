@@ -83,8 +83,7 @@ public class Gui {
 		simpleMenu[0][1] = "Add/Remove racer";
 		simpleMenu[0][2] = "New run/End run";
 		simpleMenu[0][3] = "Export";
-		simpleMenu[0][4] = "Print";
-		
+		simpleMenu[0][4] = "Print";		
 		
 		// new race type menu
 		simpleMenu[1][0] = "Individual";
@@ -175,8 +174,7 @@ public class Gui {
 
 	private void togglePrinter() {
 		printerSwitch = printerSwitch ? false : true;
-	}
-	
+	}	
 	
 	private void drawCol() {
 		if (guiActive) {
@@ -236,19 +234,14 @@ public class Gui {
 	private void clear(){
 		displayText.setText("");
 		//printerText.setText(""); // if printer text need to be wiped
-		wipe();
-		
-	}
-	
-	private void wipe(){
 		col = 0;
-		row = 0;
-	}	
+		row = 0;		
+	}
 	
 	/*
 	 * Returns a "length" of an menu array
 	 * This is not an actual array length
-	 * This number shows how many items in array is not null i.e. shows textual menu options
+	 * This number shows how many items in array is not null i.e. shows non-empty textual menu options
 	 */
 	private int getLength(String[] someArray){
 		int counter = 0;
@@ -273,6 +266,7 @@ public class Gui {
 			printerText.append(stringToPrinter + "\n");
 		}		
 	}	
+	
 	/*
 	 * Method to initialize all window components and functions
 	 */
