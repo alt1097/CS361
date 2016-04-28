@@ -51,7 +51,7 @@ public class Gui {
 	private ArrayList<JComboBox> comboBoxes; // holds sensor type comboboxe instances
 	private ArrayList<JRadioButton> radioButtons; // holds enable/disable radiobutton instances
 	private ArrayList<JToggleButton> toggleButtons;
-	Map<String, String> map;
+	private Map<String, String> map;
 	
 
 	
