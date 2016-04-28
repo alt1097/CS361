@@ -290,25 +290,26 @@ public class Gui {
 				if(!guiActive){
 					allowOutsideInput = false;					
 					
-					for (JComboBox comboBox : comboBoxes) {
-						comboBox.setSelectedIndex(0);
-					}
-					for (JRadioButton radio : radioButtons) {
-						// do nothing with radio buttons on power off routine
-						// they state should be preserved
-						// below commented lines can be removed later
-//						radio.setSelected(false);
-//						radio.setEnabled(false);
-						// below condition need to be adjusted to work properly
-//						if(radio.isSelected()){
-//							radio.doClick();
-//						}
-					}
-					for(JToggleButton toggle : toggleButtons){
-						if(toggle.isSelected()){
-							toggle.doClick();
-						}					
-					}
+//					for (JComboBox comboBox : comboBoxes) {
+//						comboBox.setSelectedIndex(0);
+//					}
+//					for (JRadioButton radio : radioButtons) {
+//						// do nothing with radio buttons on power off routine
+//						// they state should be preserved
+//						// below commented lines can be removed later
+////						radio.setSelected(false);
+////						radio.setEnabled(false);
+//						// below condition need to be adjusted to work properly
+////						if(radio.isSelected()){
+////							radio.doClick();
+////						}
+//					}
+					
+//					for(JToggleButton toggle : toggleButtons){
+//						if(toggle.isSelected()){
+//							toggle.doClick();
+//						}					
+//					}
 					
 					indicator.setForeground(Color.RED);
 					clear();
@@ -321,6 +322,18 @@ public class Gui {
 							radio.getActionListeners()[0].actionPerformed(null);
 						}
 					}
+					
+					// same logic as above
+					for (JComboBox comboBox : comboBoxes) {
+						comboBox.getActionListeners()[0].actionPerformed(new ActionEvent(comboBox, 0, (String) comboBox.getSelectedItem()));
+					}
+					
+					// seems like unnecessary action. Printer text box will show some console output although
+//					for(JToggleButton toggle : toggleButtons){
+//						if(toggle.isSelected()){
+//							toggle.getActionListeners()[0].actionPerformed(new ActionEvent(toggle, 0, toggle.getActionCommand()));
+//						}					
+//					}					
 				}
 			}
 		});
@@ -677,7 +690,6 @@ public class Gui {
 		printerPower.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				printerText.append("Printer Power button\n");
-//				appendToPrinter("OK");
 				//if(guiActive){
 					togglePrinter();
 				//}					
@@ -1048,7 +1060,9 @@ public class Gui {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("USB connect");	
 				//if(guiActive){
+				System.out.println("THIS");
 					usbActive = usbActive ? false : true;		
+					System.out.println(usbActive);
 				//}							
 			}
 		});
