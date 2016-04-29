@@ -288,7 +288,9 @@ public class RaceGRP extends Race{
 		data.put("racers", racers);
 		data.put("placeNumber", placeNumber);
 		data.put("trackNumber", trackNumber);
-		data.put("startTime", startTime);
+		if(startTime != null){
+			data.put("startTime", startTime);
+		}
 		if(startChannel != null){
 			data.put("startChannel", startChannel.getName());
 		}
