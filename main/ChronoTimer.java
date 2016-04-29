@@ -538,8 +538,11 @@ public class ChronoTimer extends JFrame{
 					logOut += " - RACE HAS ENDED";
 				}
 				else{
-					logOut += race.addRacer(number, false);
-					output("RACER "+number+" ADDED");
+					String check = race.addRacer(number, false);
+					if(check.length() == 0){
+						output("RACER "+number+" ADDED");
+					}
+					logOut += check;
 				}
 			}
 			else{

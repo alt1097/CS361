@@ -152,7 +152,13 @@ public abstract class Race{
 	/**
 	 Runs the actions to finalize a Race.
 	 */
-	public abstract void end();
+	public void end(){
+		ongoing = false;
+		ended = true;
+		endedDisplay = raceStats();
+		ChronoTimer.log.add(print());
+		ChronoTimer.log.addToExport(exportMe());
+	};
 	
 	/**
 	 Prints the current status of all Racers.

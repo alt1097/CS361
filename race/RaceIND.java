@@ -289,7 +289,7 @@ public class RaceIND extends Race{
 		String sep = "--------------------";
 		String record = "";
 		record += sep+"\n";
-		record += ": : Run #"+ChronoTimer.log.getLogNumber()+" : : "+eventType+" : : ";
+		record += ": Run #"+ChronoTimer.log.getLogNumber()+" : "+eventType+" : ";
 		if(ended()){
 			record += "Ended";
 		}
@@ -299,30 +299,12 @@ public class RaceIND extends Race{
 		else{
 			record += "Not Started";
 		}
-		record += " : :\n";
+		record += " :\n";
 		for(Racer racer : racers){
-			record += "#"+racer.getNumber()+"\tStart: ";
-			boolean printDif = true;
-			Long tempTime = racer.getStartTime();
-			if(tempTime == null){
-				record += "DID NOT START";
-				printDif = false;
-			}
-			else{
-				record += ChronoTimer.format.format(tempTime);
-			}
-			record += "\t\tFinish: ";
-			tempTime = racer.getEndTime();
-			if(tempTime == null){
-				record += "DID NOT FINISH";
-				printDif = false;
-			}
-			else{
-				record += ChronoTimer.format.format(tempTime);
-			}
-			record += "\t\tFinal: ";
-			if(printDif){
-				record += ChronoTimer.diffFormat.format(racer.getFinalTime());
+			record += "#"+racer.getNumber()+"\tFinal: ";
+			Long diff = racer.getFinalTime();
+			if(diff != null){
+				record += ChronoTimer.diffFormat.format(diff);
 			}
 			else{
 				record += "DNF";
@@ -353,15 +335,6 @@ public class RaceIND extends Race{
 			data.put("finishChannel", finishChannel.getName());
 		}
 		return ChronoTimer.export.objectToJsonString(data);
-	}
-
-	@Override
-	public void end() {
-		ongoing = false;
-		ended = true;
-		endedDisplay = raceStats();
-		ChronoTimer.log.add(print());
-		ChronoTimer.log.addToExport(exportMe());
 	}
 
 	/**

@@ -27,6 +27,11 @@ public class RacePARGRP extends Race{
 	private Long startTime;
 	
 	/**
+	 * Finish places
+	 */
+	private ArrayList<Racer> places = new ArrayList<>();
+	
+	/**
 	 Initializes the Parallel Groups components of Race.
 	 */
 	public RacePARGRP(ChronoTimer chrono){
@@ -36,7 +41,6 @@ public class RacePARGRP extends Race{
 			channels.add(null);
 		}
 		channelVerify();
-		//  TODO
 	}
 
 	//  ----------  RACER MANAGEMENT  ----------
@@ -50,13 +54,22 @@ public class RacePARGRP extends Race{
 	@Override
 	public String addRacer(int number, boolean toFront){
 		String logOut = "";
+		int count = 0;
 		if(!ongoing)
 		{
-			if(racers.size() < 8)
+			for(Racer racer : racers)
+			{
+				if(racer != null)
+				{
+					++count;
+				}
+			}
+			if(count < 8)
 			{
 				for(int i = 0; i < 8; i++){
 					if(racers.get(i) == null){
 						racers.set(i, new Racer(number));
+						channelVerify();
 						break;
 					}
 				}
@@ -86,7 +99,14 @@ public class RacePARGRP extends Race{
 		}
 		else{
 			for(Racer racer : racers){
-				if(racer.getNumber() == number){
+				if(racer != null && racer.getNumber() == number){
+					return racer;
+				}
+			}
+			for(Racer racer : places)
+			{
+				if(racer.getNumber() == number)
+				{
 					return racer;
 				}
 			}
@@ -104,6 +124,7 @@ public class RacePARGRP extends Race{
 		int index = racers.indexOf(getRacer(number, false));
 		if(index != -1){
 			racers.set(index, null);
+			channelVerify();
 			return true;
 		}
 		return false;
@@ -161,20 +182,25 @@ public class RacePARGRP extends Race{
 			return true;
 		}
 		boolean pass = true;
-		if(racers.size() > 0)
+		int count = 0;
+		
+		
+		for(int i = 0; i < 8; ++i)
 		{
-			for(int i = 0; i < racers.size(); ++i)
-			{
+			if(racers.get(i) != null){
+				++count;
 				if(channels.get(i) == null){
+					
 					pass = false;
 					break;
 				}
 			}
 		}
-		else
+		if(count == 0)
 		{
 			pass = false;
 		}
+		
 		canStart = pass;
 		return pass;
 	}
@@ -192,7 +218,6 @@ public class RacePARGRP extends Race{
 				if(temp != null && temp.isOn()){
 					temp.setChanType("FINISH");
 					channels.set(i, temp);
-					System.out.println("HERE");
 				}
 				else
 				{
@@ -217,16 +242,17 @@ public class RacePARGRP extends Race{
 	@Override
 	public String trigger(Channel channel){
 		String retMes = "";
-		
 		if(channels.contains(channel))
 		{
 			if(channel.getName() == 0 && startTime == null)
 			{
 				startTime = ChronoTimer.getTime();
 				ongoing = true;
-				for(Racer r: racers)
+				for(Racer racer: racers)
 				{
-					r.setStartTime(startTime);
+					if(racer != null){
+						racer.setStartTime(startTime);
+					}
 				}
 				getChrono().output("TRIG RACE HAS STARTED");
 			}
@@ -239,10 +265,17 @@ public class RacePARGRP extends Race{
 				else
 				{
 					Racer racer = racers.get(channel.getName());
-					channel.fireChannel(racer);
-					channel.reset();
-					getChrono().output(racer.getNumber()+" TRIG "+(channel.getName() + 1));
-					getChrono().output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
+					if(racer == null){
+						retMes += " - NO RACER IN LANE";
+					}
+					else{
+						racers.set(channel.getName(), null);
+						places.add(racer);
+						channel.fireChannel(racer);
+						channel.reset();
+						getChrono().output(racer.getNumber()+" TRIG "+(channel.getName() + 1));
+						getChrono().output(racer.getNumber()+" ELAPSED "+ChronoTimer.diffFormat.format(racer.getFinalTime()));
+					}
 				}
 			}
 		}
@@ -261,9 +294,9 @@ public class RacePARGRP extends Race{
 	private void update(){
 	boolean hasEnded = true;
 		
-		for(Racer r : racers)
+		for(Racer racer : racers)
 		{
-			if(r.getEndTime() == null)
+			if(racer != null)
 			{
 				hasEnded = false;
 				break;
@@ -282,7 +315,49 @@ public class RacePARGRP extends Race{
 	 */
 	@Override
 	public String print(){
-		return "";  //  TODO
+		String sep = "--------------------";
+		String record = "";
+		record += sep+"\n";
+		record += ": : Run #"+ChronoTimer.log.getLogNumber()+" : : "+eventType+" : : ";
+		if(ended()){
+			record += "Ended";
+		}
+		else if(ongoing()){
+			record += "Ongoing";
+		}
+		else{
+			record += "Not Started";
+		}
+		record += " :\n";
+		int place = 1;
+		for(Racer racer : places){
+			String placeStr = place+"";
+			for(int i = placeStr.length(); i < 3; i++){
+				placeStr += " ";
+			}
+			record += placeStr+"  #"+racer.getNumber()+"\tFinal: ";
+			Long diff = racer.getFinalTime();
+			if(diff != null){
+				record += ChronoTimer.diffFormat.format(diff);
+			}
+			else{
+				record += "DNF";
+			}
+			record += "\n";
+			place++;
+		}
+		place = 0;
+		String tempStr = "";
+		for(Racer racer : racers){
+			place++;
+			if(racer != null){
+				tempStr += "#"+racer.getNumber()+"    "+place+"\n";
+			}
+		}
+		if(place > 0){
+			record += "\t~~~Not Finished~~~\n"+tempStr;
+		}
+		return record;
 	}
 
 	/**
@@ -291,17 +366,22 @@ public class RacePARGRP extends Race{
 	@Override
 	public String exportMe() {
 		Hashtable<String, Serializable> data = new Hashtable<>();
+		data.put("eventType", super.eventType);
+		data.put("canStart", super.canStart);
+		data.put("ongoing", super.ongoing);
+		data.put("ended", super.ended);
 		data.put("racers", racers);
+		for(int i = 0; i < 8; i++){
+			Channel channel = channels.get(i);
+			if(channel != null){
+				data.put("channel_"+i, channel.getName());
+			}
+		}
+		if(startTime != null){
+			data.put("startTime", startTime);
+		}
+		data.put("places", places);
 		return ChronoTimer.export.objectToJsonString(data);
-	}
-
-	@Override
-	public void end() {
-		ongoing = false;
-		ended = true;
-		endedDisplay = raceStats();
-		ChronoTimer.log.add(print());
-		ChronoTimer.log.addToExport(exportMe());
 	}
 
 	/**
@@ -309,6 +389,30 @@ public class RacePARGRP extends Race{
 	 @return The displayed text for the GUI.
 	 */
 	public String raceStats(){
-		return "";  //  TODO
+		if(endedDisplay == null){
+			String output = "";
+			if(startTime == null){
+				output += "- RACE NOT STARTED -";
+			}
+			else{
+				output += "ELAPSED: "+(ChronoTimer.diffFormat.format(ChronoTimer.getTime() - startTime));
+			}
+			output += "\n";
+			int lane = 0;
+			for(Racer racer : racers){
+				lane++;
+				if(racer != null){
+					output += "\n"+racer.getNumber()+"\t"+lane;
+				}
+			}
+			output += "\n";
+			for(Racer racer : places){
+				if(racer.getEndTime() != null){
+					output += "\n"+racer.getNumber()+"\t"+ChronoTimer.diffFormat.format(racer.getFinalTime())+" F";
+				}
+			}
+			return output;
+		}
+		return endedDisplay;
 	}
 }

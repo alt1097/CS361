@@ -243,7 +243,7 @@ public class RaceGRP extends Race{
 		String sep = "--------------------";
 		String record = "";
 		record += sep+"\n";
-		record += ": : Run #"+ChronoTimer.log.getLogNumber()+" : : "+eventType+" : : ";
+		record += ": Run #"+ChronoTimer.log.getLogNumber()+" : "+eventType+" : ";
 		if(ended()){
 			record += "Ended";
 		}
@@ -253,35 +253,23 @@ public class RaceGRP extends Race{
 		else{
 			record += "Not Started";
 		}
-		record += " : :\n";
+		record += " :\n";
+		int place = 1;
 		for(Racer racer : racers){
-			record += "#"+racer.getNumber()+"\tStart: ";
-			boolean printDif = true;
-			Long tempStartTime = racer.getStartTime();
-			if(tempStartTime == null){
-				record += "DID NOT START";
-				printDif = false;
+			String placeStr = place+"";
+			for(int i = placeStr.length(); i < 3; i++){
+				placeStr += " ";
 			}
-			else{
-				record += ChronoTimer.format.format(tempStartTime);
-			}
-			record += "\t\tFinish: ";
-			Long tempEndTime = racer.getEndTime();
-			if(tempEndTime == null){
-				record += "DID NOT FINISH";
-				printDif = false;
-			}
-			else{
-				record += ChronoTimer.format.format(tempEndTime);
-			}
-			record += "\t\tFinal: ";
-			if(printDif){
-				record += ChronoTimer.diffFormat.format(racer.getFinalTime());
+			record += placeStr+"  #"+racer.getNumber()+"\tFinal: ";
+			Long diff = racer.getFinalTime();
+			if(diff != null){
+				record += ChronoTimer.diffFormat.format(diff);
 			}
 			else{
 				record += "DNF";
 			}
 			record += "\n";
+			place++;
 		}
 		record += sep;
 		return record;
@@ -308,18 +296,6 @@ public class RaceGRP extends Race{
 			data.put("finishChannel", finishChannel.getName());
 		}
 		return ChronoTimer.export.objectToJsonString(data);
-	}
-	
-	/**
-	 Runs the actions to finalize a Group Race.
-	 */
-	@Override
-	public void end() {
-		ongoing = false;
-		ended = true;
-		endedDisplay = raceStats();
-		ChronoTimer.log.add(print());
-		ChronoTimer.log.addToExport(exportMe());
 	}
 
 	/**
