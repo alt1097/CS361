@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Timer;
@@ -227,16 +228,33 @@ public class ChronoTimer extends JFrame{
 			logOut += " - RACE ONGOING";
 		}
 		else{
-			try{
-				long parsed = format.parse(time).getTime();
-				systemStartTime = System.currentTimeMillis();
-				newOffset = parsed;
-				output("SYSTEM TIME SET TO "+format.format(new Date(parsed)));
-			}catch(ParseException e){
+			try{				
+				Calendar cal = Calendar.getInstance();
+				cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), Integer.parseInt(time.substring(0,2)), Integer.parseInt(time.substring(2,4)), Integer.parseInt(time.substring(4)));
+				Date customDate = cal.getTime(); // this is today's day, month, year but different time
+				systemStartTime = customDate.getTime();
+				System.out.println(customDate);
+				output("SYSTEM TIME SET TO "+format.format(systemStartTime));
+			}catch(Exception e){
 				logOut += " - TIME COULD NOT BE PARSED";
 			}
 		}
 		debugLog.add(logOut);
+//		String logOut = format.format(getTime())+" TIME "+time;
+//		if(race.ongoing()){
+//			logOut += " - RACE ONGOING";
+//		}
+//		else{
+//			try{
+//				long parsed = format.parse(time).getTime();
+//				systemStartTime = System.currentTimeMillis();
+//				newOffset = parsed;
+//				output("SYSTEM TIME SET TO "+format.format(new Date(parsed)));
+//			}catch(ParseException e){
+//				logOut += " - TIME COULD NOT BE PARSED";
+//			}
+//		}
+//		debugLog.add(logOut);
 	}
 
 	/**

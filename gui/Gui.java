@@ -36,7 +36,7 @@ public class Gui {
 	private JTextArea printerText; // text area for printer output
 	private JTextArea displayText; // text area for display output
 	private JScrollPane scrollPane; // addition for printer text box to make it scroll
-	private String[][] simpleMenu = new String[6][5]; // menu items array. Do not treat it as a two dimensional array even if it looks like one
+	private String[][] simpleMenu = new String[7][6]; // menu items array. Do not treat it as a two dimensional array even if it looks like one
 	private int row; // current row
 	private int col; // current column
 	private ChronoTimer chrono; // reference to ChronoTimer instance
@@ -73,6 +73,7 @@ public class Gui {
 		map.put("Export to USB", "export");
 		map.put("Show all stats", null);
 		map.put("Show only one", "print");
+		map.put("Set time", "time");
 		
 		comboBoxes = new ArrayList<JComboBox>(); 
 		radioButtons = new ArrayList<JRadioButton>(); 
@@ -83,7 +84,8 @@ public class Gui {
 		simpleMenu[0][1] = "Add/Remove racer";
 		simpleMenu[0][2] = "New run/End run";
 		simpleMenu[0][3] = "Export";
-		simpleMenu[0][4] = "Print";		
+		simpleMenu[0][4] = "Print";
+		simpleMenu[0][5] = "Set time";
 		
 		// new race type menu
 		simpleMenu[1][0] = "Individual";
@@ -114,6 +116,12 @@ public class Gui {
 		simpleMenu[5][1] = "Show only one";
 //		simpleMenu[5][2] = null;
 //		simpleMenu[5][3] = null;
+		
+	//	// generic menu page
+//		simpleMenu[6][0] = "Item 4 0";
+//		simpleMenu[4][1] = "Item 4 1";
+//		simpleMenu[4][2] = "Item 4 2";
+//		simpleMenu[4][3] = "Item 4 2";	
 		
 ////		// generic menu page
 //		simpleMenu[4][0] = "Item 4 0";
@@ -219,6 +227,20 @@ public class Gui {
 		try {
 //			Method m = ChronoTimer.class.getMethod(what, int.class);
 			ChronoTimer.class.getMethod(what, int.class).invoke(chrono, arg);
+		} catch (NoSuchMethodException | SecurityException e1) {
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			e1.printStackTrace();
+		} catch (IllegalArgumentException e1) {
+			e1.printStackTrace();
+		} catch (InvocationTargetException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	private void invoke(String what, String arg){
+		try {
+			ChronoTimer.class.getMethod(what, String.class).invoke(chrono, (Object)arg);
 		} catch (NoSuchMethodException | SecurityException e1) {
 			e1.printStackTrace();
 		} catch (IllegalAccessException e1) {
@@ -391,6 +413,7 @@ public class Gui {
 		right.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// System.out.println("Right");
+				System.out.println("ROW " + row);
 				if (functionsMenuActive) {					
 					if (row == 1) { // race type menu page						
 						chrono.event(map.get(simpleMenu[row][col]));
@@ -428,6 +451,12 @@ public class Gui {
 							displayText.append("(keypad and #): ");
 						}
 						return;	
+					} else if (row == 0 && col == 5) { // time set menu
+							numPadActive = true;
+							displayText.setText("Set system time. \n");
+							displayText.setText("Format HHMMSS \n");
+							displayText.append("(keypad and #): ");
+						return;					
 					} else {
 						row = col + 1;
 						col = 0;
@@ -840,9 +869,15 @@ public class Gui {
 		button_pound.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				if (numPadActive) {
-					// System.out.println("Numpad button #");
-					invoke(map.get(simpleMenu[row][col]), Integer.parseInt(displayText.getText().substring(displayText.getText().lastIndexOf(' ') + 1)));
+				if (numPadActive) { // TODO					
+
+					if(row == 0 && col == 5){
+						invoke(map.get(simpleMenu[row][col]), (displayText.getText().substring(displayText.getText().lastIndexOf(' ') + 1)));
+					}else{
+						invoke(map.get(simpleMenu[row][col]), Integer.parseInt(displayText.getText().substring(displayText.getText().lastIndexOf(' ') + 1)));
+					}
+//					invoke(map.get(simpleMenu[row][col]), Integer.parseInt(displayText.getText().substring(displayText.getText().lastIndexOf(' ') + 1)));
+					
 				}
 				numPadActive = false;
 				drawCol();
