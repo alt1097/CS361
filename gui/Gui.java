@@ -454,8 +454,8 @@ public class Gui {
 					} else if (row == 0 && col == 5) { // time set menu
 							numPadActive = true;
 							displayText.setText("Set system time. \n");
-							displayText.setText("Format HHMMSS \n");
-							displayText.append("(keypad and #): ");
+							displayText.setText("Format HH*MM*SS \n");
+							displayText.append("(keypad and */#): ");
 						return;					
 					} else {
 						row = col + 1;
@@ -844,7 +844,7 @@ public class Gui {
 			public void actionPerformed(ActionEvent e) {
 				if(numPadActive){
 //					System.out.println("Numpad button *");	
-					displayText.append("*");
+					displayText.append(":");
 				}
 				
 			}

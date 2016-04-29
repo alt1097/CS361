@@ -230,7 +230,7 @@ public class ChronoTimer extends JFrame{
 		else{
 			try{				
 				Calendar cal = Calendar.getInstance();
-				cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), Integer.parseInt(time.substring(0,2)), Integer.parseInt(time.substring(2,4)), Integer.parseInt(time.substring(4)));
+				cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), Integer.parseInt(time.substring(0,2)), Integer.parseInt(time.substring(3,5)), Integer.parseInt(time.substring(6)));
 				Date customDate = cal.getTime(); // this is today's day, month, year but different time
 				systemStartTime = customDate.getTime();
 				System.out.println(customDate);
