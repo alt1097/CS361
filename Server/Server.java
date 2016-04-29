@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import race.Racer;
 
@@ -48,8 +49,9 @@ public class Server {
     }
     
     private static String getResponseBodyFromArrayList(ArrayList<Racer> fromJson) {
-    	SimpleDateFormat millisFormat = new SimpleDateFormat("H:mm:ss.SSS");
+    	SimpleDateFormat millisFormat = new SimpleDateFormat("HH:mm:ss.SSS");
     	int counter = 0;
+    	String tempString;
         String result = "<link rel=\"stylesheet\" type=\"text/css\" href=\"mystyle.css\">";
         result += "<script type=\"text/javascript\">setTimeout(function () { location.reload();}, 15 * 1000);</script>";
         result += "<div class=\"table-title\"><h3>Race results</h3></div>";
@@ -62,24 +64,32 @@ public class Server {
                 "<th class=\"text-left\"><a href=\"/displayresults/endtime\">Finish time</a></th>" +
                 "<th class=\"text-left\"><a href=\"/displayresults/elapsed\">Elapsed time</a></th>" +
                 "</tr></thead><tbody class=\"table-hover\">";
-        for (Racer e : fromJson) {
-            result += "<tr>" +
-            		"<td class=\"text-left\">" + (++counter) + "</td>" +
-                    "<td class=\"text-left\">" + e.getNumber() + "</td>" +
-                    "<td class=\"text-left\">" + (getName(e.getNumber())) + "</td>" +
-                    "<td class=\"text-left\">" + millisFormat.format((new Date(e.getStartTime()))) + "</td>" +
-                    "<td class=\"text-left\">" + millisFormat.format((new Date(e.getEndTime()))) + "</td>" +
-                    "<td class=\"text-left\">" + millisFormat.format((new Date(e.getFinalTime()))) + "</td>" +
-                    "</tr>";            
-        }
+        try {
+			for (Racer e : fromJson) {
+			    result += "<tr>" +
+			    		"<td class=\"text-left\">" + (++counter) + "</td>" +
+			            "<td class=\"text-left\">" + e.getNumber() + "</td>" +
+			            "<td class=\"text-left\">" + (getName(e.getNumber())) + "</td>" +
+//			            "<td class=\"text-left\">" + (getStats(millisFormat.format((new Date(e.getStartTime()))))) + "</td>" +
+//			            "<td class=\"text-left\">" + (getStats(millisFormat.format((new Date(e.getEndTime()))))) + "</td>" +
+//			            "<td class=\"text-left\">" + (getStats(millisFormat.format((new Date(e.getFinalTime()))))) + "</td>" +
+						"<td class=\"text-left\">" + (tempString = e.getStartTime() == null ? "N/A" : millisFormat.format((new Date(e.getStartTime())))) + "</td>" +
+						"<td class=\"text-left\">" + (tempString = e.getEndTime() == null ? "DNF" : millisFormat.format((new Date(e.getEndTime())))) + "</td>" +
+						"<td class=\"text-left\">" + (tempString = e.getFinalTime() == null ? "DNF" : (formatInterval(e.getFinalTime()))) + "</td>" +
+			            "</tr>";            
+			}
+		} catch (Exception e) {
+			System.out.println("Exception thrown on server's fromJson loop");
+			e.printStackTrace();
+		}
         result += "</tbody></table>";
         return result;
     }
     
     private static String getName(int bib){
     	
-    	String fileName = "racers.txt";
-    	String line = "";
+    	String fileName = "./racers.txt";
+    	String line;
 
         try {
             FileReader fileReader = new FileReader(fileName);
@@ -97,7 +107,18 @@ public class Server {
         catch(IOException ex) {
             System.out.println("Error reading file " + fileName);
         }
-        return line;
+        return "";
+    }
+    
+    // don't need to use Date object to construct interval from milliseconds
+    // turn long into string in this method
+    private static String formatInterval(final long l)
+    {
+        final long hr = TimeUnit.MILLISECONDS.toHours(l);
+        final long min = TimeUnit.MILLISECONDS.toMinutes(l - TimeUnit.HOURS.toMillis(hr));
+        final long sec = TimeUnit.MILLISECONDS.toSeconds(l - TimeUnit.HOURS.toMillis(hr) - TimeUnit.MINUTES.toMillis(min));
+        final long ms = TimeUnit.MILLISECONDS.toMillis(l - TimeUnit.HOURS.toMillis(hr) - TimeUnit.MINUTES.toMillis(min) - TimeUnit.SECONDS.toMillis(sec));
+        return String.format("%02d:%02d:%02d.%03d", hr, min, sec, ms);
     }
 
     private static void createResponseWithComparator(HttpExchange t, Comparator c) throws IOException {

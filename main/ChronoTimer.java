@@ -826,7 +826,6 @@ public class ChronoTimer extends JFrame{
 //				c.sendData("sendresults", race.exportMe());
 //				System.out.println(race.exportMe().substring(race.exportMe().indexOf('['), race.exportMe().lastIndexOf(']') + 1));
 				c.sendData("sendresults", race.exportMe().substring(race.exportMe().indexOf('['), race.exportMe().lastIndexOf(']') + 1));
-
 			}
 		}, 0, 5000);
 	}

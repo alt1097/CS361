@@ -20,7 +20,7 @@ public class Client {
 
 	private HttpURLConnection conn;
 	private String url;
-	private ArrayList<Racer> racers = new ArrayList<>();
+//	private ArrayList<Racer> racers = new ArrayList<>();
 
 	public Client(String ip, int port) {
 		url = ip + ":" + port + "/";
