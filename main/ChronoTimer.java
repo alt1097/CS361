@@ -823,9 +823,9 @@ public class ChronoTimer extends JFrame{
 		new Timer().scheduleAtFixedRate(new TimerTask(){
 			@Override
 			public void run(){
-//				c.sendData("sendresults", race.exportMe());
+				c.sendData("sendresults", race.exportMe());
 //				System.out.println(race.exportMe().substring(race.exportMe().indexOf('['), race.exportMe().lastIndexOf(']') + 1));
-				c.sendData("sendresults", race.exportMe().substring(race.exportMe().indexOf('['), race.exportMe().lastIndexOf(']') + 1));
+//				c.sendData("sendresults", race.exportMe().substring(race.exportMe().indexOf('['), race.exportMe().lastIndexOf(']') + 1));
 			}
 		}, 0, 5000);
 	}
