@@ -223,7 +223,7 @@ public class ChronoTimer extends JFrame{
 	 @param time String of desired time to start at.
 	 */
 	public void time(String time){
-		String logOut = format.format(getTime())+" TIME "+time;
+/*		String logOut = format.format(getTime())+" TIME "+time;
 		if(race.ongoing()){
 			logOut += " - RACE ONGOING";
 		}
@@ -239,22 +239,22 @@ public class ChronoTimer extends JFrame{
 				logOut += " - TIME COULD NOT BE PARSED";
 			}
 		}
+		debugLog.add(logOut);*/
+		String logOut = format.format(getTime())+" TIME "+time;
+		if(race.ongoing()){
+			logOut += " - RACE ONGOING";
+		}
+		else{
+			try{
+				long parsed = format.parse(time).getTime();
+				systemStartTime = System.currentTimeMillis();
+				newOffset = parsed;
+				output("SYSTEM TIME SET TO "+format.format(new Date(parsed)));
+			}catch(ParseException e){
+				logOut += " - TIME COULD NOT BE PARSED";
+			}
+		}
 		debugLog.add(logOut);
-//		String logOut = format.format(getTime())+" TIME "+time;
-//		if(race.ongoing()){
-//			logOut += " - RACE ONGOING";
-//		}
-//		else{
-//			try{
-//				long parsed = format.parse(time).getTime();
-//				systemStartTime = System.currentTimeMillis();
-//				newOffset = parsed;
-//				output("SYSTEM TIME SET TO "+format.format(new Date(parsed)));
-//			}catch(ParseException e){
-//				logOut += " - TIME COULD NOT BE PARSED";
-//			}
-//		}
-//		debugLog.add(logOut);
 	}
 
 	/**
@@ -309,7 +309,7 @@ public class ChronoTimer extends JFrame{
 		}
 		else{
 			channelObj.connect(sensor);
-			output("SENSOR TYPE ("+sensor+") CONNECTED TO CHANNEL "+num);
+			output("SENSOR ("+sensor+") CONNECTED TO "+num);
 		}
 		debugLog.add(logOut);
 	}
@@ -327,7 +327,7 @@ public class ChronoTimer extends JFrame{
 		}
 		else{
 			channelObj.disconnect();
-			output("SENSOR DISCONNECTED FROM CHANNEL "+num);
+			output("SENSOR DISCONNECT FROM "+num);
 		}
 		debugLog.add(logOut);
 	}
@@ -348,7 +348,7 @@ public class ChronoTimer extends JFrame{
 					logOut += " - RACE ONGOING";
 				}
 				else{
-					output("EVENT TYPE CHANGING TO "+type);
+					output("EVENT TYPE TO "+type);
 					newRun(type, true);
 				}
 			}
@@ -398,7 +398,7 @@ public class ChronoTimer extends JFrame{
 					default:
 						//  TODO
 				}
-				output("NEW RUN TYPE ("+type+") STARTED");
+				output("NEW RUN ("+type+")");
 			}
 			else{
 				logOut += " - EVENT TYPE DOES NOT EXIST";
@@ -510,7 +510,7 @@ public class ChronoTimer extends JFrame{
 							fw.close();
 							output("EXPORT SUCCESSFUL...");
 						}catch(IOException e){
-							output("EXPORT FAILED, FILE COULD NOT BE CREATED...");
+							output("EXPORT FAILED, FILE NOT CREATED...");
 						}
 					}
 					output("EXPORT COMPLETE");
@@ -826,9 +826,10 @@ public class ChronoTimer extends JFrame{
 		new Timer().scheduleAtFixedRate(new TimerTask(){
 			@Override
 			public void run(){
-				c.sendData("sendresults", race.exportMe());
+				String data = race.exportServer();
+//				c.sendData("sendresults", race.exportMe());
 //				System.out.println(race.exportMe().substring(race.exportMe().indexOf('['), race.exportMe().lastIndexOf(']') + 1));
-//				c.sendData("sendresults", race.exportMe().substring(race.exportMe().indexOf('['), race.exportMe().lastIndexOf(']') + 1));
+				c.sendData("sendresults", data.substring(data.indexOf('['), data.lastIndexOf(']') + 1));
 			}
 		}, 0, 5000);
 	}

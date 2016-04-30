@@ -183,6 +183,12 @@ public abstract class Race{
 	public abstract String exportMe();
 
 	/**
+	 Exports Racers for display on Server.
+	 @return The JSON data.
+	 */
+	public abstract String exportServer();
+
+	/**
 	 Builds text to display on center GUI screen.
 	 @return The displayed text for the GUI.
 	 */

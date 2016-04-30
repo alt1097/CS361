@@ -301,6 +301,16 @@ public class RaceGRP extends Race{
 	}
 
 	/**
+	 Exports Racers for display on Server.
+	 @return The JSON data.
+	 */
+	public String exportServer(){
+		Hashtable<String, Serializable> data = new Hashtable<>();
+		data.put("racers", racers);
+		return ChronoTimer.export.objectToJsonString(data);
+	}
+
+	/**
 	 Builds Group Race text to display on center GUI screen.
 	 @return The displayed text for the GUI.
 	 */

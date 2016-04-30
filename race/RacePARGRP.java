@@ -385,6 +385,19 @@ public class RacePARGRP extends Race{
 	}
 
 	/**
+	 Exports Racers for display on Server.
+	 @return The JSON data.
+	 */
+	public String exportServer(){
+		Hashtable<String, Serializable> data = new Hashtable<>();
+		ArrayList<Racer> collection = new ArrayList<>();
+		collection.addAll(places);
+		collection.addAll(racers);
+		data.put("racers", collection);
+		return ChronoTimer.export.objectToJsonString(data);
+	}
+
+	/**
 	 Builds Parallel Group Race text to display on center GUI screen.
 	 @return The displayed text for the GUI.
 	 */

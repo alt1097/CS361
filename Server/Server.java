@@ -33,11 +33,12 @@ public class Server {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 
         // create a context to get the request to display the results
-        server.createContext("/displayresults/endtime", new DisplayHandlerEndTime());
-        server.createContext("/displayresults/starttime", new DisplayHandlerStartTime());
-        server.createContext("/displayresults/bib", new DisplayHandlerBib());
-        server.createContext("/displayresults/elapsed", new DisplayHandlerElapsed());
-        server.createContext("/displayresults/mystyle.css", new CSSHandler());
+        server.createContext("/results", new DisplayHandlerBib());
+        server.createContext("/results/endtime", new DisplayHandlerEndTime());
+        server.createContext("/results/starttime", new DisplayHandlerStartTime());
+        server.createContext("/results/elapsed", new DisplayHandlerElapsed());
+        server.createContext("/results/mystyle.css", new CSSHandler());
+        server.createContext("/mystyle.css", new CSSHandler());
 
         // create a context to get the request for the POST
         server.createContext("/sendresults",new PostHandler());
@@ -54,15 +55,15 @@ public class Server {
     	String tempString;
         String result = "<link rel=\"stylesheet\" type=\"text/css\" href=\"mystyle.css\">";
         result += "<script type=\"text/javascript\">setTimeout(function () { location.reload();}, 15 * 1000);</script>";
-        result += "<div class=\"table-title\"><h3>Race results</h3></div>";
+        result += "<div class=\"table-title\"><h3>Race Results</h3></div>";
         result += "<table class=\"table-fill\">\n";
         result += "\t<thead><tr>" +
                 "<th class=\"text-left\">Place</th>" +
-                "<th class=\"text-left\"><a href=\"/displayresults/bib\">Bib</a></th>" +
+                "<th class=\"text-left\"><a href=\"/results\">Bib</a></th>" +
                 "<th class=\"text-left\">Name</th>" +
-                "<th class=\"text-left\"><a href=\"/displayresults/starttime\">Start time</a></th>" +
-                "<th class=\"text-left\"><a href=\"/displayresults/endtime\">Finish time</a></th>" +
-                "<th class=\"text-left\"><a href=\"/displayresults/elapsed\">Elapsed time</a></th>" +
+                "<th class=\"text-left\"><a href=\"/results/starttime\">Start Time</a></th>" +
+                "<th class=\"text-left\"><a href=\"/results/endtime\">Finish Time</a></th>" +
+                "<th class=\"text-left\"><a href=\"/results/elapsed\">Final Time</a></th>" +
                 "</tr></thead><tbody class=\"table-hover\">";
         try {
 			for (Racer e : fromJson) {
@@ -88,7 +89,7 @@ public class Server {
     
     private static String getName(int bib){
     	
-    	String fileName = "./racers.txt";
+    	String fileName = Server.class.getResource("racers.txt").getPath().replaceAll("%20", " ");
     	String line;
 
         try {
@@ -149,6 +150,12 @@ public class Server {
     		@Override
     		public int compare(Object o1, Object o2) {
     			if (o1 instanceof Racer && o2 instanceof Racer) {
+					if(((Racer) o1).getEndTime() == null){
+						return 1;
+					}
+					if(((Racer) o2).getEndTime() == null){
+						return -1;
+					}
     				return ((Racer) o1).getEndTime().compareTo(((Racer) o2).getEndTime());
     			}
     			return 0;
@@ -168,6 +175,12 @@ public class Server {
         	@Override
         	public int compare(Object o1, Object o2) {
         		if (o1 instanceof Racer && o2 instanceof Racer) {
+					if(((Racer) o1).getStartTime() == null){
+						return 1;
+					}
+					if(((Racer) o2).getStartTime() == null){
+						return -1;
+					}
         			return ((Racer) o1).getStartTime().compareTo(((Racer) o2).getStartTime());
         		}
         		return 0;
@@ -212,6 +225,12 @@ public class Server {
             @Override
             public int compare(Object o1, Object o2) {
                 if (o1 instanceof Racer && o2 instanceof Racer) {
+					if(((Racer) o1).getEndTime() == null){
+						return 1;
+					}
+					if(((Racer) o2).getEndTime() == null){
+						return -1;
+					}
                 	return ((Racer) o1).getElapsedTime().compareTo(((Racer) o2).getElapsedTime());
                 }
                 return 0;
@@ -266,7 +285,7 @@ public class Server {
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String filename = httpExchange.getRequestURI().toString();
-            File file = new File("./Server/" + filename.substring(filename.lastIndexOf('/') + 1));
+            File file = new File(Server.class.getResource(filename.substring(filename.lastIndexOf('/') + 1)).getPath().replaceAll("%20", " "));
             Headers h = httpExchange.getResponseHeaders();
             h.set("Content-Type", "text/css");
             OutputStream os = httpExchange.getResponseBody();
