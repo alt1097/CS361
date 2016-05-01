@@ -392,7 +392,11 @@ public class RacePARGRP extends Race{
 		Hashtable<String, Serializable> data = new Hashtable<>();
 		ArrayList<Racer> collection = new ArrayList<>();
 		collection.addAll(places);
-		collection.addAll(racers);
+		for(Racer racer : racers){
+			if(racer != null){
+				collection.add(racer);
+			}
+		}
 		data.put("racers", collection);
 		return ChronoTimer.export.objectToJsonString(data);
 	}

@@ -325,7 +325,7 @@ public class RaceGRP extends Race{
 			int racersSize = racers.size();
 			if(racersSize > 0){
 				Racer lastRacer = racers.get(racersSize - 1);
-				output += "\n\n"+lastRacer.getNumber()+"\t"+lastRacer.getFinalTime()+" F";
+				output += "\n\n"+lastRacer.getNumber()+"\t"+ChronoTimer.diffFormat.format(lastRacer.getFinalTime())+" F";
 			}
 			return output;
 		}

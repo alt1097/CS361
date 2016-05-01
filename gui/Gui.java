@@ -64,7 +64,7 @@ public class Gui {
 		map = new HashMap<String, String>();
 		map.put("Create a new run", "newRun");
 		map.put("End current run", "endRun");
-		map.put("Add new racer", "num");
+		map.put("Add/Move racer", "num");
 		map.put("Remove racer", "clr");
 		map.put("Individual", "IND");
 		map.put("Parallel", "PARIND");
@@ -81,7 +81,7 @@ public class Gui {
 		// row column	
 		// main menu
 		simpleMenu[0][0] = "Choose race type";
-		simpleMenu[0][1] = "Add/Remove racer";
+		simpleMenu[0][1] = "Add/Move/Remove racer";
 		simpleMenu[0][2] = "New run/End run";
 		simpleMenu[0][3] = "Export";
 		simpleMenu[0][4] = "Print";
@@ -94,7 +94,7 @@ public class Gui {
 		simpleMenu[1][3] = "Group parallel";
 		
 		// add racer function
-		simpleMenu[2][0] = "Add new racer";
+		simpleMenu[2][0] = "Add/Move racer";
 		simpleMenu[2][1] = "Remove racer";
 //		simpleMenu[2][2] = null;
 //		simpleMenu[2][3] = null;
@@ -697,7 +697,7 @@ public class Gui {
 		// Display text area
 		Font displayTextFont = new Font("Verdana", Font.BOLD, 16);
 		displayText = new JTextArea();
-		displayText.setBounds(290, 170, 250, 250);
+		displayText.setBounds(250, 170, 300, 280);
 		displayText.setEditable(false);
 		displayText.setFont(displayTextFont);
 		frame.getContentPane().add(displayText);		
@@ -721,7 +721,7 @@ public class Gui {
 //		printerText.setBounds(630, 41, 150, 200);
 		printerText.setEditable(false);
 		scrollPane = new JScrollPane(printerText);
-		scrollPane.setBounds(615, 40, 175, 200);
+		scrollPane.setBounds(615, 40, 180, 200);
 		frame.getContentPane().add(scrollPane);	
 
 		// Numpad section

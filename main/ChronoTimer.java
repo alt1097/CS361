@@ -245,6 +245,42 @@ public class ChronoTimer extends JFrame{
 			logOut += " - RACE ONGOING";
 		}
 		else{
+			if(time.length() == 0){
+				time = "00:00:00.000";
+			}
+			if(time.length() == 1){
+				time = "0"+time;
+			}
+			if(time.length() == 2){
+				time += ":";
+			}
+			if(time.length() == 3){
+				time += "00:00.000";
+			}
+			if(time.length() == 4){
+				time = time.substring(0, 3)+"0"+time.substring(3);
+			}
+			if(time.length() == 5){
+				time += ":";
+			}
+			if(time.length() == 6){
+				time += "00.000";
+			}
+			if(time.length() == 7){
+				time = time.substring(0, 6)+"0"+time.substring(6);
+			}
+			if(time.length() == 8){
+				time += ".";
+			}
+			for(int i = time.length(); i < 13; i++){
+				int length = time.length();
+				if(length == 9 || length == 10 || length == 11){
+					time = time.substring(0, 9)+"0"+time.substring(length);
+				}
+			}
+			if(time.length() > 12){
+				time = time.substring(0, 12);
+			}
 			try{
 				long parsed = format.parse(time).getTime();
 				systemStartTime = System.currentTimeMillis();
