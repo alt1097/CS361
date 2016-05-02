@@ -4,23 +4,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-//import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-//import java.util.Collection;
-//import java.util.Collections;
-//import java.util.Scanner;
-
-import race.Racer;
-
-import com.google.gson.Gson;
-//import com.google.gson.reflect.TypeToken;
 
 public class Client {
 
 	private HttpURLConnection conn;
 	private String url;
-//	private ArrayList<Racer> racers = new ArrayList<>();
 
 	public Client(String ip, int port) {
 		url = ip + ":" + port + "/";
@@ -54,27 +43,4 @@ public class Client {
 		}
 		return response.toString();
 	}
-
-//	public int addToList(Racer em, int index) {
-//		if (!em.isEmpty()) {
-//			if (index > employees.size() - 1) {
-//				employees.add(em);
-//			} else {
-//				employees.set(index, em);
-//			}
-//			return index + 1;
-//		}
-//		return index;
-//
-//	}
-
-//	public Racer getEmployee(int index) {
-//		return employees.get(index);
-//	}
-
-//	public String getJSON() {
-//		Gson g = new Gson();
-//		return g.toJson(racers);
-//	}
-
 }
