@@ -1,0 +1,19 @@
+11:00:00.0 TIME 12:00:01.0
+12:01:02.0 ON
+Channel # 0 ANON was successfully connected to GATE sensor.
+12:01:12.0 CONN GATE 1
+Channel # 1 ANON was successfully connected to EYE sensor.
+12:01:15.0 CONN EYE 2
+12:01:20.0 EVENT IND - EVENT TYPE SAME
+Channel ANON was toggled, it is true now
+12:02:00.0 TOGGLE 1
+Channel ANON was toggled, it is true now
+12:02:04.0 TOGGLE 2
+12:02:10.0 NUM 234
+12:02:15.0 CLR 234
+12:02:50.0 TRIG 1 - RACE IS NOT SET UP
+12:03:35.0 TRIG 2 - RACE IS NOT SET UP
+12:04:50.0 PRINT
+12:06:00.0 ENDRUN - RACE NOT ONGOING
+12:15:00.0 OFF
+12:20:00.0 EXIT

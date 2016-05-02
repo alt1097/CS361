@@ -1,0 +1,19 @@
+11:00:00.0 TIME 12:00:01.0
+12:01:02.0 ON
+Channel # 0 ANON was successfully connected to EYE sensor.
+12:01:04.0 CONN EYE 1
+Channel # 1 ANON was successfully connected to EYE sensor.
+12:01:06.0 CONN EYE 2
+Channel ANON was toggled, it is true now
+12:01:08.0 TOGGLE 1
+Channel ANON was toggled, it is true now
+12:01:12.0 TOGGLE 2
+12:01:15.0 TRIG 1 - RACE IS NOT SET UP
+12:01:16.0 NUM 648
+12:01:17.0 NUM 184
+12:01:20.0 NUM 284
+12:02:00.0 TRIG 1
+12:02:04.0 TRIG 1
+12:02:10.0 TRIG 1
+12:02:25.0 TRIG 1 - NO RACER LEFT IN QUEUE
+12:02:50.0 EXIT

@@ -1,0 +1,21 @@
+11:00:00.0 TIME 12:00:01.0
+12:01:02.0 ON
+12:01:04.0 CONN EYE 0 - CHANNEL DOES NOT EXIST
+Channel # 0 ANON was successfully connected to EYE sensor.
+12:01:06.0 CONN EYE 1
+Channel # 1 ANON was successfully connected to EYE sensor.
+12:01:08.0 CONN EYE 2
+Channel # 2 ANON was successfully connected to EYE sensor.
+12:01:12.0 CONN EYE 3
+Channel # 3 ANON was successfully connected to EYE sensor.
+12:01:15.0 CONN EYE 4
+Channel # 4 ANON was successfully connected to EYE sensor.
+12:01:16.0 CONN EYE 5
+Channel # 5 ANON was successfully connected to EYE sensor.
+12:01:17.0 CONN EYE 6
+Channel # 6 ANON was successfully connected to EYE sensor.
+12:01:20.0 CONN EYE 7
+Channel # 7 ANON was successfully connected to EYE sensor.
+12:02:00.0 CONN EYE 8
+12:02:04.0 CONN EYE 9 - CHANNEL DOES NOT EXIST
+12:02:10.0 EXIT
