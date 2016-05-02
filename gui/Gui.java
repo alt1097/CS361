@@ -24,8 +24,6 @@ import Client.Client;
 import Server.Server;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.ConnectException;
 import java.util.*;
 
 import main.ChronoTimer;
@@ -47,14 +45,13 @@ public class Gui {
 	private boolean allowOutsideInput; // indicate if outside instance can use internal methods
 	private boolean functionsMenuActive; // indicate if functions menu can be used
 	private boolean usbActive; // indicate if usb connected
+	private boolean starAllowed;
+	private boolean poundAllowed;
 	
 	private ArrayList<JComboBox> comboBoxes; // holds sensor type comboboxe instances
 	private ArrayList<JRadioButton> radioButtons; // holds enable/disable radiobutton instances
 	private ArrayList<JToggleButton> toggleButtons;
 	private Map<String, String> map;
-	
-
-	
 	/**
 	 * Constructor for Gui class
 	 * 
@@ -96,32 +93,17 @@ public class Gui {
 		// add racer function
 		simpleMenu[2][0] = "Add/Move racer";
 		simpleMenu[2][1] = "Remove racer";
-//		simpleMenu[2][2] = null;
-//		simpleMenu[2][3] = null;
 		
 		// generic menu page
 		simpleMenu[3][0] = "Create a new run";
 		simpleMenu[3][1] = "End current run";
-//		simpleMenu[3][2] = null;
-//		simpleMenu[3][3] = null;
 		
 		// export menu
 		simpleMenu[4][0] = "Export to USB";
-//		simpleMenu[4][1] = null;
-//		simpleMenu[4][2] = null;
-//		simpleMenu[4][3] = null;
 		
 		// print menu page
 		simpleMenu[5][0] = "Show all stats";
 		simpleMenu[5][1] = "Show only one";
-//		simpleMenu[5][2] = null;
-//		simpleMenu[5][3] = null;
-		
-	//	// generic menu page
-//		simpleMenu[6][0] = "Item 4 0";
-//		simpleMenu[4][1] = "Item 4 1";
-//		simpleMenu[4][2] = "Item 4 2";
-//		simpleMenu[4][3] = "Item 4 2";	
 		
 ////		// generic menu page
 //		simpleMenu[4][0] = "Item 4 0";
@@ -223,26 +205,26 @@ public class Gui {
 		}
 	}
 	
-	private void invoke(String what, int arg){
-		try {
-//			Method m = ChronoTimer.class.getMethod(what, int.class);
-			ChronoTimer.class.getMethod(what, int.class).invoke(chrono, arg);
-		} catch (NoSuchMethodException | SecurityException e1) {
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			e1.printStackTrace();
-		} catch (IllegalArgumentException e1) {
-			e1.printStackTrace();
-		} catch (InvocationTargetException e1) {
-			e1.printStackTrace();
-		}
-	}
-	
 	private void invoke(String what, String arg){
-		try {
-			ChronoTimer.class.getMethod(what, String.class).invoke(chrono, (Object)arg);
+		
+		if(arg == null || arg.length() == 0){
+			System.out.println("Attempt to invoke ChronoTimer method from gui with empty argument");
+			System.out.println("Attempt ignored");
+			return;
+		}
+		
+		try {			
+		     try{
+		         int tempInt = Integer.parseInt(arg);
+		         ChronoTimer.class.getMethod(what, int.class).invoke(chrono, tempInt);
+		     }
+		     catch(NumberFormatException nfe){
+		    	 ChronoTimer.class.getMethod(what, String.class).invoke(chrono, (Object)arg);
+		     }		     
 		} catch (NoSuchMethodException | SecurityException e1) {
-			e1.printStackTrace();
+			System.out.println("Bad argument for time function provided over gui interface. Default time will be used.");
+			invoke("time", "12:00:00");
+//			e1.printStackTrace();
 		} catch (IllegalAccessException e1) {
 			e1.printStackTrace();
 		} catch (IllegalArgumentException e1) {
@@ -250,8 +232,7 @@ public class Gui {
 		} catch (InvocationTargetException e1) {
 			e1.printStackTrace();
 		}
-	}
-	
+	}	
 	
 	private void clear(){
 		displayText.setText("");
@@ -298,8 +279,10 @@ public class Gui {
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		ArrayList<JLabel> backSideChannelLabels;
+		ArrayList<JComboBox> dropDownChannels;
 		
-		JLabel indicator = new JLabel("•");
+		JLabel indicator = new JLabel("\u2022");
 		indicator.setForeground(Color.RED);
 		indicator.setFont(new Font("Tahoma", Font.PLAIN, 50));
 		indicator.setBounds(150, 7, 25, 25);
@@ -378,11 +361,9 @@ public class Gui {
 		
 		BasicArrowButton up = new BasicArrowButton(BasicArrowButton.NORTH);
 		up.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Up col: " + col +" row: " + row);	
-				if(functionsMenuActive){ // TODO
+			public void actionPerformed(ActionEvent e) {	
+				if(functionsMenuActive){
 					if((--col < 0)){
-//						col = simpleMenu[row].length - 1;
 						col = getLength(simpleMenu[row]) - 1; // such approach allows to avoid scrolling menu over "invisible" menu items
 					}
 				drawCol();
@@ -413,13 +394,13 @@ public class Gui {
 		right.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// System.out.println("Right");
-				System.out.println("ROW " + row);
 				if (functionsMenuActive) {					
 					if (row == 1) { // race type menu page						
 						chrono.event(map.get(simpleMenu[row][col]));
 						return;
 					} else if (row == 2) { // add racer menu page
 						numPadActive = true; // activate numpad
+						poundAllowed = true;
 						// it is necessary to have whitespace at the end of menu
 						// description
 						displayText.setText("Enter racer's bib number. \n");
@@ -432,6 +413,7 @@ public class Gui {
 					} else if (row == 4) { // export menu
 						if (usbActive) {
 							numPadActive = true;
+							poundAllowed = true;
 							// it is necessary to have whitespace at the end of
 							// menu description
 							displayText.setText("Provide a run number. \n");
@@ -445,6 +427,7 @@ public class Gui {
 							chrono.print();
 						}else{
 							numPadActive = true;
+							poundAllowed = true;
 							// it is necessary to have whitespace at the end of
 							// menu description
 							displayText.setText("Provide a run number. \n");
@@ -453,6 +436,8 @@ public class Gui {
 						return;	
 					} else if (row == 0 && col == 5) { // time set menu
 							numPadActive = true;
+							starAllowed = true;
+							poundAllowed = true;
 							displayText.setText("Set system time. \n");
 							displayText.setText("Format HH*MM*SS \n");
 							displayText.append("(keypad and */#): ");
@@ -844,9 +829,13 @@ public class Gui {
 			public void actionPerformed(ActionEvent e) {
 				if(numPadActive){
 //					System.out.println("Numpad button *");	
-					displayText.append(":");
-				}
-				
+					if(starAllowed){ // fix to disable ':' in any menus except time
+						displayText.append(":");					
+						if(displayText.getText().substring(displayText.getText().indexOf(':')+1).indexOf(':') != displayText.getText().substring(displayText.getText().indexOf(':')+1).lastIndexOf(':')){
+							starAllowed = false;
+						}						
+					}					
+				}				
 			}
 		});
 		num_star.setBounds(630, 400, 50, 50);
@@ -868,25 +857,17 @@ public class Gui {
 		JButton button_pound = new JButton("#");
 		button_pound.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				if (numPadActive) { // TODO					
-
-					if(row == 0 && col == 5){
-						invoke(map.get(simpleMenu[row][col]), (displayText.getText().substring(displayText.getText().lastIndexOf(' ') + 1)));
-					}else{
-						invoke(map.get(simpleMenu[row][col]), Integer.parseInt(displayText.getText().substring(displayText.getText().lastIndexOf(' ') + 1)));
-					}
-//					invoke(map.get(simpleMenu[row][col]), Integer.parseInt(displayText.getText().substring(displayText.getText().lastIndexOf(' ') + 1)));
-					
+				if(poundAllowed){
+					invoke(map.get(simpleMenu[row][col]), (displayText.getText().substring(displayText.getText().lastIndexOf(' ') + 1)));
+					numPadActive = false;
+					poundAllowed = false;
+					starAllowed = false;
+					drawCol();
 				}
-				numPadActive = false;
-				drawCol();
 			}
 		});
 		button_pound.setBounds(730, 400, 50, 50);
 		frame.getContentPane().add(button_pound);
-		
-
 		
 		
 		// Back view section
@@ -897,37 +878,20 @@ public class Gui {
 		frame.getContentPane().add(backViewLabel);
 		
 		// this is a numbers above a channel type selector
-		JLabel backChanLabel_1 = new JLabel("1");
-		backChanLabel_1.setBounds(140, 540, 15, 14);
-		frame.getContentPane().add(backChanLabel_1);
+		backSideChannelLabels = new ArrayList<JLabel>(8);
+		dropDownChannels = new ArrayList<JComboBox>(8);
 		
-		JLabel backChanLabel_3 = new JLabel("3");
-		backChanLabel_3.setBounds(200, 540, 15, 14);
-		frame.getContentPane().add(backChanLabel_3);
-		
-		JLabel backChanLabel_5 = new JLabel("5");
-		backChanLabel_5.setBounds(270, 539, 15, 14);
-		frame.getContentPane().add(backChanLabel_5);
-		
-		JLabel backChanLabel_7 = new JLabel("7");
-		backChanLabel_7.setBounds(330, 539, 15, 14);
-		frame.getContentPane().add(backChanLabel_7);
-		
-		JLabel backChanLabel_2 = new JLabel("2");
-		backChanLabel_2.setBounds(140, 589, 15, 14);
-		frame.getContentPane().add(backChanLabel_2);
-		
-		JLabel backChanLabel_4 = new JLabel("4");
-		backChanLabel_4.setBounds(200, 589, 15, 14);
-		frame.getContentPane().add(backChanLabel_4);
-		
-		JLabel backChanLabel_5_1 = new JLabel("6");
-		backChanLabel_5_1.setBounds(270, 588, 15, 14);
-		frame.getContentPane().add(backChanLabel_5_1);
-		
-		JLabel backChanLabel_8 = new JLabel("8");
-		backChanLabel_8.setBounds(330, 588, 15, 14);
-		frame.getContentPane().add(backChanLabel_8);
+		for(int i = 0; i < 8; i++){
+			backSideChannelLabels.add(new JLabel());
+			if((i + 1) % 2 != 0){
+				backSideChannelLabels.get(i).setBounds(140+(i*32), 540, 15, 15);
+				backSideChannelLabels.get(i).setText(""+(i+1));
+			}else{
+				backSideChannelLabels.get(i).setBounds(110+(i*32), 590, 15, 15);
+				backSideChannelLabels.get(i).setText(""+(i+1));
+			}
+			frame.getContentPane().add(backSideChannelLabels.get(i));
+		}			
 		
 		
 		JComboBox<String> backChan_1 = new JComboBox<String>(sensors);
@@ -952,7 +916,6 @@ public class Gui {
 		backChan_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Back radio 3");
-				
 				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
 				if(sensorType.equals("-")){
 					chrono.disc(3);
@@ -969,14 +932,12 @@ public class Gui {
 		backChan_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Back radio 5");
-
 				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
 				if(sensorType.equals("-")){
 					chrono.disc(5);
 				}else{
 					chrono.conn(sensorType, 5);
-				}
-				
+				}				
 			}
 		});
 		comboBoxes.add(backChan_5);
@@ -987,7 +948,6 @@ public class Gui {
 		backChan_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Back radio 7");
-				
 				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
 				if(sensorType.equals("-")){
 					chrono.disc(7);
@@ -1006,7 +966,6 @@ public class Gui {
 		backChan_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Back radio 2");
-				
 				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
 				if(sensorType.equals("-")){
 					chrono.disc(2);
@@ -1023,7 +982,6 @@ public class Gui {
 		backChan_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Back radio 4");
-				
 				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
 				if(sensorType.equals("-")){
 					chrono.disc(4);
@@ -1042,7 +1000,6 @@ public class Gui {
 		backChan_6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Back radio 6");
-				
 				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
 				if(sensorType.equals("-")){
 					chrono.disc(6);
@@ -1061,7 +1018,6 @@ public class Gui {
 		backChan_8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("Back radio 8");
-				
 				String sensorType = (String)(((JComboBox<String>) e.getSource()).getSelectedItem());
 				if(sensorType.equals("-")){
 					chrono.disc(8);
@@ -1083,7 +1039,6 @@ public class Gui {
 			public void actionPerformed(ActionEvent e) {
 //				System.out.println("USB connect");	
 				//if(guiActive){
-				System.out.println("THIS");
 					usbActive = usbActive ? false : true;		
 					System.out.println(usbActive);
 				//}							
@@ -1119,18 +1074,18 @@ public class Gui {
 		testButton_1.setBounds(600, 510, 90, 25);
 		frame.getContentPane().add(testButton_1);
 //
-		JButton testButton_2 = new JButton("Test serv");
-		testButton_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Client c = new Client("http://localhost", 8000);
-//				String test = "[{\"number\": 111,\"startTime\": \"Apr 21, 2016 10:25:17 PM\",\"endTime\": \"Apr 21, 2016 10:25:32 PM\"},{\"number\": 222,\"startTime\": \"Apr 21, 2016 10:25:18 PM\",\"endTime\": \"Apr 21, 2016 10:25:33 PM\"},{\"number\": 333,\"startTime\": \"Apr 21, 2016 10:25:19 PM\",\"endTime\": \"Apr 21, 2016 10:25:34 PM\"},{\"number\": 444,\"startTime\": \"Apr 21, 2016 10:25:20 PM\",\"endTime\": \"Apr 21, 2016 10:25:35 PM\"},{\"number\": 555,\"startTime\": \"Apr 21, 2016 10:25:21 PM\",\"endTime\": \"Apr 21, 2016 10:25:37 PM\"}]";
-				String test = "[{\"number\": 111,\"startTime\": \"1086073200000\",\"endTime\": \"1086073200000\"},{\"number\": 222,\"startTime\": \"1086073200000\",\"endTime\": \"1086073200000\"}]";
-				c.sendData("sendresults", test);
-
-			}
-		});
-		testButton_2.setBounds(600, 540, 90, 25);
-		frame.getContentPane().add(testButton_2);
+//		JButton testButton_2 = new JButton("Test serv");
+//		testButton_2.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				Client c = new Client("http://localhost", 8000);
+////				String test = "[{\"number\": 111,\"startTime\": \"Apr 21, 2016 10:25:17 PM\",\"endTime\": \"Apr 21, 2016 10:25:32 PM\"},{\"number\": 222,\"startTime\": \"Apr 21, 2016 10:25:18 PM\",\"endTime\": \"Apr 21, 2016 10:25:33 PM\"},{\"number\": 333,\"startTime\": \"Apr 21, 2016 10:25:19 PM\",\"endTime\": \"Apr 21, 2016 10:25:34 PM\"},{\"number\": 444,\"startTime\": \"Apr 21, 2016 10:25:20 PM\",\"endTime\": \"Apr 21, 2016 10:25:35 PM\"},{\"number\": 555,\"startTime\": \"Apr 21, 2016 10:25:21 PM\",\"endTime\": \"Apr 21, 2016 10:25:37 PM\"}]";
+//				String test = "[{\"number\": 111,\"startTime\": \"1086073200000\",\"endTime\": \"1086073200000\"},{\"number\": 222,\"startTime\": \"1086073200000\",\"endTime\": \"1086073200000\"}]";
+//				c.sendData("sendresults", test);
+//
+//			}
+//		});
+//		testButton_2.setBounds(600, 540, 90, 25);
+//		frame.getContentPane().add(testButton_2);
 //		
 //		JButton testButton_3 = new JButton("Dnf Test");
 //		testButton_3.addActionListener(new ActionListener() {
