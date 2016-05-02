@@ -14,7 +14,7 @@ import gui.Gui; //gui example. Place this import in class that will create gui w
 
 public class Simulator {
 	ChronoTimer chrono = new ChronoTimer();
-	ComHandler handler = new ComHandler(chrono);
+	public ComHandler handler = new ComHandler(chrono);
 
 	/**
 	 * Simulates the running of the chrono timer with a test file
@@ -43,13 +43,12 @@ public class Simulator {
 	}
 
 	public void gui() {
-		//gui example. Place this code in class that will create gui window
 		try {
 			Gui window = new Gui(chrono);
 			window.getFrame().setVisible(true);
 			chrono.addListener(window);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}// end of gui example
+		}
 	}
 }
