@@ -3,20 +3,37 @@ package ChronoTest;
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
 import main.ChronoTimer;
 import main.Simulator;
 
 public class ChronoTest {
 	
-	Simulator simulator;
-	static String tf = "ChronoTest/Test_Files/";
-	static String t = ".txt";
+ 	Simulator simulator;
+	static String tf = "testFiles";
+	String t = ".txt"; 
+	
+	public static void main(String[] args) throws Exception {	     
+		 JUnitCore jCore = new JUnitCore();
+	     Result result = jCore.run(ChronoTest.class);
+	     System.out.println("Runtime: " + result.getRunTime());
+	     System.out.println("Tests failed: " + result.getFailureCount());
+	     System.out.println("Tests ignored: " + result.getIgnoreCount());
+	     System.out.println("\nFailed tests:\n");
+	     for(Failure failure : result.getFailures()){
+	    	 System.out.println("Test description: " + failure.getTestHeader());
+	     }
+	}
 
 	@Test
 	public void channelLimit(){
@@ -188,34 +205,40 @@ public class ChronoTest {
 		testUnit("triggerLimit");
 	}
 
-	private void testUnit(String fileName){
-		System.out.println("==  "+fileName+"  ================================================");
+	private void testUnit(String fileName){		
+		ClassLoader classLoader = getClass().getClassLoader();
 		simulator = new Simulator();
-		simulator.handler.enableJUnit();
+		simulator.handler.enableJUnit();		
 		ChronoTimer.enableJUnit();
-		simulator.fileReader(tf+fileName+t);
-		debugCompare(fileRetrieve(fileName), ChronoTimer.debugLog.outputTestString());
-		System.out.println("\n\n\n\n");
+		
+		// IDE file path
+        simulator.fileReader("\\"+classLoader.getResource(tf+"/" + fileName + t).toString().substring(5));
+        // separate executable file path
+//        simulator.fileReader((new File("").getAbsolutePath())+"\\"+classLoader.getResource(tf+"/" + fileName + t).toString().substring(5)); 
+        debugCompare(fileRetrieve(fileName), ChronoTimer.debugLog.outputTestString());
+		System.out.println("\n");
 	}
 
 	private ArrayList<String> fileRetrieve(String fileName){
+		ClassLoader classLoader = getClass().getClassLoader();
 		ArrayList<String> debug = new ArrayList<String>();
-		try(BufferedReader br = new BufferedReader(new FileReader(tf+"Results/"+fileName+" Debug"+t))){
+		
+		// File path for Separate executable
+//		try(BufferedReader br = new BufferedReader(new FileReader(new FileInputStream((new File("").getAbsolutePath())+"\\"+classLoader.getResource(tf+"/Results/" + fileName + " Debug"+t).toString().substring(5).replaceAll("%20", " ")).getFD()))){
+// File path for IDE
+			try(BufferedReader br = new BufferedReader(new FileReader(new FileInputStream("\\"+classLoader.getResource(tf+"/Results/" + fileName + " Debug"+t).toString().substring(5).replaceAll("%20", " ")).getFD()))){
 			String line;
 			while((line = br.readLine()) != null){
 				debug.add(line);
 			}
 			return debug;
-		}catch(IOException e){
+		}catch(IOException e){			
 			debug.add("Debug file retrieval failed!");
 			return debug;
 		}
 	}
 
 	private void debugCompare(ArrayList<String> trueDebug, ArrayList<String> testDebug){
-//		if(trueDebug.size() != testDebug.size()){
-//			fail("Number of true debug file lines != tested debug!");
-//		}
 		for(int i = 0; i < trueDebug.size(); i++){
 			if(!trueDebug.get(i).equals(testDebug.get(i))){
 				System.out.println("! ! ! FAILURE: "+trueDebug.get(i)+"  |  "+testDebug.get(i));
@@ -224,5 +247,4 @@ public class ChronoTest {
 			}
 		}
 	}
-
 }
